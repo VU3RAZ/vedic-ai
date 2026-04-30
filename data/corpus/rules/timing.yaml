@@ -1,0 +1,163 @@
+- rule_id: T001
+  name: Saturn Mahadasha — Period of Discipline and Karma
+  scope: timing
+  weight: 0.75
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Saturn
+  explanation_template: >-
+    Saturn Mahadasha brings a period of karmic reckoning, discipline, and
+    slow but lasting achievements. Hard work during this period yields
+    enduring results; shortcuts will be penalised.
+  source_refs:
+    - "BPHS 46.2"
+  conflict_policy: merge
+
+- rule_id: T002
+  name: Jupiter Mahadasha — Period of Growth and Wisdom
+  scope: timing
+  weight: 0.8
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Jupiter
+  explanation_template: >-
+    Jupiter Mahadasha is generally auspicious, bringing opportunities for
+    education, spiritual growth, wealth, and expansion. Marriage, children,
+    and career advancement are favoured.
+  source_refs:
+    - "BPHS 46.8"
+  conflict_policy: merge
+
+- rule_id: T003
+  name: Rahu Mahadasha — Period of Ambition and Disruption
+  scope: timing
+  weight: 0.7
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Rahu
+  explanation_template: >-
+    Rahu Mahadasha amplifies ambition and worldly desires. Sudden changes,
+    foreign connections, and unconventional opportunities arise. The native
+    should be wary of deception and over-reaching.
+  source_refs:
+    - "BPHS 47.1"
+  conflict_policy: merge
+
+- rule_id: T004
+  name: Ketu Mahadasha — Period of Detachment and Spirituality
+  scope: timing
+  weight: 0.65
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Ketu
+  explanation_template: >-
+    Ketu Mahadasha favours spiritual inquiry, renunciation, and inner work.
+    Worldly ambitions may feel hollow; the native benefits from meditation
+    and charitable service.
+  source_refs:
+    - "BPHS 47.6"
+  conflict_policy: merge
+
+- rule_id: T005
+  name: Venus Mahadasha — Period of Pleasure and Prosperity
+  scope: timing
+  weight: 0.8
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Venus
+  explanation_template: >-
+    Venus Mahadasha is the longest and often most pleasurable period,
+    favouring arts, romance, luxury, and material prosperity. Relationships
+    and creative pursuits flourish.
+  source_refs:
+    - "BPHS 46.3"
+  conflict_policy: merge
+
+- rule_id: T006
+  name: Sun Mahadasha — Period of Authority and Recognition
+  scope: timing
+  weight: 0.7
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Sun
+  explanation_template: >-
+    Sun Mahadasha brings recognition, authority, and prominence. Government
+    or leadership roles are highlighted. The native gains confidence but
+    should guard against pride.
+  source_refs:
+    - "BPHS 46.1"
+  conflict_policy: merge
+
+- rule_id: T007
+  name: Moon Mahadasha — Period of Emotional Sensitivity
+  scope: timing
+  weight: 0.65
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Moon
+  explanation_template: >-
+    Moon Mahadasha heightens emotional sensitivity, intuition, and
+    attachment to home and mother. Travel, public dealings, and
+    fluctuating fortunes are characteristic.
+  source_refs:
+    - "BPHS 46.4"
+  conflict_policy: merge
+
+- rule_id: T008
+  name: Mars Mahadasha — Period of Energy and Assertion
+  scope: timing
+  weight: 0.7
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Mars
+  explanation_template: >-
+    Mars Mahadasha energises ambition, courage, and physical vitality.
+    Property, siblings, and technical pursuits are highlighted. Impulsiveness
+    and conflicts should be managed consciously.
+  source_refs:
+    - "BPHS 46.5"
+  conflict_policy: merge
+
+- rule_id: T009
+  name: Mercury Mahadasha — Period of Intellect and Communication
+  scope: timing
+  weight: 0.7
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Mercury
+  explanation_template: >-
+    Mercury Mahadasha stimulates intellectual activity, business acumen,
+    and communication skills. Trade, writing, education, and analytical work
+    are favoured. Nervous energy should be grounded.
+  source_refs:
+    - "BPHS 46.9"
+  conflict_policy: merge
+
+- rule_id: T010
+  name: Saturn Antardasha in Jupiter Mahadasha — Lessons within Growth
+  scope: timing
+  weight: 0.6
+  conditions:
+    - feature: timing.mahadasha.lord
+      op: eq
+      value: Jupiter
+    - feature: timing.antardasha.lord
+      op: eq
+      value: Saturn
+  explanation_template: >-
+    Saturn Antardasha within Jupiter Mahadasha creates tension between
+    expansion and contraction. Delays and responsibilities temper the
+    expansive Jupiterian energy. Patience and structured planning are
+    essential to harvest long-term gains.
+  source_refs:
+    - "BPHS 46.8"
+  conflict_policy: merge

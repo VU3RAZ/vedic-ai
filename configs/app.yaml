@@ -1,0 +1,18 @@
+app_name: vedic-ai
+environment: development
+
+log:
+  level: INFO
+  json_logs: false
+
+storage:
+  db_url: "sqlite:///data/vedic_ai.db"
+  cache_dir: "data/processed/cache"
+
+astrology:
+  engine: swisseph
+  ayanamsa: lahiri
+  house_system: whole_sign
+  node_type: mean
+  divisional_charts:
+    - D1

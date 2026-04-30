@@ -1,0 +1,150 @@
+- rule_id: C001
+  name: Sun in 10th House — Career Prominence
+  scope: career
+  weight: 0.75
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Sun placed in the 10th house of career (Karma bhava) confers prominence,
+    authority, and recognition in professional life, often in government
+    or leadership roles.
+  source_refs:
+    - "BPHS 24.5"
+  conflict_policy: merge
+
+- rule_id: C002
+  name: Saturn in 10th House — Disciplined Career
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Saturn in the 10th house denotes a career built through sustained effort,
+    discipline, and perseverance; success often comes later in life but endures.
+  source_refs:
+    - "BPHS 24.13"
+  conflict_policy: merge
+
+- rule_id: C003
+  name: 10th Lord in Kendra — Solid Career Foundation
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: houses.10.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th house lord is placed in an angular house (kendra), providing a
+    strong structural foundation for the native's career and public standing.
+  source_refs:
+    - "BPHS 24.1"
+  conflict_policy: merge
+
+- rule_id: C004
+  name: 10th Lord in Trikona — Fortunate Career
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: houses.10.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th house lord is placed in a trine (trikona), indicating that fortune,
+    dharma, and luck support the native's professional endeavours.
+  source_refs:
+    - "BPHS 24.2"
+  conflict_policy: merge
+
+- rule_id: C005
+  name: Jupiter in 10th House — Wisdom in Career
+  scope: career
+  weight: 0.7
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Jupiter occupies the 10th house, bestowing wisdom, ethical conduct, and
+    a career in teaching, law, finance, or advisory roles.
+  source_refs:
+    - "BPHS 24.10"
+  conflict_policy: merge
+
+- rule_id: C006
+  name: Mars in 10th House — Leadership Profession
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Mars in the 10th house indicates a dynamic, action-oriented career involving
+    leadership, engineering, the military, or competitive fields.
+  source_refs:
+    - "BPHS 24.7"
+  conflict_policy: merge
+
+- rule_id: C007
+  name: 10th House Occupied — Active Career Sector
+  scope: career
+  weight: 0.4
+  conditions:
+    - feature: houses.10.is_occupied
+      op: eq
+      value: true
+  explanation_template: >-
+    One or more planets occupy the 10th house, activating the career sector
+    and drawing conscious energy toward professional achievement.
+  source_refs:
+    - "BPHS 24.0"
+  conflict_policy: merge
+
+- rule_id: C008
+  name: Lagna Lord in 10th — Career-Focused Native
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: lagna.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The Lagna lord is placed in the 10th house, indicating that the native's
+    core identity and personal drive are closely tied to career and social status.
+  source_refs:
+    - "BPHS 7.10"
+  conflict_policy: merge
+
+- rule_id: C009
+  name: 10th Lord Exalted — Outstanding Career Achievement
+  scope: career
+  weight: 0.85
+  conditions:
+    - feature: houses.10.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The 10th house lord is exalted, indicating exceptional career achievement,
+    high professional status, and outstanding recognition in one's field.
+  source_refs:
+    - "BPHS 24.3"
+  conflict_policy: override
+
+- rule_id: C010
+  name: 10th Lord Debilitated — Career Challenges
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.10.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The 10th house lord is debilitated, indicating obstacles, delays, or
+    underachievement in professional life that require conscious remediation.
+  source_refs:
+    - "BPHS 24.4"
+  conflict_policy: defer

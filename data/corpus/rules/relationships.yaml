@@ -1,0 +1,104 @@
+- rule_id: R001
+  name: Venus in 7th House — Charming Partner
+  scope: relationships
+  weight: 0.75
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Venus placed in the 7th house of partnership indicates a charming,
+    attractive partner with refined tastes and a harmonious marital bond.
+  source_refs:
+    - "BPHS 23.6"
+  conflict_policy: merge
+
+- rule_id: R002
+  name: Jupiter in 7th House — Noble Partner
+  scope: relationships
+  weight: 0.7
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Jupiter in the 7th house indicates a wise, moral, and generous partner
+    who brings growth and spiritual depth to the marriage.
+  source_refs:
+    - "BPHS 23.10"
+  conflict_policy: merge
+
+- rule_id: R003
+  name: Saturn in 7th House — Delayed or Serious Partnerships
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Saturn occupying the 7th house can delay marriage or bring a partner who
+    is older, more reserved, or who teaches through commitment and discipline.
+  source_refs:
+    - "BPHS 23.13"
+  conflict_policy: merge
+
+- rule_id: R004
+  name: 7th Lord in Own Sign — Stable Partnership
+  scope: relationships
+  weight: 0.7
+  conditions:
+    - feature: houses.7.lord_dignity
+      op: in
+      value: ["own", "moolatrikona"]
+  explanation_template: >-
+    The 7th house lord is in its own sign or moolatrikona, conferring stable,
+    enduring partnerships built on mutual respect and shared values.
+  source_refs:
+    - "BPHS 23.2"
+  conflict_policy: override
+
+- rule_id: R005
+  name: Venus Exalted — Exceptional Romantic Prospects
+  scope: relationships
+  weight: 0.8
+  conditions:
+    - feature: planets.Venus.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is exalted in Pisces, indicating refined romantic sensibilities,
+    an exceptionally charming partner, and deep capacity for love and devotion.
+  source_refs:
+    - "BPHS 3.14"
+  conflict_policy: merge
+
+- rule_id: R006
+  name: Mars in 7th House — Passionate Partnerships
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Mars in the 7th house indicates passionate, energetic partnerships with
+    potential for conflict; the native benefits from a dynamic, assertive partner.
+  source_refs:
+    - "BPHS 23.7"
+  conflict_policy: merge
+
+- rule_id: R007
+  name: 7th House Occupied — Active Partnership Sector
+  scope: relationships
+  weight: 0.35
+  conditions:
+    - feature: houses.7.is_occupied
+      op: eq
+      value: true
+  explanation_template: >-
+    One or more planets occupy the 7th house, drawing the native's focus and
+    energy toward partnerships, marriage, and committed relationships.
+  source_refs:
+    - "BPHS 23.0"
+  conflict_policy: merge

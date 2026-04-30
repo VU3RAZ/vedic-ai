@@ -1,0 +1,310 @@
+{
+  "schema_version": "1.0.0",
+  "birth": {
+    "birth_datetime": "2000-09-22T14:00:00+05:30",
+    "location": {
+      "latitude": 12.9716,
+      "longitude": 77.5946,
+      "altitude_m": 0.0,
+      "place_name": "Bangalore, India"
+    },
+    "name": "Chart C — Balanced",
+    "notes": null
+  },
+  "engine": "flatlib",
+  "ayanamsa": "lahiri",
+  "node_type": "mean",
+  "d1": {
+    "division": "D1",
+    "ascendant_longitude": 180.0,
+    "planets": {
+      "Sun": {
+        "graha": "Sun",
+        "longitude": 183.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Libra",
+          "degree_in_rasi": 3.0
+        },
+        "nakshatra": {
+          "nakshatra": "Chitra",
+          "pada": 3,
+          "nakshatra_lord": "Mars",
+          "degree_in_nakshatra": 9.67
+        },
+        "house": 1,
+        "dignity": "debilitated"
+      },
+      "Moon": {
+        "graha": "Moon",
+        "longitude": 225.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Scorpio",
+          "degree_in_rasi": 15.0
+        },
+        "nakshatra": {
+          "nakshatra": "Anuradha",
+          "pada": 4,
+          "nakshatra_lord": "Saturn",
+          "degree_in_nakshatra": 11.67
+        },
+        "house": 2,
+        "dignity": null
+      },
+      "Mars": {
+        "graha": "Mars",
+        "longitude": 70.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Gemini",
+          "degree_in_rasi": 10.0
+        },
+        "nakshatra": {
+          "nakshatra": "Ardra",
+          "pada": 1,
+          "nakshatra_lord": "Rahu",
+          "degree_in_nakshatra": 3.33
+        },
+        "house": 9,
+        "dignity": null
+      },
+      "Mercury": {
+        "graha": "Mercury",
+        "longitude": 170.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Virgo",
+          "degree_in_rasi": 20.0
+        },
+        "nakshatra": {
+          "nakshatra": "Hasta",
+          "pada": 4,
+          "nakshatra_lord": "Moon",
+          "degree_in_nakshatra": 10.0
+        },
+        "house": 12,
+        "dignity": "own"
+      },
+      "Jupiter": {
+        "graha": "Jupiter",
+        "longitude": 35.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Taurus",
+          "degree_in_rasi": 5.0
+        },
+        "nakshatra": {
+          "nakshatra": "Krittika",
+          "pada": 3,
+          "nakshatra_lord": "Sun",
+          "degree_in_nakshatra": 8.33
+        },
+        "house": 8,
+        "dignity": null
+      },
+      "Venus": {
+        "graha": "Venus",
+        "longitude": 200.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Libra",
+          "degree_in_rasi": 20.0
+        },
+        "nakshatra": {
+          "nakshatra": "Vishakha",
+          "pada": 1,
+          "nakshatra_lord": "Jupiter",
+          "degree_in_nakshatra": 0.0
+        },
+        "house": 1,
+        "dignity": "own"
+      },
+      "Saturn": {
+        "graha": "Saturn",
+        "longitude": 40.0,
+        "latitude": 0.0,
+        "speed": 1.0,
+        "is_retrograde": false,
+        "rasi": {
+          "rasi": "Taurus",
+          "degree_in_rasi": 10.0
+        },
+        "nakshatra": {
+          "nakshatra": "Rohini",
+          "pada": 1,
+          "nakshatra_lord": "Moon",
+          "degree_in_nakshatra": 0.0
+        },
+        "house": 8,
+        "dignity": null
+      },
+      "Rahu": {
+        "graha": "Rahu",
+        "longitude": 75.0,
+        "latitude": 0.0,
+        "speed": -1.0,
+        "is_retrograde": true,
+        "rasi": {
+          "rasi": "Gemini",
+          "degree_in_rasi": 15.0
+        },
+        "nakshatra": {
+          "nakshatra": "Ardra",
+          "pada": 3,
+          "nakshatra_lord": "Rahu",
+          "degree_in_nakshatra": 8.33
+        },
+        "house": 9,
+        "dignity": null
+      },
+      "Ketu": {
+        "graha": "Ketu",
+        "longitude": 255.0,
+        "latitude": 0.0,
+        "speed": -1.0,
+        "is_retrograde": true,
+        "rasi": {
+          "rasi": "Sagittarius",
+          "degree_in_rasi": 15.0
+        },
+        "nakshatra": {
+          "nakshatra": "Purva Ashadha",
+          "pada": 1,
+          "nakshatra_lord": "Venus",
+          "degree_in_nakshatra": 1.67
+        },
+        "house": 3,
+        "dignity": null
+      }
+    },
+    "houses": {
+      "1": {
+        "number": 1,
+        "rasi": "Libra",
+        "cusp_longitude": 180.0,
+        "lord": "Venus",
+        "occupants": [
+          "Sun",
+          "Venus"
+        ]
+      },
+      "2": {
+        "number": 2,
+        "rasi": "Scorpio",
+        "cusp_longitude": 210.0,
+        "lord": "Mars",
+        "occupants": [
+          "Moon"
+        ]
+      },
+      "3": {
+        "number": 3,
+        "rasi": "Sagittarius",
+        "cusp_longitude": 240.0,
+        "lord": "Jupiter",
+        "occupants": [
+          "Ketu"
+        ]
+      },
+      "4": {
+        "number": 4,
+        "rasi": "Capricorn",
+        "cusp_longitude": 270.0,
+        "lord": "Saturn",
+        "occupants": []
+      },
+      "5": {
+        "number": 5,
+        "rasi": "Aquarius",
+        "cusp_longitude": 300.0,
+        "lord": "Saturn",
+        "occupants": []
+      },
+      "6": {
+        "number": 6,
+        "rasi": "Pisces",
+        "cusp_longitude": 330.0,
+        "lord": "Jupiter",
+        "occupants": []
+      },
+      "7": {
+        "number": 7,
+        "rasi": "Aries",
+        "cusp_longitude": 0.0,
+        "lord": "Mars",
+        "occupants": []
+      },
+      "8": {
+        "number": 8,
+        "rasi": "Taurus",
+        "cusp_longitude": 30.0,
+        "lord": "Venus",
+        "occupants": [
+          "Jupiter",
+          "Saturn"
+        ]
+      },
+      "9": {
+        "number": 9,
+        "rasi": "Gemini",
+        "cusp_longitude": 60.0,
+        "lord": "Mercury",
+        "occupants": [
+          "Mars",
+          "Rahu"
+        ]
+      },
+      "10": {
+        "number": 10,
+        "rasi": "Cancer",
+        "cusp_longitude": 90.0,
+        "lord": "Moon",
+        "occupants": []
+      },
+      "11": {
+        "number": 11,
+        "rasi": "Leo",
+        "cusp_longitude": 120.0,
+        "lord": "Sun",
+        "occupants": []
+      },
+      "12": {
+        "number": 12,
+        "rasi": "Virgo",
+        "cusp_longitude": 150.0,
+        "lord": "Mercury",
+        "occupants": [
+          "Mercury"
+        ]
+      }
+    }
+  },
+  "vargas": {},
+  "dashas": [
+    {
+      "graha": "Venus",
+      "level": 1,
+      "start_date": "2000-09-22",
+      "end_date": "2020-09-22",
+      "sub_periods": []
+    }
+  ],
+  "derived_features": {},
+  "provenance": {
+    "source": "fixture"
+  },
+  "computed_at": "2024-01-01T00:00:00Z"
+}

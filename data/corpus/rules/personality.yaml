@@ -1,0 +1,164 @@
+- rule_id: P001
+  name: Sun in Lagna — Natural Leader
+  scope: personality
+  weight: 0.7
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Sun occupies the Lagna (1st house), bestowing a commanding presence,
+    natural authority, and a strong, radiant self-identity.
+  source_refs:
+    - "BPHS 15.3"
+  conflict_policy: merge
+
+- rule_id: P002
+  name: Moon in Lagna — Reflective Nature
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Moon in the Lagna gives a reflective, emotionally receptive temperament
+    with strong intuition and changeable moods.
+  source_refs:
+    - "BPHS 15.4"
+  conflict_policy: merge
+
+- rule_id: P003
+  name: Jupiter in Lagna — Wisdom and Generosity
+  scope: personality
+  weight: 0.65
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Jupiter placed in the Lagna indicates a wise, generous, and optimistic
+    personality with a natural inclination toward learning and dharma.
+  source_refs:
+    - "BPHS 15.10"
+  conflict_policy: merge
+
+- rule_id: P004
+  name: Saturn in Lagna — Disciplined Temperament
+  scope: personality
+  weight: 0.55
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Saturn in the Lagna produces a disciplined, reserved, and patient nature.
+    The native is serious, methodical, and may appear austere to others.
+  source_refs:
+    - "BPHS 15.13"
+  conflict_policy: merge
+
+- rule_id: P005
+  name: Lagna Lord in Own Sign — Natural Self-Expression
+  scope: personality
+  weight: 0.7
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: in
+      value: ["own", "moolatrikona"]
+  explanation_template: >-
+    The Lagna lord is placed in its own sign (or moolatrikona), granting the
+    native natural confidence, strong constitution, and authentic self-expression.
+  source_refs:
+    - "BPHS 7.2"
+  conflict_policy: override
+
+- rule_id: P006
+  name: Kemadruma Yoga — Emotional Isolation
+  scope: personality
+  weight: 0.55
+  conditions:
+    - feature: yogas.kemadruma
+      op: eq
+      value: true
+  explanation_template: >-
+    Kemadruma yoga is present: Moon has no planetary support in adjacent houses
+    or conjunct, indicating a tendency toward emotional solitude and self-reliance.
+  source_refs:
+    - "BPHS 35.10"
+  conflict_policy: merge
+
+- rule_id: P007
+  name: Gajakesari Yoga — Intelligence and Renown
+  scope: personality
+  weight: 0.75
+  conditions:
+    - feature: yogas.gajakesari
+      op: eq
+      value: true
+  explanation_template: >-
+    Gajakesari yoga is present (Jupiter in a kendra from Moon), bestowing
+    intelligence, eloquence, good character, and widespread recognition.
+  source_refs:
+    - "BPHS 35.1"
+  conflict_policy: merge
+
+- rule_id: P008
+  name: Sun Exalted — Regal Confidence
+  scope: personality
+  weight: 0.8
+  conditions:
+    - feature: planets.Sun.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Sun is exalted in Aries, conferring exceptional confidence, vitality,
+    and an authoritative presence that commands respect.
+  source_refs:
+    - "BPHS 3.14"
+  conflict_policy: merge
+
+- rule_id: P009
+  name: Moon Exalted — Emotional Stability
+  scope: personality
+  weight: 0.75
+  conditions:
+    - feature: planets.Moon.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Moon is exalted in Taurus, giving a steady, nurturing emotional nature
+    with refined tastes and a calm, grounded disposition.
+  source_refs:
+    - "BPHS 3.14"
+  conflict_policy: merge
+
+- rule_id: P010
+  name: Rahu in Lagna — Unconventional Ambition
+  scope: personality
+  weight: 0.5
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Rahu in the Lagna creates an unconventional, ambitious personality with
+    a tendency to challenge norms and pursue worldly desires intensely.
+  source_refs:
+    - "BPHS 16.2"
+  conflict_policy: merge
+
+- rule_id: P011
+  name: Saturn Aspecting Lagna — Austere Nature
+  scope: personality
+  weight: 0.4
+  conditions:
+    - feature: planets.Saturn.aspects_to_houses
+      op: contains
+      value: 1
+  explanation_template: >-
+    Saturn casts its drishti on the Lagna, imparting discipline, restraint,
+    and a serious, hardworking approach to life.
+  source_refs:
+    - "BPHS 26.4"
+  conflict_policy: defer

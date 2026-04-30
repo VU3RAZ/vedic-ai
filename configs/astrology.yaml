@@ -1,0 +1,11 @@
+engine: flatlib  # flatlib | kerykeion
+
+ayanamsa: lahiri  # lahiri | krishnamurti | raman
+
+house_system: whole_sign  # whole_sign | placidus
+
+node_type: mean  # mean | true
+
+divisional_charts:
+  - D1
+  # Add D9, D10 etc. in later phases

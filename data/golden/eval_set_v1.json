@@ -1,0 +1,36 @@
+{
+  "name": "Phase 9 Seed Evaluation Set",
+  "version": "1.0",
+  "cases": [
+    {
+      "case_id": "EC001",
+      "birth_name": "Test Native A",
+      "scope": "career",
+      "expected_rule_ids": ["C001"],
+      "expected_keywords": ["career", "professional"],
+      "forbidden_keywords": ["I cannot", "I don't know"],
+      "notes": "Sun in 10th house chart — strong career indicators expected",
+      "chart_fixture": "sample_chart_a.json"
+    },
+    {
+      "case_id": "EC002",
+      "birth_name": "Test Native B",
+      "scope": "personality",
+      "expected_rule_ids": [],
+      "expected_keywords": ["personality", "nature"],
+      "forbidden_keywords": ["I cannot", "I don't know"],
+      "notes": "General personality scope test",
+      "chart_fixture": "sample_chart_b.json"
+    },
+    {
+      "case_id": "EC003",
+      "birth_name": "Test Native C",
+      "scope": "relationships",
+      "expected_rule_ids": [],
+      "expected_keywords": ["relationship", "partner"],
+      "forbidden_keywords": ["I cannot", "I don't know"],
+      "notes": "Relationships scope test",
+      "chart_fixture": "sample_chart_c.json"
+    }
+  ]
+}

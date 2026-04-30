@@ -1,0 +1,15 @@
+backend: faiss  # faiss | chroma
+
+embedding_model: all-MiniLM-L6-v2
+embedding_dim: 384
+
+chunking:
+  chunk_size: 600
+  overlap: 100
+
+index:
+  faiss_index_path: "data/processed/faiss.index"
+  chroma_persist_dir: "data/processed/chroma"
+
+retrieval:
+  top_k: 5
