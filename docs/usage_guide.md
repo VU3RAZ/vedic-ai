@@ -7,7 +7,7 @@
 ## Table of contents
 
 1. [Prerequisites](#1-prerequisites)
-2. [Installation](#2-installation)
+2. [Installation and index build](#2-installation-and-index-build)
 3. [Configuration](#3-configuration)
 4. [Three ways to run predictions](#4-three-ways-to-run-predictions)
    - 4a. Command-line interface (CLI)
@@ -49,7 +49,7 @@ curl http://localhost:11434/api/tags   # should return JSON
 
 ---
 
-## 2. Installation
+## 2. Installation and index build
 
 ```bash
 git clone https://github.com/VU3RAZ/vedic-ai.git
@@ -68,6 +68,28 @@ vedic-ai --help
 pytest tests/unit -q               # should be 100% green
 ```
 
+### Build the retrieval index (required once before first use)
+
+```bash
+vedic-ai build-index
+# [1/4] Ingesting corpus from data/corpus/texts/ ...
+#        9 sources — 1,525,642 total chars
+# [2/4] Chunking ...
+#        3,054 chunks produced
+# [3/4] Embedding with 'all-MiniLM-L6-v2' (this may take a few minutes) ...
+#        3,054 vectors — dim=384
+# [4/4] Building FAISS index in data/processed ...
+# Index ready: data/processed/faiss.index
+
+# Check status anytime:
+vedic-ai corpus-info
+
+# Force rebuild (e.g. after adding new text files):
+vedic-ai build-index --force
+```
+
+The index is built fully offline — no HuggingFace Hub calls are made at runtime (controlled by `HF_HUB_OFFLINE=1` set automatically by the CLI).
+
 ---
 
 ## 3. Configuration
@@ -82,7 +104,7 @@ llm:
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
-    timeout_seconds: 120
+    timeout_seconds: 600   # CPU inference — increase if needed
   temperature: 0.2
   max_tokens: 2048
 ```
@@ -131,11 +153,28 @@ VEDIC_AI__LOG__LEVEL=DEBUG vedic-ai predict ...
 
 ---
 
-## 4. Three ways to run predictions
+## 4. Four ways to run predictions
 
-### 4a. Command-line interface (CLI)
+### 4a. Web UI (easiest)
 
-The `vedic-ai predict` command is the simplest entry point.
+```bash
+vedic-ai serve            # starts http://127.0.0.1:8000
+vedic-ai serve --port 8080
+vedic-ai serve --host 0.0.0.0 --port 8080   # accessible on your LAN
+```
+
+Open the printed URL in any browser. The interface provides:
+
+- **Birth Data form** — name, date/time, timezone selector (14 presets), lat/lon, scope, dry-run toggle
+- **Quick Fill chips** — one-click example charts (Nagpur 1972, Delhi 1985, Mumbai 2000)
+- **Compute Chart** button — shows the natal chart table (planet, sign, degree, house, retrograde), house table (sign, lord, occupants), and Vimshottari dasha table
+- **Generate Prediction** button — runs the full pipeline and shows one prediction card per scope, each with summary, details, and a collapsible evidence accordion (rule triggers + BPHS passages)
+
+The web UI talks to the same FastAPI backend as the REST API below.
+
+### 4b. Command-line interface (CLI)
+
+The `vedic-ai predict` command is the fastest text-based entry point.
 
 **Syntax:**
 ```
@@ -152,30 +191,31 @@ vedic-ai predict <birth_datetime> <latitude> <longitude> [options]
 **Options:**
 | Flag | Default | Purpose |
 |---|---|---|
-| `--scope` / `-s` | `career` | `career`, `personality`, or `relationships` |
+| `--scope` / `-s` | *(all three)* | `personality`, `career`, or `relationships`. Omit to run all. |
 | `--name` / `-n` | — | Native's name (included in report) |
 | `--dry-run` | off | Skip LLM; return evidence-only report (fast) |
+| `--no-rag` | off | Disable FAISS retrieval (faster, less grounded) |
+| `--top-k` / `-k` | 5 | Number of corpus passages to retrieve |
 | `--output` / `-o` | stdout | Write JSON report to a file |
 
 **Examples:**
 
 ```bash
-# Career prediction for a Delhi native, printed to terminal
-vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21 \
-    --name "Arjuna" --scope career
+# All three scopes — full LLM run with RAG
+vedic-ai predict "1972-08-27T19:45:00+05:30" 21.15 79.08 --name "Rahul"
 
-# Personality scope, save to file
+# Single scope
+vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21 --scope career
+
+# Fast dry-run (no LLM, instant, good for debugging rules)
+vedic-ai predict "1972-08-27T19:45:00+05:30" 21.15 79.08 --dry-run
+
+# Save to file
 vedic-ai predict "1985-11-15T06:00:00+05:30" 19.07 72.87 \
-    --name "Draupadi" --scope personality \
-    --output reports/draupadi_personality.json
+    --name "Draupadi" --scope personality -o report.json
 
-# Fast dry-run (no LLM needed, returns triggered rules only)
-vedic-ai predict "1975-03-21T14:00:00+00:00" 51.50 -0.12 \
-    --scope relationships --dry-run
-
-# Relationships analysis in UTC
-vedic-ai predict "2001-09-11T08:46:00-05:00" 40.71 -74.01 \
-    --name "Test" --scope relationships
+# Disable RAG for a quicker result
+vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21 --no-rag
 ```
 
 **Birth datetime rules:**
@@ -185,7 +225,7 @@ vedic-ai predict "2001-09-11T08:46:00-05:00" 40.71 -74.01 \
 
 ---
 
-### 4b. Python API (direct)
+### 4c. Python API (direct)
 
 Use this when you want to embed prediction in a script or integrate with other systems.
 
@@ -291,21 +331,25 @@ print(json.dumps(combined, indent=2))
 
 ---
 
-### 4c. REST API (FastAPI server)
+### 4d. REST API (FastAPI server)
 
 Start the server:
 
 ```bash
+vedic-ai serve                  # recommended
+# or directly via uvicorn:
 uvicorn vedic_ai.api.app:create_api_app --factory --port 8000 --reload
 ```
 
-The API is now available at `http://localhost:8000`.
+The API is now available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
 **Endpoints:**
 
 | Method | Path | Purpose |
 |---|---|---|
+| GET | `/` | Web UI (HTML frontend) |
 | GET | `/health` | Liveness check |
+| GET | `/predictions/scopes` | List valid scopes |
 | POST | `/predictions` | Run full prediction pipeline |
 | POST | `/charts/compute` | Compute chart only (no prediction) |
 
@@ -321,10 +365,11 @@ The API is now available at `http://localhost:8000`.
   "longitude": 77.21,
   "place_name": "Delhi",
   "name": "Arjuna",
-  "scope": "career",
+  "scope": "all",
   "dry_run": false
 }
 ```
+`scope` accepts `"all"` (default — runs all three and merges sections), `"personality"`, `"career"`, or `"relationships"`.
 
 **`curl` example:**
 ```bash
@@ -735,10 +780,24 @@ The YAML rule uses a feature path whose top-level namespace is not registered in
 Either `dry_run=True` was passed or the LLM client was not initialised. Pass a `LocalLLMClient` and set `dry_run=False`.
 
 ### Very slow LLM response (CPU-only)
-Expected: `qwen2.5:14b` runs at ~3–5 tokens/sec on CPU. A 500-token report takes ~2 minutes. To keep the model warm and avoid cold-start delays:
+Expected: `qwen2.5:14b` runs at ~3–5 tokens/sec on CPU. A 500-token report takes ~2 minutes. `timeout_seconds` in `configs/models.yaml` defaults to 600 — increase if needed. To keep the model warm and avoid cold-start delays:
 ```bash
 curl http://localhost:11434/api/generate \
   -d '{"model":"qwen2.5:14b","keep_alive":"1h","prompt":"","stream":false}'
+```
+
+### `Read timed out` calling Ollama
+Increase `timeout_seconds` in `configs/models.yaml`:
+```yaml
+ollama:
+  timeout_seconds: 1200   # 20 minutes for heavy CPU load
+```
+
+### Warning: "unauthenticated requests to the HF Hub"
+This is suppressed automatically by the CLI (`HF_HUB_OFFLINE=1`). If you see it when calling the pipeline directly from Python, set the env var yourself:
+```bash
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
 ```
 
 ### Retrieval returns no passages
@@ -759,34 +818,55 @@ pip install faiss-cpu sentence-transformers
 ## Quick-reference cheat sheet
 
 ```bash
-# CLI — career prediction for Delhi native
+# ── FIRST-TIME SETUP ──────────────────────────────────────────────────────────
+pip install -e ".[dev,engine,retrieval,llm,api]"
+vedic-ai build-index                          # embed corpus (run once)
+
+# ── WEB UI ───────────────────────────────────────────────────────────────────
+vedic-ai serve                                # http://127.0.0.1:8000
+vedic-ai serve --host 0.0.0.0 --port 8080    # LAN accessible
+
+# ── CLI PREDICTIONS ───────────────────────────────────────────────────────────
+# All three scopes — full LLM run
+vedic-ai predict "1972-08-27T19:45:00+05:30" 21.15 79.08 --name "Rahul"
+
+# Single scope
 vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21 --scope career
 
-# CLI — personality, save to file
-vedic-ai predict "1985-11-15T06:00:00+05:30" 19.07 72.87 \
-    --scope personality --output report.json
-
-# CLI — fast dry-run (no LLM)
+# Instant dry-run (no LLM, good for debugging rules)
 vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21 --dry-run
 
-# API server
-uvicorn vedic_ai.api.app:create_api_app --factory --port 8000
+# Save to file
+vedic-ai predict "1985-11-15T06:00:00+05:30" 19.07 72.87 \
+    --scope personality -o report.json
 
-# Health check
+# ── CORPUS MANAGEMENT ─────────────────────────────────────────────────────────
+vedic-ai corpus-info                          # show manifest + index status
+vedic-ai build-index --force                  # rebuild after adding new texts
+vedic-ai search "Sun in 10th house career"    # semantic search
+vedic-ai search "Atmakaraka Jaimini" --top-k 3
+
+# ── REST API ──────────────────────────────────────────────────────────────────
 curl http://localhost:8000/health
+curl http://localhost:8000/predictions/scopes
 
-# REST prediction
 curl -X POST http://localhost:8000/predictions \
   -H "Content-Type: application/json" \
-  -d '{"birth_datetime":"1990-04-05T10:30:00+05:30","latitude":28.61,"longitude":77.21,"scope":"career","dry_run":true}'
+  -d '{"birth_datetime":"1990-04-05T10:30:00+05:30","latitude":28.61,"longitude":77.21,"scope":"all","dry_run":true}'
 
-# Keep Ollama model warm
+curl -X POST http://localhost:8000/charts/compute \
+  -H "Content-Type: application/json" \
+  -d '{"birth_datetime":"1990-04-05T10:30:00+05:30","latitude":28.61,"longitude":77.21}'
+
+# ── LLM ──────────────────────────────────────────────────────────────────────
+sudo systemctl start ollama
+ollama pull qwen2.5:14b
+# Keep model warm (avoids cold-start delay):
 curl http://localhost:11434/api/generate \
   -d '{"model":"qwen2.5:14b","keep_alive":"1h","prompt":"","stream":false}'
 
-# Run all tests
+# ── TESTS AND DEBUG ───────────────────────────────────────────────────────────
+pytest tests/unit -q
 pytest tests/ -q
-
-# Debug mode
 VEDIC_AI__LOG__LEVEL=DEBUG vedic-ai predict "1990-04-05T10:30:00+05:30" 28.61 77.21
 ```

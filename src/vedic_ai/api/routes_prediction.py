@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 
+import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -13,6 +15,59 @@ from vedic_ai.domain.prediction import PredictionReport
 
 router = APIRouter()
 
+_VALID_SCOPES = ("personality", "career", "relationships")
+
+# ---------------------------------------------------------------------------
+# Module-level config + retriever (loaded once at import time)
+# ---------------------------------------------------------------------------
+
+def _load_models_config() -> dict:
+    models_path = Path("configs/models.yaml")
+    if not models_path.exists():
+        return {}
+    try:
+        return yaml.safe_load(models_path.read_text()) or {}
+    except Exception:
+        return {}
+
+
+_models_config: dict = _load_models_config()
+
+_DEFAULT_INDEX_DIR = Path("data/processed")
+_DEFAULT_CORPUS_DIR = Path("data/processed/corpus")
+
+
+def _try_load_retriever():
+    """Load FAISS retriever if the index exists; return None otherwise."""
+    handle_path = _DEFAULT_INDEX_DIR / "handle.json"
+    manifest_path = _DEFAULT_CORPUS_DIR / "manifest.json"
+
+    if not handle_path.exists() or not manifest_path.exists():
+        return None
+
+    try:
+        from vedic_ai.retrieval.corpus_loader import load_manifest
+        from vedic_ai.retrieval.chunker import chunk_corpus_documents
+        from vedic_ai.retrieval.vector_store import load_vector_index
+        from vedic_ai.retrieval.retriever import create_retriever
+
+        manifest = load_manifest(str(manifest_path))
+        chunks = chunk_corpus_documents(manifest)
+        handle, _ = load_vector_index(str(handle_path))
+        return create_retriever(chunks, handle)
+    except Exception:
+        return None
+
+
+try:
+    _retriever = _try_load_retriever()
+except Exception:
+    _retriever = None
+
+
+# ---------------------------------------------------------------------------
+# Request / response models
+# ---------------------------------------------------------------------------
 
 class PredictionRequest(BaseModel):
     birth_datetime: datetime
@@ -20,7 +75,7 @@ class PredictionRequest(BaseModel):
     longitude: float
     place_name: str | None = None
     name: str | None = None
-    scope: str = "career"
+    scope: str = "all"
     dry_run: bool = False
 
 
@@ -50,6 +105,16 @@ def export_report(report: PredictionReport, fmt: str = "json") -> str | dict:
     return "\n".join(lines)
 
 
+# ---------------------------------------------------------------------------
+# Routes
+# ---------------------------------------------------------------------------
+
+@router.get("/scopes")
+def list_scopes() -> list[str]:
+    """Return the list of supported prediction scopes."""
+    return list(_VALID_SCOPES)
+
+
 @router.post("")
 def predict(request: PredictionRequest) -> dict:
     """Generate a Vedic astrology prediction report from birth data.
@@ -63,6 +128,17 @@ def predict(request: PredictionRequest) -> dict:
             detail="birth_datetime must include a timezone offset (e.g. +05:30)"
         )
 
+    # Resolve scope list
+    if request.scope == "all":
+        scopes = list(_VALID_SCOPES)
+    elif request.scope in _VALID_SCOPES:
+        scopes = [request.scope]
+    else:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unknown scope {request.scope!r}. Choose: all, {', '.join(_VALID_SCOPES)}"
+        )
+
     birth = BirthData(
         birth_datetime=request.birth_datetime,
         location=GeoLocation(
@@ -73,26 +149,50 @@ def predict(request: PredictionRequest) -> dict:
         name=request.name,
     )
 
+    # Build LLM client from models.yaml config
     llm_client = None
     if not request.dry_run:
         try:
             from vedic_ai.llm.local_client import LocalLLMClient
+            backend = _models_config.get("llm", {}).get("backend", "ollama")
+            backend_cfg = _models_config.get("llm", {}).get(backend, {})
             llm_client = LocalLLMClient(
-                model_name="qwen2.5:14b",
-                base_url="http://localhost:11434",
-                backend="ollama",
+                model_name=backend_cfg.get("model", "mistral:7b-instruct"),
+                base_url=backend_cfg.get("base_url", "http://localhost:11434"),
+                backend=backend,
+                timeout=backend_cfg.get("timeout_seconds", 600),
             )
         except Exception:
             pass
 
     try:
         from vedic_ai.orchestration.pipeline import run_prediction_pipeline
-        report = run_prediction_pipeline(
-            birth=birth,
-            scope=request.scope,
-            llm_client=llm_client,
-            dry_run=request.dry_run or llm_client is None,
-        )
+
+        if len(scopes) == 1:
+            report = run_prediction_pipeline(
+                birth=birth,
+                scope=scopes[0],
+                llm_client=llm_client,
+                retriever=_retriever,
+                top_k=5,
+                dry_run=request.dry_run or llm_client is None,
+            )
+        else:
+            # Run all scopes and merge sections into one report
+            report = None
+            for s in scopes:
+                r = run_prediction_pipeline(
+                    birth=birth,
+                    scope=s,
+                    llm_client=llm_client,
+                    retriever=_retriever,
+                    top_k=5,
+                    dry_run=request.dry_run or llm_client is None,
+                )
+                if report is None:
+                    report = r
+                else:
+                    report.sections.extend(r.sections)
     except EngineError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     except Exception as exc:

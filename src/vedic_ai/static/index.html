@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vedic AI — Jyotish Analysis</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #1a1f35;
+      --card-bg:   #252b45;
+      --accent:    #f59e0b;
+      --accent-dim:#b45309;
+      --text:      #e8eaf0;
+      --muted:     #8892a4;
+      --border:    #313859;
+      --error:     #f87171;
+      --success:   #34d399;
+      --radius:    10px;
+      --transition: 0.2s ease;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    header .logo { font-size: 1.5rem; }
+    header h1 { font-size: 1.1rem; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+    header p  { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      height: calc(100vh - 60px);
+    }
+
+    /* ── LEFT PANEL ── */
+    .panel-left {
+      background: var(--card-bg);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
+    .field input, .field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      width: 100%;
+      transition: border-color var(--transition);
+    }
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .field input[type="number"] { -moz-appearance: textfield; }
+    .field input[type="number"]::-webkit-outer-spin-button,
+    .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .toggle-row input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer;
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+    .btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary   { background: var(--accent); color: #0f1220; }
+    .btn-secondary { background: var(--border); color: var(--text); }
+    .btn-primary:hover:not(:disabled)   { background: #fbbf24; }
+    .btn-secondary:hover:not(:disabled) { background: #3d4668; }
+
+    .quick-fill { display: flex; flex-direction: column; gap: 8px; }
+    .quick-fill-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .chip:hover { background: var(--border); color: var(--text); border-color: var(--accent); }
+
+    hr.divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ── RIGHT PANEL ── */
+    .panel-right {
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      height: 100%;
+      color: var(--muted);
+      text-align: center;
+    }
+    .placeholder .big-icon { font-size: 3.5rem; opacity: 0.35; }
+    .placeholder p { max-width: 300px; font-size: 0.9rem; }
+
+    /* Spinner */
+    .spinner-wrap {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 30px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .spinner-wrap.active { display: flex; }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error banner */
+    .error-banner {
+      display: none;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid var(--error);
+      border-radius: var(--radius);
+      color: var(--error);
+      font-size: 0.85rem;
+      padding: 12px 16px;
+    }
+    .error-banner.active { display: block; }
+
+    /* Chart table */
+    .result-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .result-card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    th {
+      background: rgba(245,158,11,0.08);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    td { padding: 9px 14px; border-top: 1px solid var(--border); }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    .retro { color: var(--error); font-size: 0.8rem; }
+    .planet-sym { font-size: 1.1rem; margin-right: 4px; }
+
+    /* Prediction cards */
+    .pred-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .pred-card-header {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pred-icon { font-size: 1.4rem; }
+    .pred-title { font-weight: 700; font-size: 1rem; color: var(--accent); }
+    .pred-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+    .pred-summary { font-size: 0.9rem; line-height: 1.7; color: var(--text); }
+    .pred-details { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .pred-details li {
+      font-size: 0.84rem;
+      color: var(--muted);
+      padding-left: 14px;
+      position: relative;
+    }
+    .pred-details li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Evidence accordion */
+    .evidence-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      width: fit-content;
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .evidence-toggle:hover { border-color: var(--accent); color: var(--text); }
+    .evidence-panel {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .evidence-panel.open { display: flex; }
+    .evidence-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      padding: 10px 14px;
+    }
+    .evidence-item .ev-source {
+      color: var(--accent-dim);
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .evidence-item .ev-text { color: var(--muted); line-height: 1.5; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .panel-left { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">&#9654;</span>
+  <div>
+    <h1>Vedic AI — Jyotish Analysis</h1>
+    <p>Local-first Vedic astrology prediction engine</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: Form -->
+  <aside class="panel-left">
+
+    <div>
+      <div class="section-title">Birth Data</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label for="name">Name (optional)</label>
+          <input type="text" id="name" placeholder="Native's name" />
+        </div>
+        <div class="field">
+          <label for="bdt">Birth Date &amp; Time</label>
+          <input type="datetime-local" id="bdt" />
+        </div>
+        <div class="field">
+          <label for="tz">Timezone Offset</label>
+          <select id="tz">
+            <option value="+05:30" selected>IST +05:30 (India)</option>
+            <option value="+05:45">NPT +05:45 (Nepal)</option>
+            <option value="+06:00">BST +06:00 (Bangladesh)</option>
+            <option value="+05:00">PKT +05:00 (Pakistan)</option>
+            <option value="+07:00">ICT +07:00 (Thailand/Vietnam)</option>
+            <option value="+08:00">CST +08:00 (China/Singapore)</option>
+            <option value="+09:00">JST +09:00 (Japan)</option>
+            <option value="+03:00">MSK +03:00 (Moscow)</option>
+            <option value="+01:00">CET +01:00 (Central Europe)</option>
+            <option value="+00:00">UTC +00:00</option>
+            <option value="-05:00">EST -05:00 (New York)</option>
+            <option value="-06:00">CST -06:00 (Chicago)</option>
+            <option value="-07:00">MST -07:00 (Denver)</option>
+            <option value="-08:00">PST -08:00 (Los Angeles)</option>
+          </select>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="lat">Latitude</label>
+            <input type="number" id="lat" step="0.0001" placeholder="21.1458" />
+          </div>
+          <div class="field">
+            <label for="lon">Longitude</label>
+            <input type="number" id="lon" step="0.0001" placeholder="79.0882" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="scope">Scope</label>
+          <select id="scope">
+            <option value="all" selected>All Scopes</option>
+            <option value="personality">Personality</option>
+            <option value="career">Career</option>
+            <option value="relationships">Relationships</option>
+          </select>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="dryrun" />
+          <label for="dryrun">Dry Run — skip LLM, show evidence only</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="computeChart()">Compute Chart</button>
+      <button class="btn btn-primary"   onclick="generatePrediction()">Generate Prediction</button>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="quick-fill">
+      <div class="section-title">Quick Fill — Example Births</div>
+      <div class="quick-fill-btns">
+        <button class="chip" onclick="fillExample('nagpur1972')">Nagpur 1972-08-27</button>
+        <button class="chip" onclick="fillExample('delhi1985')">Delhi 1985-03-15</button>
+        <button class="chip" onclick="fillExample('mumbai2000')">Mumbai 2000-01-01</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- RIGHT: Results -->
+  <main class="panel-right" id="results-panel">
+
+    <div class="placeholder" id="placeholder">
+      <span class="big-icon">&#9775;</span>
+      <p>Enter birth data on the left, then click <strong>Compute Chart</strong> or <strong>Generate Prediction</strong>.</p>
+    </div>
+
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      <span id="spinner-label">Working…</span>
+    </div>
+
+    <div class="error-banner" id="error-banner"></div>
+
+    <div id="chart-section"></div>
+    <div id="prediction-section"></div>
+
+  </main>
+</div>
+
+<script>
+  // ── Planet symbols ──────────────────────────────────────────────────────────
+  const PLANET_SYMS = {
+    Sun:     '&#9737;',
+    Moon:    '&#9789;',
+    Mars:    '&#9794;',
+    Mercury: '&#9791;',
+    Jupiter: '&#9795;',
+    Venus:   '&#9792;',
+    Saturn:  '&#9796;',
+    Rahu:    '&#9738;',
+    Ketu:    '&#9739;',
+  };
+
+  const SCOPE_ICONS = {
+    personality:   '&#9789;',
+    career:        '&#9795;',
+    relationships: '&#9792;',
+  };
+
+  // ── Quick-fill data ─────────────────────────────────────────────────────────
+  const EXAMPLES = {
+    nagpur1972: { name: 'Nagpur Native', dt: '1972-08-27T19:45', tz: '+05:30', lat: 21.1458, lon: 79.0882 },
+    delhi1985:  { name: 'Delhi Native',  dt: '1985-03-15T08:30', tz: '+05:30', lat: 28.6139, lon: 77.2090 },
+    mumbai2000: { name: 'Mumbai Native', dt: '2000-01-01T06:00', tz: '+05:30', lat: 19.0760, lon: 72.8777 },
+  };
+
+  function fillExample(key) {
+    const e = EXAMPLES[key];
+    document.getElementById('name').value = e.name;
+    document.getElementById('bdt').value  = e.dt;
+    document.getElementById('tz').value   = e.tz;
+    document.getElementById('lat').value  = e.lat;
+    document.getElementById('lon').value  = e.lon;
+  }
+
+  // ── UI helpers ──────────────────────────────────────────────────────────────
+  function showSpinner(label) {
+    document.getElementById('placeholder').style.display   = 'none';
+    document.getElementById('spinner-label').textContent   = label;
+    document.getElementById('spinner').classList.add('active');
+    document.getElementById('error-banner').classList.remove('active');
+  }
+  function hideSpinner() {
+    document.getElementById('spinner').classList.remove('active');
+  }
+  function showError(msg) {
+    const el = document.getElementById('error-banner');
+    el.textContent = msg;
+    el.classList.add('active');
+    hideSpinner();
+  }
+
+  // ── Build ISO-8601 datetime string ──────────────────────────────────────────
+  function buildISODatetime() {
+    const dt = document.getElementById('bdt').value;
+    const tz = document.getElementById('tz').value;
+    if (!dt) return null;
+    // datetime-local gives "YYYY-MM-DDTHH:MM", append seconds + offset
+    return dt + ':00' + tz;
+  }
+
+  // ── Collect form values ─────────────────────────────────────────────────────
+  function collectForm() {
+    const iso = buildISODatetime();
+    if (!iso) { showError('Please enter a birth date and time.'); return null; }
+    const lat = parseFloat(document.getElementById('lat').value);
+    const lon = parseFloat(document.getElementById('lon').value);
+    if (isNaN(lat) || isNaN(lon)) { showError('Please enter valid latitude and longitude.'); return null; }
+    return {
+      birth_datetime: iso,
+      latitude:  lat,
+      longitude: lon,
+      name:      document.getElementById('name').value.trim() || null,
+      scope:     document.getElementById('scope').value,
+      dry_run:   document.getElementById('dryrun').checked,
+    };
+  }
+
+  // ── Compute Chart ───────────────────────────────────────────────────────────
+  async function computeChart() {
+    const form = collectForm();
+    if (!form) return;
+
+    showSpinner('Computing chart…');
+    document.getElementById('chart-section').innerHTML = '';
+
+    try {
+      const resp = await fetch('/charts/compute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          birth_datetime: form.birth_datetime,
+          latitude:  form.latitude,
+          longitude: form.longitude,
+          name:      form.name,
+        }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || resp.statusText);
+      }
+      const data = await resp.json();
+      hideSpinner();
+      renderChart(data);
+    } catch (err) {
+      showError('Chart error: ' + err.message);
+    }
+  }
+
+  function renderChart(data) {
+    const d1       = data.d1 || {};
+    const planetsMap = d1.planets || {};
+    const houses   = d1.houses   || {};
+    const dashas   = data.dashas || [];
+
+    // Lagna sign from house 1
+    const lagna = (houses['1'] || houses[1] || {}).rasi || '—';
+
+    // Planet rows — planetsMap is { "Sun": { graha, rasi: {rasi}, house, is_retrograde, dignity } }
+    const ORDER = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+    let tbody = '';
+    ORDER.forEach(name => {
+      const p = planetsMap[name];
+      if (!p) return;
+      const sym    = PLANET_SYMS[name] || '';
+      const sign   = (p.rasi || {}).rasi || '—';
+      const deg    = (p.rasi || {}).degree_in_rasi;
+      const degStr = deg != null ? deg.toFixed(2) + '°' : '—';
+      const retro  = p.is_retrograde ? '<span class="retro" title="Retrograde">℞</span>' : '—';
+      const dignity = p.dignity ? `<span style="color:var(--muted);font-size:0.75rem">${escapeHTML(p.dignity)}</span>` : '';
+      tbody += `<tr>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}</td>
+        <td>${escapeHTML(sign)} ${dignity}</td>
+        <td style="text-align:center">${p.house ?? '—'}</td>
+        <td style="text-align:center">${degStr}</td>
+        <td style="text-align:center">${retro}</td>
+      </tr>`;
+    });
+
+    // Houses summary
+    let houseTbody = '';
+    for (let i = 1; i <= 12; i++) {
+      const h = houses[String(i)] || houses[i] || {};
+      const occ = (h.occupants || []).join(', ') || '—';
+      houseTbody += `<tr>
+        <td style="text-align:center;color:var(--accent)">${i}</td>
+        <td>${escapeHTML(h.rasi || '—')}</td>
+        <td style="color:var(--muted);font-size:0.82rem">${escapeHTML(h.lord || '—')}</td>
+        <td style="color:var(--muted);font-size:0.82rem">${escapeHTML(occ)}</td>
+      </tr>`;
+    }
+
+    // Dashas
+    let dashaRows = '';
+    dashas.filter(d => d.level === 1).slice(0, 9).forEach(d => {
+      const sym = PLANET_SYMS[d.graha] || '';
+      dashaRows += `<tr>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(d.graha)}</td>
+        <td style="color:var(--muted);font-size:0.82rem">${d.start_date}</td>
+        <td style="color:var(--muted);font-size:0.82rem">${d.end_date}</td>
+      </tr>`;
+    });
+
+    document.getElementById('chart-section').innerHTML = `
+      <div class="result-card" style="margin-bottom:0">
+        <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
+        <table>
+          <thead><tr><th>Planet</th><th>Sign</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th></tr></thead>
+          <tbody>${tbody || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No planet data.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="result-card" style="margin-top:16px;margin-bottom:0">
+        <div class="result-card-header">&#9651; Houses</div>
+        <table>
+          <thead><tr><th>House</th><th>Sign</th><th>Lord</th><th>Occupants</th></tr></thead>
+          <tbody>${houseTbody}</tbody>
+        </table>
+      </div>
+      ${dashaRows ? `<div class="result-card" style="margin-top:16px">
+        <div class="result-card-header">&#9679; Vimshottari Dashas</div>
+        <table>
+          <thead><tr><th>Dasha</th><th>Start</th><th>End</th></tr></thead>
+          <tbody>${dashaRows}</tbody>
+        </table>
+      </div>` : ''}`;
+  }
+
+  // ── Generate Prediction ─────────────────────────────────────────────────────
+  async function generatePrediction() {
+    const form = collectForm();
+    if (!form) return;
+
+    showSpinner('Generating prediction…');
+    document.getElementById('prediction-section').innerHTML = '';
+
+    try {
+      const resp = await fetch('/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || resp.statusText);
+      }
+      const data = await resp.json();
+      hideSpinner();
+      renderPrediction(data);
+    } catch (err) {
+      showError('Prediction error: ' + err.message);
+    }
+  }
+
+  // ── Parse a possibly-stringified dict into display text ─────────────────────
+  function parseDetail(raw) {
+    if (typeof raw !== 'string') return String(raw);
+    // Looks like "{'scope': 'career', 'description': 'some text'}"?
+    const m = raw.match(/['\"]description['\"]\s*:\s*['"]([^'"]+)['"]/);
+    if (m) return m[1];
+    return raw;
+  }
+
+  function renderPrediction(data) {
+    const sections = data.sections || [];
+    if (!sections.length) {
+      document.getElementById('prediction-section').innerHTML =
+        '<div class="error-banner active">No prediction sections returned.</div>';
+      return;
+    }
+
+    let html = '';
+    sections.forEach((sec, idx) => {
+      const icon  = SCOPE_ICONS[sec.scope] || '&#9733;';
+      const title = (sec.scope || 'Unknown').replace(/^\w/, c => c.toUpperCase());
+
+      const detailsHTML = (sec.details || []).map(d =>
+        `<li>${escapeHTML(parseDetail(d))}</li>`
+      ).join('');
+
+      // Evidence passages
+      const evidence = sec.evidence || [];
+      const evCount  = evidence.length;
+      const evId     = 'ev-' + idx;
+      let evHTML = '';
+      if (evCount > 0) {
+        const items = evidence.map(ev =>
+          `<div class="evidence-item">
+            <div class="ev-source">${escapeHTML(ev.source || ev.chunk_id || 'Unknown source')}</div>
+            <div class="ev-text">${escapeHTML((ev.text || ev.passage || '').substring(0, 300))}${(ev.text || ev.passage || '').length > 300 ? '…' : ''}</div>
+          </div>`
+        ).join('');
+        evHTML = `
+          <button class="evidence-toggle" onclick="toggleEvidence('${evId}', this)">
+            &#128218; ${evCount} evidence passage${evCount !== 1 ? 's' : ''} &#9660;
+          </button>
+          <div class="evidence-panel" id="${evId}">${items}</div>`;
+      }
+
+      html += `
+        <div class="pred-card">
+          <div class="pred-card-header">
+            <span class="pred-icon">${icon}</span>
+            <span class="pred-title">${title}</span>
+          </div>
+          <div class="pred-body">
+            <div class="pred-summary">${escapeHTML(sec.summary || '')}</div>
+            ${detailsHTML ? `<ul class="pred-details">${detailsHTML}</ul>` : ''}
+            ${evHTML}
+          </div>
+        </div>`;
+    });
+
+    document.getElementById('prediction-section').innerHTML = html;
+  }
+
+  function toggleEvidence(id, btn) {
+    const panel = document.getElementById(id);
+    panel.classList.toggle('open');
+    const isOpen = panel.classList.contains('open');
+    btn.innerHTML = btn.innerHTML.replace(isOpen ? '&#9660;' : '&#9650;', isOpen ? '&#9650;' : '&#9660;');
+  }
+
+  function escapeHTML(str) {
+    if (typeof str !== 'string') str = String(str);
+    return str
+      .replace(/&/g,  '&amp;')
+      .replace(/</g,  '&lt;')
+      .replace(/>/g,  '&gt;')
+      .replace(/"/g,  '&quot;')
+      .replace(/'/g,  '&#039;');
+  }
+</script>
+
+</body>
+</html>

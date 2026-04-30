@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Optional
 
 import typer
+
+# Keep all ML model loading fully local — no network calls to HuggingFace Hub.
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from vedic_ai.core.config import load_app_config
 from vedic_ai.core.exceptions import ConfigError
@@ -67,8 +72,11 @@ def info(
 
 
 def register_cli() -> typer.Typer:
-    """Return the root CLI app object.
-
-    Later phases register their sub-commands against this app.
-    """
+    """Return the root CLI app object."""
     return app
+
+
+# Register all sub-commands by importing their modules (side-effect registration)
+import vedic_ai.cli.commands_predict  # noqa: E402, F401
+import vedic_ai.cli.commands_corpus   # noqa: E402, F401
+import vedic_ai.cli.commands_serve    # noqa: E402, F401

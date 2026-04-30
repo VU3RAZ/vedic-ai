@@ -88,8 +88,9 @@ def generate_structured_interpretation(
     _backend  = backend    or cfg.get("backend", "ollama")
     _base_url = base_url   or cfg[_backend]["base_url"]
     _model    = model_name or cfg[_backend]["model"]
+    _timeout  = cfg[_backend].get("timeout_seconds", 600)
 
-    client = LocalLLMClient(model_name=_model, base_url=_base_url, backend=_backend)
+    client = LocalLLMClient(model_name=_model, base_url=_base_url, backend=_backend, timeout=_timeout)
     raw = client.generate(prompt, temperature=temperature)
     try:
         return json.loads(raw)

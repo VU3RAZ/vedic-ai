@@ -42,8 +42,57 @@ def _chart_facts_section(bundle: ChartBundle) -> str:
 
 
 def _derived_features_section(features: dict) -> str:
-    # Deterministic serialisation: sort_keys=True, compact
-    return json.dumps(features, sort_keys=True, ensure_ascii=False)
+    """Emit a concise, LLM-readable summary of interpretation-relevant features.
+
+    Includes planet dignities/placements, house lordships, yogas, and lagna.
+    Omits raw coordinates and deep sub-dicts to keep prompt size manageable.
+    """
+    lines: list[str] = []
+
+    planets = features.get("planets", {})
+    if planets:
+        lines.append("Planets (sign, house, dignity):")
+        for name in sorted(planets.keys()):
+            p = planets[name]
+            retro = " (R)" if p.get("is_retrograde") else ""
+            flags = "".join([
+                " EXALTED"     if p.get("is_exalted") else "",
+                " DEBILITATED" if p.get("is_debilitated") else "",
+                " OWN-SIGN"    if p.get("is_own_sign") else "",
+            ])
+            lines.append(
+                f"  {name}: {p.get('rasi','?')} H{p.get('house','?')}"
+                f"{retro}{flags}  nak={p.get('nakshatra','?')}"
+            )
+
+    houses = features.get("houses", {})
+    if houses:
+        lines.append("House lords:")
+        for h in range(1, 13):
+            hd = houses.get(h, {})
+            lines.append(
+                f"  H{h}: lord={hd.get('lord','?')} in H{hd.get('lord_house','?')}"
+                f" {hd.get('lord_rasi','?')}  dignity={hd.get('lord_dignity','?')}"
+            )
+
+    yogas = features.get("yogas", {})
+    if yogas:
+        lines.append("Yogas:")
+        lines.append(f"  Gajakesari={yogas.get('gajakesari',False)}"
+                     f"  Kemadruma={yogas.get('kemadruma',False)}")
+        for y in yogas.get("raja_yogas", []):
+            lines.append(f"  Raja yoga: {y.get('trikona_lord')}+{y.get('kendra_lord')} ({y.get('association')})")
+        for y in yogas.get("dhana_yogas", []):
+            lines.append(f"  Dhana yoga: {y.get('wealth_lord')}+{y.get('prosperity_lord')} ({y.get('association')})")
+
+    lagna = features.get("lagna", {})
+    if lagna:
+        lines.append(
+            f"Lagna: {lagna.get('rasi','?')}  lord={lagna.get('lord','?')}"
+            f" in H{lagna.get('lord_house','?')}  nak={lagna.get('nakshatra','?')}"
+        )
+
+    return "\n".join(lines) if lines else json.dumps(features, sort_keys=True, ensure_ascii=False)
 
 
 def _rules_section(triggers: list[RuleTrigger]) -> str:

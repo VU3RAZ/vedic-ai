@@ -10,7 +10,7 @@ from typing import Any
 
 from vedic_ai.domain.birth import BirthData
 from vedic_ai.domain.prediction import PredictionReport
-from vedic_ai.engines.kerykeion_adapter import KerykeionAdapter
+from vedic_ai.engines.swisseph_adapter import SwissEphAdapter
 from vedic_ai.engines.base import AstrologyEngine, compute_core_chart
 from vedic_ai.features.core_features import extract_core_features
 from vedic_ai.orchestration.evidence_builder import (
@@ -77,7 +77,7 @@ def run_prediction_pipeline(
 
     # 1. Compute chart
     if engine is None:
-        engine = KerykeionAdapter()
+        engine = SwissEphAdapter()
     logger.info("Computing chart for scope=%r", scope)
     bundle = compute_core_chart(birth, engine)
 

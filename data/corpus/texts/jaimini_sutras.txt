@@ -1,0 +1,120 @@
+---
+source: JAIMINI_SUTRAS
+chapter: null
+language: en
+---
+
+# Jaimini Sutras — Principles of Jaimini Jyotish
+
+Jaimini astrology is a parallel system of Vedic astrology attributed to the sage Jaimini, a disciple of Parashara. It uses rasi (sign) aspects instead of planetary aspects, a unique set of karakas (significators) called Chara Karakas, and special dasas—most notably the Chara Dasa—for timing events. Jaimini deepens personality, career, and relationship readings when used alongside Parashari principles.
+
+## Chara Karakas (Variable Significators)
+
+Chara Karakas are assigned dynamically based on planetary longitude within a sign. The planet with the highest longitude (ignoring minutes and seconds for ranking) becomes the Atmakaraka (AK), signifying the soul's highest purpose and the primary indicator of self. The seven or eight Chara Karakas in descending order of longitude are:
+
+1. **Atmakaraka (AK)** — Soul significator. The most powerful planet in the horoscope; its sign, house, and aspects describe the native's deepest motivations, karma, and life lesson. When the AK occupies a kendra or trikona in the natal chart or from the Karakamsha, it confers strength of purpose.
+
+2. **Amatyakaraka (AmK)** — Career and minister significator. The planet with the second-highest longitude. The AmK reveals the sphere of professional life, the nature of occupation, and relationship with authority. A powerful AmK in Kendra from the AK or in the 10th from Karakamsha produces professional success.
+
+3. **Bhratrukaraka (BK)** — Siblings and courage significator. Third highest longitude. Indicates the vitality of sibling relationships and the native's own courage and initiative. Afflictions to the BK show difficulties with brothers.
+
+4. **Matrukaraka (MK)** — Mother and home significator. Fourth highest longitude. Governs maternal relationships, domestic happiness, education, and emotional security.
+
+5. **Pitrukaraka (PK)** — Father significator. Fifth highest longitude. Governs paternal relationships, dharma, and received guidance.
+
+6. **Putrakaraka (PuK)** — Children and intelligence significator. Sixth highest longitude. Shows creative intelligence, progeny, and disciples.
+
+7. **Gnatikaraka (GK)** — Enemies, disease, and competition significator. Seventh highest longitude. Indicates the nature of obstacles, rivals, and chronic health patterns.
+
+8. **Darakaraka (DK)** — Spouse significator. The planet with the lowest longitude (eighth). Governs the spouse, partnerships, and long-term committed relationships.
+
+**Note:** When using the eight-karaka scheme, Rahu is included. When using seven karakas, Rahu is excluded. Rahu's longitude is subtracted from 30° before ranking.
+
+## Karakamsha — The Soul's Lagna
+
+The Karakamsha is the navamsha sign occupied by the Atmakaraka. When the navamsha sign of the AK is transposed back into the natal (D1) chart, that house becomes the Karakamsha Lagna (KL). Planets aspecting or occupying the Karakamsha describe the native's innate genius, spiritual inclination, and career aptitude.
+
+- Sun or Mars in Karakamsha: government service, military, medicine, or administration
+- Moon in Karakamsha: trade, public dealing, nursing, or artistic careers requiring emotional intelligence
+- Mercury in Karakamsha: business, accounting, communication, writing, or intellectual professions
+- Jupiter in Karakamsha: teaching, philosophy, law, counseling, or spiritual roles
+- Venus in Karakamsha: arts, luxury goods, diplomacy, beauty industry, or entertainment
+- Saturn in Karakamsha: labour, mining, agriculture, research, or disciplined crafts
+- Rahu in Karakamsha: unconventional careers, technology, foreign connection, or mass media
+- Ketu in Karakamsha: spiritual liberation, research, healing, or moksha
+
+Planets aspecting the Karakamsha by rasi aspect reinforce or modify these indications.
+
+## Rasi Aspects (Sign Aspects)
+
+Unlike Parashari aspects which depend on planetary position, Jaimini aspects operate between signs (rasis). All signs aspect each other based on the following fixed rule:
+
+- **Moveable signs (Aries, Cancer, Libra, Capricorn)** aspect all fixed signs except the adjacent fixed sign. Specifically: Aries aspects Leo, Scorpio, and Aquarius; Cancer aspects Scorpio, Aquarius, and Taurus; Libra aspects Aquarius, Taurus, and Leo; Capricorn aspects Taurus, Leo, and Scorpio.
+
+- **Fixed signs (Taurus, Leo, Scorpio, Aquarius)** aspect all moveable signs except the adjacent moveable sign. Specifically: Taurus aspects Cancer, Libra, and Capricorn; Leo aspects Libra, Capricorn, and Aries; Scorpio aspects Capricorn, Aries, and Cancer; Aquarius aspects Aries, Cancer, and Libra.
+
+- **Dual signs (Gemini, Virgo, Sagittarius, Pisces)** aspect each other mutually. Each dual sign aspects the other three dual signs.
+
+All planets in an aspecting sign participate in that aspect. A planet in Aries, for example, aspects all planets in Leo, Scorpio, and Aquarius. These aspects are mutual and of equal strength.
+
+## Argala (Intervention or Plug)
+
+Argala refers to the intervention or obstruction caused by planets in certain houses counted from a reference planet or sign. A planet creates argala (positive intervention) from the 2nd, 4th, and 11th houses. The 5th house creates a secondary argala. Planets in the 3rd, 10th, and 12th houses obstruct argala.
+
+Argala determines which planets have the power to influence a karaka or house even without a direct aspect. A strong planet creating unobstructed argala on the AK amplifies the karaka's results.
+
+## Chara Dasa — Timing of Life Events
+
+The Chara Dasa (also called Jaimini's Rasi Dasa) is a sign-based timing system. Each rasi (sign) rules a period (dasa) whose duration is calculated from the number of signs between the rasi and its lord (counted in a specific direction).
+
+The general sequence starts from the Lagna sign and proceeds sign by sign. Each sign's dasa activates the planets and houses associated with that sign, making the natal promise of those planets operational.
+
+**Calculation rule:**
+- For odd rasis (Aries, Gemini, Leo, Libra, Sagittarius, Aquarius): count forward from the rasi to its lord; the number of signs (inclusive) = dasa years.
+- For even rasis (Taurus, Cancer, Virgo, Scorpio, Capricorn, Pisces): count backward from the rasi to its lord; the number of signs (inclusive) = dasa years.
+- Special rules apply for Aquarius (Rahu) and Scorpio (Ketu as co-lord).
+- If the result is 12, it becomes 12. Total of all twelve rasi dasas = 144 years.
+
+During a Chara Dasa the native experiences the events promised by planets and karakas posited in or aspecting that rasi in the natal chart.
+
+## Upapada Lagna (UL) — Spouse and Marriage
+
+The Upapada Lagna is derived from the 12th house lord:
+- Find the 12th house from the Lagna.
+- Count as many signs from the 12th lord as the 12th lord is from the 12th house (in the same direction).
+- The sign arrived at is the Upapada Lagna.
+
+The UL and its lord reveal the nature of the spouse, the quality of marriage, and the likelihood of committed union. Benefics aspecting the UL by rasi aspect promote marital happiness. Malefics aspecting the UL create friction or delays.
+
+The 2nd from the UL shows the longevity of the marriage and the sustaining values of the relationship. Benefics in the 2nd from UL are highly auspicious for marriage stability.
+
+## Special Lagnas for Personality and Career
+
+- **Hora Lagna (HL):** Relates to finances and wealth accumulation. Computed from sunrise. Planets influencing HL by rasi aspect or position affect earning capacity.
+- **Ghatika Lagna (GL):** Relates to power, authority, and ambition. The GL indicates the native's political or social power. Jupiter aspecting GL confers leadership; Saturn delays but gives eventual authority.
+- **Bhava Lagna (BL):** Shows prosperity and the 9th-house matters of dharma and fortune.
+
+## Jaimini Yogas
+
+**Raja Yogas in Jaimini:**
+- The AK and AmK together in the same rasi or aspecting each other by rasi aspect form a powerful raja yoga indicating high status and career achievement.
+- The 5th and 9th from the Karakamsha, when occupied by or aspected by benefics, produce intelligence and fortune.
+- When Jupiter aspects the Karakamsha and the AK simultaneously, the native earns spiritual wisdom and worldly recognition.
+
+**Yoga for Spouse:**
+- Venus and the DK in mutual rasi aspect or together in a sign indicates a beautiful, harmonious marriage.
+- The DK occupying the UL or aspecting it by rasi aspect strengthens the marriage promise.
+
+**Yoga for Children:**
+- Jupiter aspecting the PuK and the 5th from Karakamsha favours children and creative intelligence.
+- If the PuK is in the 5th or 9th from the AK and receives a benefic rasi aspect, children come easily.
+
+## Interpretive Principles
+
+When reading a Jaimini chart:
+1. Identify the AK and its placement—this is the soul's lens on all experience.
+2. Find the Karakamsha and assess what occupies or aspects it.
+3. Examine the DK and UL for relationship themes.
+4. Use Chara Dasa to time when natal promises will activate.
+5. Cross-reference with Parashari chart for confirmation and nuance.
+6. Argala on the AK from benefics greatly enhances the native's resources and support; malefic argala indicates obstacles that test character.
