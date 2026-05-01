@@ -25,6 +25,14 @@ from vedic_ai.features.nakshatra_features import extract_nakshatra_features
 from vedic_ai.features.sandhi import compute_sandhi_analysis
 from vedic_ai.features.strength import compute_planet_strengths, full_dignity
 from vedic_ai.features.varga_analysis import extract_varga_analysis
+from vedic_ai.features.yogas_extended import (
+    detect_conjunction_yogas,
+    detect_lunar_yogas,
+    detect_nabhasa_yogas,
+    detect_solar_yogas,
+    detect_special_yogas,
+    detect_wealth_yogas,
+)
 
 # ---------------------------------------------------------------------------
 # Yoga detection tables
@@ -375,6 +383,12 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         "pancha_mahapurusha": _detect_pancha_mahapurusha(bundle),
         "neechabhanga": _detect_neechabhanga(bundle),
         "viparita_raja_yogas": _detect_viparita_raja_yoga(bundle, lordships),
+        "lunar_yogas": detect_lunar_yogas(bundle),
+        "solar_yogas": detect_solar_yogas(bundle),
+        "conjunction_yogas": detect_conjunction_yogas(bundle, lordships, aspects["aspected_by"]),
+        "wealth_yogas": detect_wealth_yogas(bundle, lordships),
+        "special_yogas": detect_special_yogas(bundle, lordships, aspects["aspected_by"]),
+        "nabhasa_yogas": detect_nabhasa_yogas(bundle),
     }
 
     return {

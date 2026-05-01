@@ -400,6 +400,62 @@
     }
     .evidence-item .ev-text { color: var(--muted); line-height: 1.5; }
 
+    /* Yogas */
+    .yoga-cards { display: flex; flex-direction: column; gap: 10px; }
+    .yoga-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .yoga-card-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .yoga-card-detail { font-size: 0.83rem; color: var(--muted); }
+    .yoga-none { font-size: 0.83rem; color: var(--muted); font-style: italic; padding: 6px 0; }
+    .yoga-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+    .yoga-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 6px 14px;
+    }
+    .yoga-flag-yes   { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+    .yoga-flag-no    { background: rgba(248,113,113,0.12); color: var(--error);   border: 1px solid rgba(248,113,113,0.3); }
+    .yoga-flag-neutral { background: rgba(96,165,250,0.12); color: var(--info);   border: 1px solid rgba(96,165,250,0.3); }
+
+    /* Varga planet mini-table */
+    .varga-planets { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+    .varga-planets summary {
+      cursor: pointer;
+      font-size: 0.76rem;
+      color: var(--muted);
+      user-select: none;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .varga-planets summary::-webkit-details-marker { display: none; }
+    .varga-planets[open] summary .tog-arrow { transform: rotate(90deg); }
+    .tog-arrow { display: inline-block; transition: transform 0.15s; font-size: 0.7rem; }
+    .varga-planets table { margin-top: 6px; width: 100%; font-size: 0.77rem; }
+    .varga-planets th { font-size: 0.69rem; padding: 5px 8px; }
+    .varga-planets td { padding: 5px 8px; }
+
     /* Responsive */
     @media (max-width: 768px) {
       .layout { grid-template-columns: 1fr; height: auto; }
@@ -738,6 +794,7 @@
 
     // ── Varga cards tab ─────────────────────────────────────────────────────
     const VARGA_ORDER = ['D9','D10','D6','D3','D7','D12','D2','D4','D8','D16','D20','D24','D27','D30','D60'];
+    const PLANET_ORDER = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
     let vargaCards = '<div class="varga-grid">';
     VARGA_ORDER.forEach(div => {
       const v = vargas[div];
@@ -745,14 +802,43 @@
       const stats = v.dignity_stats || {};
       const yogas = (v.yogas || []).slice(0, 5);
       const karakas = (v.karaka_analysis || []);
+      const karakaSet = new Set(karakas.map(k => k.graha));
+
       const yogaHTML = yogas.length ? `
         <div class="varga-yogas">
           ${yogas.map(y => `<div class="yoga-item">${escapeHTML(formatYoga(y))}</div>`).join('')}
         </div>` : '';
+
       const karakaHTML = karakas.length ? `
         <div style="font-size:0.78rem;color:var(--muted);margin-top:4px">
           ${karakas.map(k => `<span><strong style="color:var(--text)">${escapeHTML(k.graha)}</strong>: ${escapeHTML(k.rasi)} H${k.house}${k.dignity ? dignityHTML(k.dignity) : ''}</span>`).join(' &nbsp;·&nbsp; ')}
         </div>` : '';
+
+      // Planet mini-table
+      const planetRows = (v.planets || [])
+        .sort((a, b) => PLANET_ORDER.indexOf(a.graha) - PLANET_ORDER.indexOf(b.graha))
+        .map(p => {
+          const sym = PLANET_SYMS[p.graha] || '';
+          const isKaraka = karakaSet.has(p.graha);
+          const retro = p.is_retrograde ? '<span class="retro" style="font-size:0.7rem">℞</span>' : '';
+          const nameStyle = isKaraka ? 'color:var(--accent);font-weight:700' : '';
+          return `<tr>
+            <td style="${nameStyle}"><span class="planet-sym" style="font-size:0.9rem">${sym}</span>${escapeHTML(p.graha)}${retro}</td>
+            <td>${escapeHTML(p.rasi)}</td>
+            <td style="text-align:center">${p.house}</td>
+            <td>${dignityHTML(p.dignity)}</td>
+          </tr>`;
+        }).join('');
+
+      const planetTableHTML = `
+        <details class="varga-planets">
+          <summary><span class="tog-arrow">▶</span> Planets in ${escapeHTML(div)}</summary>
+          <table>
+            <thead><tr><th>Planet</th><th>Sign</th><th style="text-align:center">H</th><th>Dignity</th></tr></thead>
+            <tbody>${planetRows}</tbody>
+          </table>
+        </details>`;
+
       vargaCards += `
         <div class="varga-card">
           <div class="varga-card-header">
@@ -775,21 +861,131 @@
             </div>
             ${karakaHTML}
             ${yogaHTML}
+            ${planetTableHTML}
           </div>
         </div>`;
     });
     vargaCards += '</div>';
 
+    // ── Yogas tab ────────────────────────────────────────────────────────────
+    const yogas = features.yogas || {};
+
+    function yogaFlagHTML(label, isTrue, trueMsg, falseMsg) {
+      const cls = isTrue ? 'yoga-flag-yes' : 'yoga-flag-no';
+      return `<span class="yoga-flag ${cls}">${isTrue ? '✓' : '✗'} ${escapeHTML(label)}: ${isTrue ? trueMsg : falseMsg}</span>`;
+    }
+
+    const gajakesariFlag = yogaFlagHTML('Gajakesari', !!yogas.gajakesari, 'present', 'absent');
+    const kemadrumaFlag  = yogaFlagHTML('Kemadruma',  !!yogas.kemadruma,  'present (affliction)', 'absent');
+
+    const rajaCards = (yogas.raja_yogas || []).length
+      ? (yogas.raja_yogas).map(y => `<div class="yoga-card">
+          <div class="yoga-card-name">Raja Yoga — ${escapeHTML(y.trikona_lord)} + ${escapeHTML(y.kendra_lord)}</div>
+          <div class="yoga-card-detail">${escapeHTML(y.trikona_lord)} (H${y.house_t}, trikona lord) &amp; ${escapeHTML(y.kendra_lord)} (H${y.house_k}, kendra lord) — ${escapeHTML(y.association)}</div>
+        </div>`).join('')
+      : '<div class="yoga-none">None detected.</div>';
+
+    const dhanaCards = (yogas.dhana_yogas || []).length
+      ? (yogas.dhana_yogas).map(y => `<div class="yoga-card">
+          <div class="yoga-card-name">Dhana Yoga — ${escapeHTML(y.wealth_lord)} + ${escapeHTML(y.prosperity_lord)}</div>
+          <div class="yoga-card-detail">${escapeHTML(y.wealth_lord)} (H${y.house_w}, 2nd/11th lord) &amp; ${escapeHTML(y.prosperity_lord)} (H${y.house_p}, 1st/9th lord) — ${escapeHTML(y.association)}</div>
+        </div>`).join('')
+      : '<div class="yoga-none">None detected.</div>';
+
+    const mahapurushaCards = (yogas.pancha_mahapurusha || []).length
+      ? (yogas.pancha_mahapurusha).map(y => `<div class="yoga-card">
+          <div class="yoga-card-name">Pancha Mahapurusha — ${escapeHTML(y.name)}</div>
+          <div class="yoga-card-detail">${escapeHTML(y.graha)} in ${escapeHTML(y.rasi)} H${y.house} (kendra, own/exalted sign)</div>
+        </div>`).join('')
+      : '<div class="yoga-none">None detected.</div>';
+
+    const neechaCards = (yogas.neechabhanga || []).length
+      ? (yogas.neechabhanga).map(y => `<div class="yoga-card">
+          <div class="yoga-card-name">Neechabhanga — ${escapeHTML(y.graha)} (debilitation cancelled)</div>
+          <div class="yoga-card-detail">${escapeHTML(y.graha)} debilitated in ${escapeHTML(y.debilitation_sign)} H${y.house} · cancelled by: ${(y.cancellation_by || []).map(s => escapeHTML(s)).join('; ')}</div>
+        </div>`).join('')
+      : '<div class="yoga-none">None detected.</div>';
+
+    const viparitaCards = (yogas.viparita_raja_yogas || []).length
+      ? (yogas.viparita_raja_yogas).map(y => `<div class="yoga-card">
+          <div class="yoga-card-name">Viparita Raja Yoga — ${escapeHTML(y.lord)}</div>
+          <div class="yoga-card-detail">${escapeHTML(y.lord)}, lord of H${y.owns_house} (dusthana), placed in H${y.placed_in_house} (another dusthana)</div>
+        </div>`).join('')
+      : '<div class="yoga-none">None detected.</div>';
+
+    function extYogaCards(list) {
+      return (list || []).length
+        ? list.map(y => `<div class="yoga-card">
+            <div class="yoga-card-name">${escapeHTML(y.name)}</div>
+            <div class="yoga-card-detail">${escapeHTML(y.detail)}<span style="color:var(--muted);font-size:0.78rem;margin-left:6px">[${escapeHTML(y.source || '')}]</span></div>
+          </div>`).join('')
+        : '<div class="yoga-none">None detected.</div>';
+    }
+
+    const yogasPanel = `
+      <div class="result-card">
+        <div class="result-card-header">&#9733; Yoga Summary</div>
+        <div style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px">
+          ${gajakesariFlag}
+          ${kemadrumaFlag}
+        </div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Raja Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— trikona + kendra lord association</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${rajaCards}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Dhana Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— wealth lord association</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${dhanaCards}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Pancha Mahapurusha &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— planet in kendra, own/exalted</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${mahapurushaCards}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Neechabhanga Raja Yoga &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— debilitation cancelled</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${neechaCards}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Viparita Raja Yoga &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— dusthana lord in dusthana</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${viparitaCards}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Lunar Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Sunapha, Anapha, Durudhara, Adhi, Shakata</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.lunar_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Solar Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Vesi, Vasi, Ubhayachari</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.solar_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Conjunction Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Budhaditya, Guru-Chandala, Dharma-Karmadhipati, Kartari</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.conjunction_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Wealth Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Lakshmi, Saraswati, Vasumati, Kalanidhi</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.wealth_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Special Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Amala, Kahala, Mahabhagya, Parvata, Kuja Dosha, Graha Malika</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.special_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Nabhasa Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Rajju, Musala, Mala, Sarpa, Sankhya</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.nabhasa_yogas)}</div>
+      </div>`;
+
     // ── Assemble output with tabs ────────────────────────────────────────────
     document.getElementById('chart-section').innerHTML = `
       <div class="tab-bar" id="chart-tabs">
-        <button class="tab-btn active" id="tab-chart-btn"   onclick="switchTab('chart-tabs','chart-panel','tab-chart')">&#9728; Chart</button>
-        <button class="tab-btn"        id="tab-drishti-btn" onclick="switchTab('chart-tabs','chart-panel','tab-drishti')">&#128257; Drishti</button>
-        <button class="tab-btn"        id="tab-vargas-btn"  onclick="switchTab('chart-tabs','chart-panel','tab-vargas')">&#9651; Vargas</button>
+        <button class="tab-btn active" id="tab-chart-btn"   onclick="switchTab('chart-tabs','ctab','tab-chart')">&#9728; Chart</button>
+        <button class="tab-btn"        id="tab-drishti-btn" onclick="switchTab('chart-tabs','ctab','tab-drishti')">&#128257; Drishti</button>
+        <button class="tab-btn"        id="tab-vargas-btn"  onclick="switchTab('chart-tabs','ctab','tab-vargas')">&#9651; Vargas</button>
+        <button class="tab-btn"        id="tab-yogas-btn"   onclick="switchTab('chart-tabs','ctab','tab-yogas')">&#9733; Yogas</button>
       </div>
 
       <!-- Chart tab -->
-      <div class="tab-panel chart-panel active" id="tab-chart-panel">
+      <div class="tab-panel ctab active" id="tab-chart-panel">
         <div class="result-card">
           <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
           <table>
@@ -814,13 +1010,13 @@
       </div>
 
       <!-- Drishti tab -->
-      <div class="tab-panel chart-panel" id="tab-drishti-panel">
+      <div class="tab-panel ctab" id="tab-drishti-panel">
         <div class="result-card">
           <div class="result-card-header">&#128257; Drishti Matrix
             <span style="font-weight:400;font-size:0.76rem;color:var(--muted);margin-left:8px">
-              <span class="badge badge-graha">orange</span> graha drishti &nbsp;
-              <span class="badge badge-rashi">blue</span> rashi drishti &nbsp;
-              <span class="badge badge-double">green</span> double aspect &nbsp;
+              <span class="badge badge-graha">orange</span> graha &nbsp;
+              <span class="badge badge-rashi">blue</span> rashi &nbsp;
+              <span class="badge badge-double">green</span> double &nbsp;
               <span class="badge badge-occ">red</span> occupant
             </span>
           </div>
@@ -832,11 +1028,16 @@
       </div>
 
       <!-- Vargas tab -->
-      <div class="tab-panel chart-panel" id="tab-vargas-panel">
+      <div class="tab-panel ctab" id="tab-vargas-panel">
         <div style="font-size:0.82rem;color:var(--muted);padding:4px 0 8px">
-          Divisional charts (scope-related). V = Vargottama in planet table.
+          15 divisional charts. Highlighted planets = scope karakas. Click "Planets" to expand positions.
         </div>
         ${vargaCards}
+      </div>
+
+      <!-- Yogas tab -->
+      <div class="tab-panel ctab" id="tab-yogas-panel">
+        ${yogasPanel}
       </div>`;
   }
 

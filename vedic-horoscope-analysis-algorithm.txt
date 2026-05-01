@@ -1,0 +1,357 @@
+=== VEDIC HOROSCOPE ANALYSIS ALGORITHM ===
+Based on: B.V. Raman - "How to Judge a Horoscope" (Volumes 1 & 2)
+For Vector Database Embedding
+
+--- MODULE 1: FOUNDATION SETUP ---
+
+STEP 1.1: CHART CONSTRUCTION
+- Calculate Lagna (Ascendant) based on birth time, date, and place
+- Determine Rasi chart (D1) with all 12 houses
+- Calculate Navamsa chart (D9) - crucial secondary divisional chart
+- Note planetary longitudes in Nirayana (sidereal) system
+- Identify: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu positions
+- Calculate planetary degrees, sign occupancy, house occupancy
+
+STEP 1.2: DETERMINE FUNCTIONAL NATURE OF PLANETS (Per Lagna)
+- Aries Lagna: Jupiter/Sun/Mars = benefics; Saturn/Mercury/Venus = malefics
+- Taurus Lagna: Saturn = best benefic; Mercury/Mars/Sun = benefics; Jupiter/Venus/Moon = malefics
+- Gemini Lagna: Venus = sole benefic; Mars = greatest malefic; Jupiter/Sun = evil; Moon/Mercury = neutrals
+- Cancer Lagna: Jupiter/Mars = benefics; Venus/Mercury = evil; Saturn/Moon/Sun = neutrals
+- Leo Lagna: Mars/Sun = benefics; Mercury/Venus = malefics; Jupiter/Moon/Saturn = neutrals
+- Virgo Lagna: Venus = best benefic; Moon/Mars/Jupiter = malefics; Saturn/Sun/Mercury = neutrals
+- Libra Lagna: Saturn/Mercury/Venus = benefics; Sun/Jupiter/Moon = malefics; Mars = feeble benefic
+- Scorpio Lagna: Moon = best benefic; Jupiter/Sun = benefics; Mercury/Venus = evil; Mars/Saturn = neutrals
+- Sagittarius Lagna: Mars/Sun = benefics; Venus/Saturn/Mercury = evil; Jupiter/Moon = neutrals
+- Capricorn Lagna: Venus = most powerful benefic; Mercury/Saturn = benefics; Mars/Jupiter/Moon = evil
+- Aquarius Lagna: Venus = benefic; Sun/Mars = benefics; Jupiter/Moon = malefics; Mercury = neutral
+- Pisces Lagna: Moon/Mars = benefics; Saturn/Sun/Venus/Mercury = malefics; Jupiter = neutral
+
+STEP 1.3: IDENTIFY YOGAKARAKAS
+- Planet owning both Kendra (1,4,7,10) AND Trikona (1,5,9) = Yogakaraka
+- Most powerful Rajayoga: 9th+10th lord association/exchange/aspect
+- Other strong combinations: 4th+5th, 7th+5th, 10th+5th, 4th+9th, 7th+9th lords
+- Yogakaraka requires strength within 12 degrees for full effect
+- Natural malefic (Mars/Saturn) as Kendra lord = benefic functionally
+
+--- MODULE 2: ASSESS PLANETARY STRENGTHS ---
+
+STEP 2.1: DIGNITIES AND DEBILITIES
+For each planet, assess:
+- Exaltation (highest strength) -> Sun: Aries, Moon: Taurus, Mars: Capricorn, Mercury: Virgo, Jupiter: Cancer, Venus: Pisces, Saturn: Libra
+- Own sign / Moolatrikona (strong)
+- Friendly sign (moderate)
+- Neutral sign (average)
+- Enemy sign (weak)
+- Debilitation (lowest) -> Sun: Libra, Moon: Scorpio, Mars: Cancer, Mercury: Pisces, Jupiter: Capricorn, Venus: Virgo, Saturn: Aries
+- Retrograde = additional strength (triple in some methods)
+- Vargottama (same sign in Rasi and Navamsa) = double strength
+
+STEP 2.2: NEECHABHANGA (CANCELLATION OF DEBILITY)
+Debility is cancelled if:
+- Lord of exaltation sign is in Kendra from Lagna or Moon
+- Sign-dispositor of debilitated planet is in Kendra from Lagna
+- Debilitated planet is aspected by its exaltation lord
+- Debilitated planet exchanges signs with its sign lord
+
+STEP 2.3: COMBUSTION (ASTANGATA)
+Orbs for combustion:
+- Mars: 17°, Mercury: 14° (12° if retrograde), Jupiter: 11°
+- Venus: 10° (8° if retrograde), Saturn: 5°
+- Venus and Saturn are EXEMPT from combustion reduction
+- Combust planets lose half their period in Amsayu calculation
+
+STEP 2.4: PAPAKARTARI / SUBHAKARTARI YOGA
+- Papakartari: House/planet hemmed between malefics (weakens significations)
+- Subhakartari: House/planet hemmed between benefics (strengthens significations)
+
+--- MODULE 3: HOUSE ANALYSIS FRAMEWORK ---
+
+STEP 3.1: THREE-FACTOR ANALYSIS PER BHAVA
+For EACH of the 12 houses, analyze:
+A) THE HOUSE itself: Sign, occupants, aspects received
+B) THE LORD: Placement, strength, aspects, associations
+C) THE KARAKA (natural significator):
+   - 1st: Sun; 2nd: Jupiter; 3rd: Mars; 4th: Moon/Venus
+   - 5th: Jupiter; 6th: Mars/Saturn; 7th: Venus; 8th: Saturn
+   - 9th: Jupiter/Sun; 10th: Sun/Mercury/Jupiter/Saturn; 11th: Jupiter; 12th: Saturn/Ketu
+
+STEP 3.2: HOUSE ANALYSIS CHECKLIST
+For each house:
+□ Sign occupying the house (benefic/malefic sign?)
+□ Planets in the house (benefic/malefic/neutral occupants?)
+□ Aspects the house receives (from which planets/houses?)
+□ House lord placement (which house, sign, strength level?)
+□ Lord in exaltation/own sign/debility?
+□ Aspects received by lord (benefic aspects help, malefic aspects hurt)
+□ Lord's associations (conjunctions - most powerful influence)
+□ Karaka's condition and placement
+□ Assess BOTH from Lagna AND Chandra Lagna (Moon as ascendant)
+□ Check in Navamsa chart
+□ Is lord in 6th, 8th, or 12th from the house? (adverse)
+□ Is lord in 6th/8th/12th in Navamsa? (adverse timing)
+
+STEP 3.3: KEY POSITIONAL OUTCOMES FOR HOUSE LORD
+Favorable: 1, 4, 5, 7, 9, 10, 11 = positive indications
+Unfavorable: 6, 8, 12 = weakens or reverses house indications
+Special: Own house placement = self-reliant, strong indications
+
+--- MODULE 4: HOUSE-BY-HOUSE DETAILED ANALYSIS ---
+
+STEP 4.1: FIRST HOUSE (Lagna/Thanu Bhava)
+Significations: Body, personality, health, life conditions, physical appearance, vitality
+Analysis:
+- Lagna sign and its nature (movable/fixed/dual, element, ruler)
+- Lagna lord's house placement and strength
+- Planets conjunct Lagna (most powerful physical/personality influence)
+- Aspects received on Lagna (malefic aspects = health concerns)
+Health triad: Assess Sun (soul/vitality), Moon (mind), Lagna (body) together
+Strong Lagna + strong Sun + strong Moon = excellent constitution
+
+STEP 4.2: SECOND HOUSE (Dhana Bhava)
+Significations: Wealth, family, speech, right eye, food, manner of death
+Karaka: Jupiter
+Analysis:
+- 2nd lord placement and associations
+- Jupiter strength
+- Malefics in 2nd = expense of wealth or family troubles
+- 2nd house = one of two primary Maraka (death) houses
+
+STEP 4.3: THIRD HOUSE (Sahaja Bhava)
+Significations: Siblings, courage, short travel, communication, ears/throat
+Karaka: Mars
+Analysis:
+- 3rd lord in different houses gives varied sibling and courage outcomes
+- Mars condition = sibling relationships
+- Malefics in 3rd = troubled siblings but enhances courage
+- 3rd lord in 6/8/12 = loss or harm to siblings
+
+STEP 4.4: FOURTH HOUSE (Sukha Bhava)
+Significations: Mother, home, education, property, vehicles, peace of mind
+Karaka: Moon (mother), Venus (vehicles), Mercury (education)
+Analysis:
+- 4th lord and Moon strength
+- Venus for property/vehicles
+- Malefics in 4th = unhappy home life, troubled mother
+- Strong 4th = comforts, good education, happiness
+
+STEP 4.5: FIFTH HOUSE (Putra Bhava)
+Significations: Children, intelligence, speculation, romance, past-life merits
+Karaka: Jupiter (Putrakaraka)
+Analysis:
+- 5th lord strength and Jupiter's condition
+- Beeja Sphuta (male fertility point): Sum of Sun + Venus + Jupiter longitudes ÷ 360 remainder → should be odd sign and odd Navamsa, aspected by benefics
+- Kshetra Sphuta (female fertility point): Sum of Jupiter + Mars + Moon longitudes ÷ 360 remainder → should be even sign and even Navamsa
+- Assess 5th from Lagna, Moon, and Jupiter
+- Afflicted 5th = difficulty with children or intelligence issues
+
+STEP 4.6: SIXTH HOUSE (Ripu/Roga Bhava)
+Significations: Enemies, diseases, debts, subordinates, litigation, service
+Karaka: Mars/Saturn
+Analysis:
+- 6th lord placement (in 6th = strong for overcoming enemies)
+- Disease indicators: planets in 6/8/12, aspects on Lagna lord
+- Tridosha: Sun/Mars = pitta; Moon/Venus = kapha; Saturn = vata; Mercury = mixed
+- Mental health: Moon and Mercury assessment (see STEP 8.3)
+
+STEP 4.7: SEVENTH HOUSE (Kalatra Bhava)
+Significations: Marriage, spouse, partnerships, sexual urges, business partners
+Karaka: Venus (Kalatrakaraka)
+Analysis:
+Primary factors: (a) 7th house, (b) 7th lord, (c) Venus
+Secondary factors: 7th house occupants, planets aspecting 7th lord, 7th lord from Moon, karaka Venus
+
+Marriage quality:
++ Happy: 7th in benefic sign, strong 7th lord, strong Venus, benefics in 2/7/11 from 7th lord
++ Happy: Jupiter/Venus aspecting 7th; 7th lord in Kendra/Trikona
+- Unhappy: Malefics in 7th unaspected by benefics; 7th lord in 6/8/12
+- Death of spouse: Malefics in 4/8/12 from Venus; 5th/8th lord in 7th; Venus hemmed by malefics
+
+Timing of marriage:
+- Dasha/Bhukti of: 7th lord, Venus, planets occupying 7th, planets aspecting 7th
+- 7th lord from Moon also operates
+
+Kuja Dosha:
+- Mars in 2nd, 4th, 7th, 8th, or 12th from Lagna/Moon/Venus
+- Strength order: 8th > 7th > 4th > 2nd > 12th
+- Exempt: Mars in Leo/Aquarius; Mars conjunct Jupiter/Moon; specific sign exemptions per house
+
+STEP 4.8: EIGHTH HOUSE (Ayus Bhava)
+Significations: Longevity, occult, hidden enemies, inheritance, disgrace
+Karaka: Saturn
+Analysis:
+- 8th lord and Saturn condition
+- 3rd and 8th = houses of life; 2nd and 7th = houses of death
+- Strong 8th lord = good longevity
+- 8th afflicted = shorter life, health crises, sudden events
+
+STEP 4.9: NINTH HOUSE (Dharma Bhava)
+Significations: Father, fortune, religion, guru, long journeys, higher wisdom
+Karaka: Sun (father), Jupiter (guru/fortune)
+Analysis:
+- 9th lord strength
+- Jupiter condition
+- Strong 9th = good fortune, righteous life, favored by luck
+- 9th lord with Venus = sensual; with benefics = dharmic, prosperous
+
+STEP 4.10: TENTH HOUSE (Karma Bhava)
+Significations: Career, status, honor, authority, public life, deeds
+Karaka: Sun, Mercury, Jupiter, Saturn
+Vocational analysis:
+- No planet in 10th: 10th lord = primary determinant; lord of Navamsa occupied by 10th lord = secondary
+- Planet in 10th: Strongest of 10th lord, occupant, and Navamsa lord = primary determinant
+- Multiple planets in 10th: Most powerful = prime determinant (check Shadvargas)
+- Assess 10th from Lagna, Moon, AND Sun
+- The Shadvargas (6 divisional strengths) of the 10th lord determine profession type
+
+Profession indicators:
+- Jupiter + Mercury in 10th = intellectual/legal/advisory
+- Venus in 10th = arts, aesthetics, luxury
+- Sun in 10th = government service, leadership, medicine
+- Mars in 10th = military, surgery, engineering, sports
+- Saturn in 10th = agriculture, service, judiciary, masses
+- Mercury in 10th = business, communications, writing
+- Moon in 10th = service, public relations, catering
+
+STEP 4.11: ELEVENTH HOUSE (Labha Bhava)
+Significations: Gains, income, aspirations, elder siblings, freedom from misery
+Karaka: Jupiter
+Analysis:
+- 11th lord strength and placement
+- Jupiter's condition
+- Strong 11th = financial gains, success in aspirations
+- 11th worst malefic house if lord is there
+
+STEP 4.12: TWELFTH HOUSE (Vyaya Bhava)
+Significations: Losses, expenditure, spirituality, foreign lands, moksha, liberation
+Karaka: Saturn, Ketu
+Analysis:
+- 12th lord placement
+- Ketu's condition
+- Strong 12th + Jupiter = spiritual advancement, moksha
+- Afflicted 12th = heavy losses, imprisonment, wasteful expenses
+- Benefics in 12th = spiritual gifts
+
+--- MODULE 5: DASHA-BHUKTI TIMING ENGINE ---
+
+STEP 5.1: VIMSHOTTARI DASHA PERIODS
+Ketu: 7 yrs → Venus: 20 yrs → Sun: 6 yrs → Moon: 10 yrs → Mars: 7 yrs
+→ Rahu: 18 yrs → Jupiter: 16 yrs → Saturn: 19 yrs → Mercury: 17 yrs (Total: 120 yrs)
+
+STEP 5.2: IDENTIFY CURRENT DASHA
+- Balance at birth determined by natal Moon's Nakshatra position
+- Each Dasha divided into 9 Bhuktis (sub-periods) in same sequence
+
+STEP 5.3: DASHA STRENGTH ASSESSMENT
+For current Dasha lord:
+1. What houses does it rule? (functional benefic/malefic for Lagna)
+2. Where is it placed? (house number)
+3. What is its sign strength? (exaltation/own/friendly/enemy/debilitation)
+4. What aspects does it receive? (benefic strengthens, malefic weakens)
+5. With whom is it associated? (conjunction = blending of influences)
+6. Is it Vargottama? (double strength)
+7. Is it retrograde? (intensified results, sometimes delayed then sudden)
+8. What houses does it aspect? (planets aspect 3rd, 7th, and special: Mars 4th/8th, Jupiter 5th/9th, Saturn 3rd/10th)
+
+STEP 5.4: PREDICTION PER BHAVA IN DASHA
+Planet in own Bhava Dasha: Direct experience of house significations at full strength
+Planet as lord in Dasha: Results of houses owned manifest
+Planet in 6/8/12 in Dasha: Obstacles, health issues, reversals related to ruled houses
+Yogakaraka in Dasha: Exceptional success, rise in life
+Maraka in Dasha: Danger to longevity (only if longevity is completing)
+
+--- MODULE 6: SPECIAL COMBINATIONS AND YOGAS ---
+
+STEP 6.1: KEY POSITIVE YOGAS
+Rajayoga: 9th + 10th lord association/exchange (most powerful)
+Gajakesari Yoga: Jupiter in Kendra from Moon = fame, intelligence
+Adhi Yoga: Benefics (Mercury, Venus, Jupiter) in 6th, 7th, 8th from Moon
+Budha-Aditya Yoga: Sun + Mercury = intelligence, success in speech/writing
+Hamsa Yoga: Jupiter in Kendra in own/exaltation sign
+Malavya Yoga: Venus in Kendra in own/exaltation sign
+Ruchaka Yoga: Mars in Kendra in own/exaltation sign
+Sasha Yoga: Saturn in Kendra in own/exaltation sign
+Bhadra Yoga: Mercury in Kendra in own/exaltation sign
+
+STEP 6.2: KEY NEGATIVE COMBINATIONS
+Kemadruma Yoga: Moon with no planet in 2nd or 12th (loneliness, struggles)
+Chandal Yoga: Rahu conjunct Moon (mental disturbance, unconventional)
+Papakartari: House hemmed by malefics (weakened significations)
+Guru-Chandala: Jupiter with Rahu (misguided wisdom)
+
+STEP 6.3: PLANETARY COMBINATIONS IN 7TH (Marriage Specifics)
+Mars + Venus: Physical passion; if afflicted = extra-marital; Jupiter needed for stability
+Venus + Saturn: Stability, patience; if afflicted = troubled marriage
+Jupiter + Venus: Good children, harmonious marriage
+Sun + 7th: Delayed marriage, loose morals, government trouble
+Saturn + 7th: Widow/widower partner, or older spouse; stability but coldness
+Rahu + 7th: Unconventional marriage, foreign spouse, scandals
+
+--- MODULE 7: LONGEVITY DETERMINATION ---
+
+STEP 7.1: LONGEVITY CLASSIFICATION CHECK
+Balarishta indicators (premature death threats):
+- Weak Moon in Lagna with malefics; Moon in 6/8/12 badly afflicted
+- Malefics in 1/5/8/12 with no benefic aspects
+- Weak Lagna lord + weak Moon + weak Sun = low vitality
+
+If no Balarishta: Proceed to classify as short/medium/long life
+
+STEP 7.2: PINDAYU CALCULATION
+1. Find each planet's longitude in degrees
+2. Subtract exaltation point longitude from planet longitude
+3. If result < 180: subtract from 360 to get Arc
+4. Apply: (Arc × Max Years) / 360 = Basic years
+5. Apply Bharana (increases) for exaltation/retrograde/vargottama
+6. Apply 4 Haranas (reductions) sequentially
+7. Sum all planetary years + Lagna years = Total longevity estimate
+
+STEP 7.3: MARAKA ACTIVATION TIMING
+For each identified Maraka planet:
+- Confirm longevity has nearly completed before predicting death
+- Maraka Dasha with Maraka Bhukti = most dangerous period
+- Support with Saturn's transit over 2nd from natal Moon
+- Never predict death from single factor; require convergence of 3+ indicators
+
+--- MODULE 8: SYNTHESIS AND PREDICTION DELIVERY ---
+
+STEP 8.1: CHART QUALITY GRADING
+Rate overall chart:
+□ Count planets in Kendras (angles): More = strength
+□ Count planets in Trikonas: More = fortune
+□ Yogakarakas present and strong?
+□ Lagna lord strength
+□ Moon strength and sign
+□ Presence of Rajayogas
+
+STEP 8.2: LIFE AREA PREDICTIONS TEMPLATE
+For each life area, state:
+1. Favorable/Unfavorable overall assessment
+2. Key combination causing this
+3. Qualifying factors (mitigating/intensifying)
+4. Most likely Dasha period for manifestation
+5. Transit support needed
+
+STEP 8.3: CARDINAL RULES FOR PREDICTION
+1. NEVER predict from one combination alone — require at least 3 supporting factors
+2. ALWAYS assess from both Lagna and Chandra Lagna before concluding
+3. Natural benefic/malefic status is overridden by functional status for each Lagna
+4. A strong chart survives weak periods; a weak chart suffers even in good periods
+5. Neechabhanga and Yogakaraka can dramatically alter expected outcomes
+6. When multiple factors conflict: the stronger/more numerous factors prevail
+7. Consider the native's age, sex, and social context in delivery of results
+8. Navamsa chart is equal in importance to Rasi for marriage and spiritual matters
+9. Transits (Gochar) validate Dasha-based predictions; Saturn and Jupiter transits most important
+10. Intuition combined with knowledge and precision mathematics = mastery
+
+=== END OF ALGORITHM ===
+
+VECTOR DB CHUNKING GUIDE:
+- Module 1 = Chunk 1-3 (Foundation: Chart, Planetary Nature, Yogakarakas)
+- Module 2 = Chunk 4-6 (Strength Assessment)
+- Module 3 = Chunk 7-9 (House Framework)
+- Module 4 = Chunk 10-21 (12 Houses, one per chunk)
+- Module 5 = Chunk 22-25 (Dasha-Bhukti)
+- Module 6 = Chunk 26-28 (Special Yogas)
+- Module 7 = Chunk 29-31 (Longevity)
+- Module 8 = Chunk 32-34 (Synthesis)
+TEXTEOF
