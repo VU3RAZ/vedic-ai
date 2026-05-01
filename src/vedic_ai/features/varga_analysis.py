@@ -1,18 +1,21 @@
 """Divisional chart (Varga) analysis for scope-based interpretation.
 
-Each varga represents a specific life domain:
-  D3  (Drekkana)     — siblings, co-borns, courage, longevity
-  D7  (Saptamsha)    — children, progeny, creative expression
-  D9  (Navamsa)      — marriage, partnerships, dharma, overall chart strength
-  D10 (Dasamsa)      — career, profession, social achievement
-  D12 (Dvadashamsha) — parents, ancestral lineage, inherited patterns
-
-For each varga we extract:
-  - Lagna + lagna lord placement and dignity
-  - All planet positions (sign, house, dignity)
-  - Scope karaka positions and dignity
-  - Dignity statistics (exalted/own/debilitated counts)
-  - Notable varga yogas (lagna lord in kendra/trikona, sign exchanges, special placements)
+Varga → life domain mapping:
+  D2  Hora           — wealth, finances, luminaries
+  D3  Drekkana       — siblings, co-borns, courage, longevity
+  D4  Chaturthamsha  — property, fixed assets, fortune
+  D6  Shashthamsha   — health, disease, enemies, debts
+  D7  Saptamsha      — children, progeny, creative expression
+  D8  Ashtamsha      — longevity, hidden obstacles, calamities
+  D9  Navamsa        — marriage, dharma, partnerships, spiritual strength
+  D10 Dasamsa        — career, profession, social achievement
+  D12 Dvadashamsha   — parents, ancestral lineage, inherited patterns
+  D16 Shodashamsha   — vehicles, conveyances, comforts, luxuries
+  D20 Vimshamsha     — spiritual progress, religious activities
+  D24 Chaturvimshamsha — education, learning, knowledge
+  D27 Saptavimshamsha  — physical strength, vitality, constitution
+  D30 Trimshamsha    — misfortune, disease, past karma, dangers
+  D60 Shashtiamsha   — general karma, past-life themes
 """
 
 from __future__ import annotations
@@ -23,20 +26,40 @@ from vedic_ai.engines.dignity import RASI_LORDS
 from vedic_ai.features.base import DUSTHANA_HOUSES, KENDRA_HOUSES, TRIKONA_HOUSES
 
 _VARGA_SCOPE: dict[str, dict] = {
-    "D3":  {"name": "Drekkana",     "domain": "siblings, courage, longevity"},
-    "D7":  {"name": "Saptamsha",    "domain": "children, progeny, creativity"},
-    "D9":  {"name": "Navamsa",      "domain": "marriage, dharma, partnerships"},
-    "D10": {"name": "Dasamsa",      "domain": "career, profession, social achievement"},
-    "D12": {"name": "Dvadashamsha", "domain": "parents, ancestral lineage"},
+    "D2":  {"name": "Hora",             "domain": "wealth, finances, luminaries"},
+    "D3":  {"name": "Drekkana",          "domain": "siblings, courage, longevity"},
+    "D4":  {"name": "Chaturthamsha",     "domain": "property, fixed assets, fortune"},
+    "D6":  {"name": "Shashthamsha",      "domain": "health, disease, enemies, debts"},
+    "D7":  {"name": "Saptamsha",         "domain": "children, progeny, creativity"},
+    "D8":  {"name": "Ashtamsha",         "domain": "longevity, obstacles, calamities"},
+    "D9":  {"name": "Navamsa",           "domain": "marriage, dharma, partnerships"},
+    "D10": {"name": "Dasamsa",           "domain": "career, profession, social achievement"},
+    "D12": {"name": "Dvadashamsha",      "domain": "parents, ancestral lineage"},
+    "D16": {"name": "Shodashamsha",      "domain": "vehicles, comforts, luxuries"},
+    "D20": {"name": "Vimshamsha",        "domain": "spiritual progress, religious life"},
+    "D24": {"name": "Chaturvimshamsha",  "domain": "education, learning, knowledge"},
+    "D27": {"name": "Saptavimshamsha",   "domain": "physical strength, vitality"},
+    "D30": {"name": "Trimshamsha",       "domain": "misfortune, disease, past karma"},
+    "D60": {"name": "Shashtiamsha",      "domain": "general karma, past-life themes"},
 }
 
 # Scope-relevant karaka planets for each division
 _VARGA_KARAKA: dict[str, list[Graha]] = {
+    "D2":  [Graha.SUN, Graha.MOON],
     "D3":  [Graha.MARS, Graha.JUPITER],
+    "D4":  [Graha.MARS, Graha.VENUS],
+    "D6":  [Graha.MARS, Graha.SATURN, Graha.MOON],   # afflictors and vitality
     "D7":  [Graha.JUPITER, Graha.VENUS],
+    "D8":  [Graha.SATURN, Graha.MARS],
     "D9":  [Graha.VENUS, Graha.JUPITER, Graha.MOON],
     "D10": [Graha.SUN, Graha.SATURN, Graha.MERCURY, Graha.MARS],
     "D12": [Graha.SUN, Graha.MOON, Graha.SATURN],
+    "D16": [Graha.VENUS, Graha.MOON],
+    "D20": [Graha.JUPITER, Graha.KETU, Graha.MOON],
+    "D24": [Graha.MERCURY, Graha.JUPITER],
+    "D27": [Graha.SUN, Graha.MARS, Graha.SATURN],
+    "D30": [Graha.MARS, Graha.SATURN, Graha.RAHU, Graha.KETU],
+    "D60": [Graha.SATURN, Graha.RAHU],
 }
 
 _STRONG_DIGNITIES = frozenset({Dignity.EXALTED, Dignity.OWN, Dignity.MOOLATRIKONA})
@@ -56,6 +79,7 @@ def _planet_record(g: Graha, chart: DivisionalChart) -> dict | None:
         "in_trikona": p.house in TRIKONA_HOUSES,
         "in_dusthana": p.house in DUSTHANA_HOUSES,
         "is_strong": (p.dignity in _STRONG_DIGNITIES),
+        "is_debilitated": (p.dignity == Dignity.DEBILITATED),
     }
 
 
@@ -88,15 +112,15 @@ def _detect_varga_yogas(chart: DivisionalChart, division: str) -> list[dict]:
 
     if ll:
         if ll.house in KENDRA_HOUSES:
-            yogas.append({"type": "lagna_lord_kendra", "graha": lagna_lord.value, "house": ll.house})
+            yogas.append({"type": "lagna_lord_kendra",   "graha": lagna_lord.value, "house": ll.house})
         if ll.house in TRIKONA_HOUSES:
-            yogas.append({"type": "lagna_lord_trikona", "graha": lagna_lord.value, "house": ll.house})
+            yogas.append({"type": "lagna_lord_trikona",  "graha": lagna_lord.value, "house": ll.house})
         if ll.dignity in _STRONG_DIGNITIES:
-            yogas.append({"type": "lagna_lord_strong", "graha": lagna_lord.value, "dignity": ll.dignity.value})
+            yogas.append({"type": "lagna_lord_strong",   "graha": lagna_lord.value, "dignity": ll.dignity.value})
         if ll.house in DUSTHANA_HOUSES:
             yogas.append({"type": "lagna_lord_dusthana", "graha": lagna_lord.value, "house": ll.house})
 
-    # Sign exchange (parivartana) within varga
+    # Sign exchange within this varga
     checked: set[tuple] = set()
     for g_a in Graha:
         pa = chart.planets.get(g_a.value)
@@ -118,7 +142,33 @@ def _detect_varga_yogas(chart: DivisionalChart, division: str) -> list[dict]:
                     "graha_b": lord_of_a.value, "house_b": pb.house,
                 })
 
-    # D9-specific: 7th lord in kendra/own/exalted → strong marriage potential
+    # D6-specific: 6th / 8th lord strong → health challenge; lagna lord strong → resilience
+    if division == "D6":
+        for h in (6, 8):
+            h_lord = RASI_LORDS[chart.houses[h].rasi]
+            h_lp = chart.planets.get(h_lord.value)
+            if h_lp:
+                if h_lp.dignity in _STRONG_DIGNITIES:
+                    yogas.append({"type": f"d6_h{h}_lord_strong", "graha": h_lord.value, "dignity": h_lp.dignity.value, "note": "challenge indicated"})
+                if h_lp.house in KENDRA_HOUSES:
+                    yogas.append({"type": f"d6_h{h}_lord_kendra", "graha": h_lord.value, "house": h_lp.house})
+        # Saturn/Mars/Rahu in lagna of D6 → constitutional vulnerability
+        for g in (Graha.SATURN, Graha.MARS, Graha.RAHU):
+            p = chart.planets.get(g.value)
+            if p and p.house == 1:
+                yogas.append({"type": "d6_malefic_in_lagna", "graha": g.value})
+
+    # D8-specific: 8th lord placement matters for longevity
+    if division == "D8":
+        h8_lord = RASI_LORDS[chart.houses[8].rasi]
+        h8l = chart.planets.get(h8_lord.value)
+        if h8l:
+            if h8l.dignity in _STRONG_DIGNITIES:
+                yogas.append({"type": "d8_8th_lord_strong", "graha": h8_lord.value, "dignity": h8l.dignity.value})
+            if h8l.house in DUSTHANA_HOUSES:
+                yogas.append({"type": "d8_8th_lord_dusthana", "graha": h8_lord.value, "house": h8l.house})
+
+    # D9-specific: 7th lord strong → marriage; Venus strong → partnership quality
     if division == "D9":
         h7_lord = RASI_LORDS[chart.houses[7].rasi]
         h7l = chart.planets.get(h7_lord.value)
@@ -126,22 +176,32 @@ def _detect_varga_yogas(chart: DivisionalChart, division: str) -> list[dict]:
             yogas.append({"type": "d9_7th_lord_strong", "graha": h7_lord.value, "dignity": h7l.dignity.value, "house": h7l.house})
         if h7l and h7l.house in KENDRA_HOUSES:
             yogas.append({"type": "d9_7th_lord_kendra", "graha": h7_lord.value, "house": h7l.house})
+        venus = chart.planets.get(Graha.VENUS.value)
+        if venus and venus.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d9_venus_strong", "dignity": venus.dignity.value, "house": venus.house})
 
-    # D10-specific: Sun/Saturn/Mercury in 1st or 10th → career prominence
+    # D10-specific: Sun/Saturn/Mercury in 1st or 10th
     if division == "D10":
         for g in (Graha.SUN, Graha.SATURN, Graha.MERCURY):
             p = chart.planets.get(g.value)
             if p and p.house in (1, 10):
                 yogas.append({"type": "d10_career_planet_prominent", "graha": g.value, "house": p.house, "dignity": p.dignity.value if p.dignity else None})
 
-    # D12-specific: Sun/Moon dignity → parent's wellbeing
+    # D12-specific: luminaries strong → parent wellbeing
     if division == "D12":
         for g in (Graha.SUN, Graha.MOON):
             p = chart.planets.get(g.value)
             if p and p.dignity == Dignity.EXALTED:
-                yogas.append({"type": "d12_parent_luminary_exalted", "graha": g.value, "dignity": p.dignity.value})
+                yogas.append({"type": "d12_luminary_exalted", "graha": g.value})
             elif p and p.dignity == Dignity.DEBILITATED:
-                yogas.append({"type": "d12_parent_luminary_debilitated", "graha": g.value, "dignity": p.dignity.value})
+                yogas.append({"type": "d12_luminary_debilitated", "graha": g.value})
+
+    # D30-specific: Saturn/Mars/Rahu/Ketu in 1st or 8th → misfortune area
+    if division == "D30":
+        for g in (Graha.SATURN, Graha.MARS, Graha.RAHU, Graha.KETU):
+            p = chart.planets.get(g.value)
+            if p and p.house in (1, 8):
+                yogas.append({"type": "d30_malefic_sensitive_house", "graha": g.value, "house": p.house})
 
     return yogas
 

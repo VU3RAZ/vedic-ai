@@ -29,6 +29,7 @@ _SCOPE_RULE_FILES: dict[str, str] = {
     "personality": "personality.yaml",
     "career": "career.yaml",
     "relationships": "relationships.yaml",
+    "health": "health.yaml",
 }
 
 
@@ -72,6 +73,8 @@ def call_llm_for_interpretation(
     passages: list[RetrievedPassage],
     scope: str,
     llm_client: object,
+    *,
+    raman_method: bool = False,
 ) -> dict:
     """Build the prompt, call the LLM, parse and validate the response.
 
@@ -87,6 +90,7 @@ def call_llm_for_interpretation(
         passages=passages,
         scope=scope,
         output_schema=_OUTPUT_SCHEMA,
+        raman_method=raman_method,
     )
     logger.debug("Sending prompt to LLM (%d chars)", len(prompt))
 

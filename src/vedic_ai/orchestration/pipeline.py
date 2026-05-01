@@ -44,6 +44,7 @@ def run_prediction_pipeline(
     at_time: datetime | None = None,
     top_k: int = 5,
     dry_run: bool = False,
+    raman_method: bool = False,
     artifacts_dir: Path | None = None,
     rules_dir: Path | None = None,
 ) -> PredictionReport:
@@ -75,11 +76,13 @@ def run_prediction_pipeline(
     """
     adir = artifacts_dir or _ARTIFACTS_DIR
 
-    # 1. Compute chart
+    # 1. Compute chart (include all vargas for rich varga-based analysis)
+    _ALL_VARGAS = ["D2","D3","D4","D6","D7","D8","D9","D10","D12",
+                   "D16","D20","D24","D27","D30","D60"]
     if engine is None:
         engine = SwissEphAdapter()
-    logger.info("Computing chart for scope=%r", scope)
-    bundle = compute_core_chart(birth, engine)
+    logger.info("Computing chart for scope=%r raman=%s", scope, raman_method)
+    bundle = compute_core_chart(birth, engine, include_vargas=_ALL_VARGAS)
 
     # 2. Extract features
     features = extract_core_features(bundle)
@@ -98,7 +101,12 @@ def run_prediction_pipeline(
     # 4. Retrieve supporting passages
     passages = []
     if retriever is not None:
-        query = " ".join(t.explanation for t in triggers) or scope
+        base_query = " ".join(t.explanation for t in triggers) or scope
+        # When Raman method is active, anchor retrieval toward Raman house analysis
+        if raman_method:
+            query = f"Raman house signification {scope} {base_query}"
+        else:
+            query = base_query
         passages = retriever.retrieve(query, top_k=top_k)
         logger.info("Passages retrieved: %d", len(passages))
     else:
@@ -115,7 +123,8 @@ def run_prediction_pipeline(
         logger.info("Dry-run mode: LLM call skipped")
     else:
         interpretation = call_llm_for_interpretation(
-            bundle, features, triggers, passages, scope, llm_client
+            bundle, features, triggers, passages, scope, llm_client,
+            raman_method=raman_method,
         )
 
     _persist_artifact("interpretation.json", interpretation, adir)

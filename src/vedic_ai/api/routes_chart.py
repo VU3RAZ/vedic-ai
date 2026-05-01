@@ -16,7 +16,8 @@ from vedic_ai.features.core_features import extract_core_features
 
 router = APIRouter()
 
-_DEFAULT_VARGAS = ["D9", "D10", "D3", "D7", "D12"]
+_DEFAULT_VARGAS = ["D2", "D3", "D4", "D6", "D7", "D8", "D9", "D10", "D12",
+                   "D16", "D20", "D24", "D27", "D30", "D60"]
 
 
 class ComputeChartRequest(BaseModel):

@@ -469,7 +469,12 @@
             <option value="personality">Personality</option>
             <option value="career">Career</option>
             <option value="relationships">Relationships</option>
+            <option value="health">Health</option>
           </select>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="raman" />
+          <label for="raman">Raman Method — B.V. Raman-style analysis</label>
         </div>
         <div class="toggle-row">
           <input type="checkbox" id="dryrun" />
@@ -535,6 +540,7 @@
     personality:   '&#9789;',
     career:        '&#9795;',
     relationships: '&#9792;',
+    health:        '&#10052;',
   };
 
   // ── Quick-fill data ─────────────────────────────────────────────────────────
@@ -590,8 +596,9 @@
       latitude:  lat,
       longitude: lon,
       name:      document.getElementById('name').value.trim() || null,
-      scope:     document.getElementById('scope').value,
-      dry_run:   document.getElementById('dryrun').checked,
+      scope:        document.getElementById('scope').value,
+      dry_run:      document.getElementById('dryrun').checked,
+      raman_method: document.getElementById('raman').checked,
     };
   }
 
@@ -730,7 +737,7 @@
     });
 
     // ── Varga cards tab ─────────────────────────────────────────────────────
-    const VARGA_ORDER = ['D9','D10','D3','D7','D12'];
+    const VARGA_ORDER = ['D9','D10','D6','D3','D7','D12','D2','D4','D8','D16','D20','D24','D27','D30','D60'];
     let vargaCards = '<div class="varga-grid">';
     VARGA_ORDER.forEach(div => {
       const v = vargas[div];

@@ -1,0 +1,248 @@
+# Health scope rules — based on classical Jyotish principles
+# Primary significators: 1st house (vitality), 6th (disease), 8th (longevity/chronic)
+# Key planets: Sun (vitality), Moon (constitution/mind), Mars (surgery/fever),
+#              Saturn (chronic/wasting), Rahu/Ketu (mysterious/atypical illness)
+
+- rule_id: H001
+  name: Lagna Lord in Kendra — Strong Vitality
+  scope: health
+  weight: 0.75
+  conditions:
+    - feature: houses.1.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The lagna lord is placed in a kendra (angular house), indicating a robust
+    physical constitution, strong vitality, and resilience against illness.
+  source_refs:
+    - "BPHS 15.1"
+  conflict_policy: merge
+
+- rule_id: H002
+  name: Lagna Lord in Dusthana — Constitutional Vulnerability
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The ascendant lord is placed in a dusthana (6th, 8th, or 12th house),
+    indicating a vulnerability in the native's physical constitution and
+    potential for recurring health challenges.
+  source_refs:
+    - "BPHS 15.2"
+  conflict_policy: merge
+
+- rule_id: H003
+  name: Saturn in 1st House — Chronic Conditions
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Saturn in the Lagna indicates a lean or weak constitution, susceptibility
+    to chronic ailments, cold-related disorders, and joint or bone issues.
+    Longevity is often good, but health requires careful management.
+  source_refs:
+    - "BPHS 15.14"
+  conflict_policy: merge
+
+- rule_id: H004
+  name: Mars in 6th House — Surgical or Inflammatory Tendency
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Mars in the 6th house of disease (Rog bhava) activates the potential for
+    inflammatory conditions, fevers, infections, or surgical episodes. The
+    native often fights illness with strong combative energy.
+  source_refs:
+    - "BPHS 16.2"
+  conflict_policy: merge
+
+- rule_id: H005
+  name: Moon Afflicted — Mental and Digestive Sensitivity
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.in_enemy_sign
+      op: eq
+      value: true
+  explanation_template: >-
+    Moon in an enemy sign weakens emotional stability and digestive constitution,
+    pointing to sensitivity in the mind-body connection — anxiety-related
+    disorders, digestive issues, and hormonal imbalances.
+  source_refs:
+    - "BPHS 15.4"
+  conflict_policy: merge
+
+- rule_id: H006
+  name: Sun in 6th or 8th — Vitality Under Strain
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Sun.in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    Sun placed in a dusthana house (6th, 8th, or 12th) weakens the native's
+    core vitality and immunity. The 6th placement may trigger febrile illness;
+    the 8th indicates chronic vulnerabilities; the 12th points to hospital
+    stays or hidden ailments.
+  source_refs:
+    - "BPHS 16.1"
+  conflict_policy: merge
+
+- rule_id: H007
+  name: Rahu in 6th — Atypical or Undiagnosed Illness
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Rahu in the 6th house of disease is associated with mysterious, atypical,
+    or difficult-to-diagnose conditions. It can also indicate skin issues,
+    poisoning, or conditions that confound conventional treatment.
+  source_refs:
+    - "BPHS 16.8"
+  conflict_policy: merge
+
+- rule_id: H008
+  name: Ketu in 1st — Psychosomatic and Nerve Disorders
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Ketu in the Lagna is associated with psychosomatic ailments, neurological
+    sensitivity, and disorders with unclear physical origins. The native
+    may experience accidents or sudden health disturbances.
+  source_refs:
+    - "BPHS 15.9"
+  conflict_policy: merge
+
+- rule_id: H009
+  name: Saturn in 6th or 8th — Chronic and Degenerative Tendency
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    Saturn in a dusthana house (especially 6th or 8th) indicates chronic,
+    degenerative, or long-standing health conditions — particularly
+    musculoskeletal, neurological, or cold/vata disorders. The 8th placement
+    especially concerns longevity and chronic disease management.
+  source_refs:
+    - "BPHS 16.6"
+  conflict_policy: merge
+
+- rule_id: H010
+  name: Jupiter in 1st or Lagna Trikona — Protective Health Factor
+  scope: health
+  weight: 0.7
+  conditions:
+    - feature: planets.Jupiter.in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter in a kendra or trikona acts as a powerful protector of health and
+    longevity. The Gajakesari yoga formation and Jupiter's aspect on the lagna
+    are particularly auspicious for constitutional strength and recovery from
+    illness.
+  source_refs:
+    - "BPHS 15.7"
+  conflict_policy: override
+
+- rule_id: H011
+  name: 6th Lord in Lagna — Disease Comes to the Native
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 1
+  explanation_template: >-
+    The lord of the 6th house (Rog bhava) placed in the lagna brings the
+    energy of disease directly into the native's self and constitution.
+    Regular health monitoring and preventive care are strongly advised.
+  source_refs:
+    - "BPHS 16.12"
+  conflict_policy: merge
+
+- rule_id: H012
+  name: 8th Lord Debilitated — Longevity Concern
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: houses.8.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The lord of the 8th house (longevity bhava) is debilitated, weakening
+    the natural life-force and indicating potential chronic or progressive
+    health challenges. Lifestyle discipline and regular health checks
+    are especially important.
+  source_refs:
+    - "BPHS 17.1"
+  conflict_policy: merge
+
+- rule_id: H013
+  name: Exalted Sun — Strong Immunity and Vital Force
+  scope: health
+  weight: 0.7
+  conditions:
+    - feature: planets.Sun.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Sun in exaltation (Aries) bestows a powerful vital force, strong immunity,
+    and good capacity for physical recovery. The native tends toward robust
+    health unless significantly afflicted.
+  source_refs:
+    - "BPHS 3.12"
+  conflict_policy: override
+
+- rule_id: H014
+  name: Moon Exalted — Emotional Resilience and Sound Constitution
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Moon.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Exalted Moon in Taurus bestows a sound physical constitution, emotional
+    resilience, and a strong digestive and lymphatic system. Mental health
+    is generally stable and the native recovers well from illness.
+  source_refs:
+    - "BPHS 3.11"
+  conflict_policy: override
+
+- rule_id: H015
+  name: Neechabhanga — Debilitation Cancelled, Resilience Restored
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: yogas.neechabhanga
+      op: ne
+      value: []
+  explanation_template: >-
+    One or more debilitated planets have their debilitation cancelled
+    (Neechabhanga Raja Yoga). While the affliction is present, the native
+    has the inner resources and circumstances to overcome health challenges
+    and recuperate more effectively than the debilitation alone would suggest.
+  source_refs:
+    - "BPHS 36.1"
+  conflict_policy: override

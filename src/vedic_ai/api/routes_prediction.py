@@ -15,7 +15,7 @@ from vedic_ai.domain.prediction import PredictionReport
 
 router = APIRouter()
 
-_VALID_SCOPES = ("personality", "career", "relationships")
+_VALID_SCOPES = ("personality", "career", "relationships", "health")
 
 # ---------------------------------------------------------------------------
 # Module-level config + retriever (loaded once at import time)
@@ -77,6 +77,7 @@ class PredictionRequest(BaseModel):
     name: str | None = None
     scope: str = "all"
     dry_run: bool = False
+    raman_method: bool = False   # Emphasise B.V. Raman-style house analysis in retrieval
 
 
 def export_report(report: PredictionReport, fmt: str = "json") -> str | dict:
@@ -176,6 +177,7 @@ def predict(request: PredictionRequest) -> dict:
                 retriever=_retriever,
                 top_k=5,
                 dry_run=request.dry_run or llm_client is None,
+                raman_method=request.raman_method,
             )
         else:
             # Run all scopes and merge sections into one report
@@ -188,6 +190,7 @@ def predict(request: PredictionRequest) -> dict:
                     retriever=_retriever,
                     top_k=5,
                     dry_run=request.dry_run or llm_client is None,
+                    raman_method=request.raman_method,
                 )
                 if report is None:
                     report = r
