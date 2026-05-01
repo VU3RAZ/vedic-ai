@@ -737,13 +737,19 @@
       const deg    = (p.rasi || {}).degree_in_rasi;
       const degStr = deg != null ? deg.toFixed(2) + '°' : '—';
       const retro  = p.is_retrograde ? '<span class="retro" title="Retrograde">℞</span>' : '—';
-      const vargo  = fp.is_vargottama ? ' <span style="color:var(--info);font-size:0.72rem" title="Vargottama">V</span>' : '';
+      const vargo  = fp.is_vargottama  ? ' <span style="color:var(--info);font-size:0.72rem" title="Vargottama">V</span>' : '';
+      const ykBadge = fp.is_yogakaraka ? ' <span style="color:var(--success);font-size:0.70rem;font-weight:700" title="Yogakaraka — owns kendra+trikona">YK</span>' : '';
+      const mkBadge = fp.is_maraka     ? ' <span style="color:var(--error);font-size:0.70rem" title="Maraka — lord of H2 or H7">MK</span>'  : '';
+      const cBadge  = fp.is_combust && !fp.combust_exempt ? ' <span style="color:var(--warning,#f59e0b);font-size:0.70rem" title="Combust — burnt by Sun">☀</span>' : '';
+      const fnRole  = fp.functional_role || '';
+      const fnColor = fnRole === 'yogakaraka' ? 'var(--success)' : fnRole === 'benefic' ? 'var(--info)' : fnRole === 'malefic' ? 'var(--error)' : 'var(--muted)';
       tbody += `<tr>
-        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}${vargo}</td>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}${vargo}${ykBadge}${mkBadge}${cBadge}</td>
         <td>${escapeHTML(sign)}${dignityHTML(p.dignity)}${sandhiHTML(sh)}</td>
         <td style="text-align:center">${p.house ?? '—'}</td>
         <td style="text-align:center">${degStr}</td>
         <td style="text-align:center">${retro}</td>
+        <td style="text-align:center;color:${fnColor};font-size:0.76rem">${fnRole || '—'}</td>
       </tr>`;
     });
 
@@ -922,7 +928,38 @@
         : '<div class="yoga-none">None detected.</div>';
     }
 
+    // ── Functional nature card ───────────────────────────────────────────────
+    const fn = features.functional_nature || {};
+    const fnPlanets = fn.planets || {};
+    const fnYKs  = (fn.yogakarakas || []).join(', ') || 'none';
+    const fnMKs  = (fn.maraka_lords || []).join(', ') || 'none';
+    const _FN_COLOR = { yogakaraka: 'var(--success)', benefic: 'var(--info)', neutral: 'var(--muted)', malefic: 'var(--error)' };
+    const fnRows = Object.entries(fnPlanets).map(([g, info]) => {
+      const col = _FN_COLOR[info.role] || 'var(--muted)';
+      const badges = (info.is_yogakaraka ? '<span style="color:var(--success);font-size:0.7rem;font-weight:700">YK</span> ' : '')
+                   + (info.is_maraka     ? '<span style="color:var(--error);font-size:0.7rem">MK</span> '                        : '');
+      return `<tr>
+        <td>${escapeHTML(g)}</td>
+        <td style="color:${col};font-weight:600">${escapeHTML(info.role)}</td>
+        <td style="color:var(--muted);font-size:0.78rem">${(info.houses_owned||[]).map(h=>'H'+h).join(', ')}</td>
+        <td>${badges}</td>
+      </tr>`;
+    }).join('');
+
     const yogasPanel = `
+      <div class="result-card">
+        <div class="result-card-header">&#9653; Functional Planetary Nature &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Raman lagna-specific roles</span></div>
+        <div style="padding:10px 14px">
+          <div style="font-size:0.83rem;margin-bottom:8px">
+            <strong style="color:var(--success)">Yogakaraka:</strong> ${escapeHTML(fnYKs)} &nbsp;&nbsp;
+            <strong style="color:var(--error)">Maraka lords:</strong> ${escapeHTML(fnMKs)}
+          </div>
+          <table style="font-size:0.82rem;width:100%">
+            <thead><tr><th>Planet</th><th>Role</th><th>Owns</th><th></th></tr></thead>
+            <tbody>${fnRows}</tbody>
+          </table>
+        </div>
+      </div>
       <div class="result-card">
         <div class="result-card-header">&#9733; Yoga Summary</div>
         <div style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px">
@@ -973,6 +1010,10 @@
       <div class="result-card">
         <div class="result-card-header">Nabhasa Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Rajju, Musala, Mala, Sarpa, Sankhya</span></div>
         <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.nabhasa_yogas)}</div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">Kartari Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— houses hemmed by benefics or malefics</span></div>
+        <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.kartari_yogas)}</div>
       </div>`;
 
     // ── Assemble output with tabs ────────────────────────────────────────────
@@ -989,7 +1030,7 @@
         <div class="result-card">
           <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
           <table>
-            <thead><tr><th>Planet</th><th>Sign / Dignity</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th></tr></thead>
+            <thead><tr><th>Planet</th><th>Sign / Dignity</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th><th style="text-align:center" title="Functional role for this lagna">Fn</th></tr></thead>
             <tbody>${tbody || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No planet data.</td></tr>'}</tbody>
           </table>
         </div>

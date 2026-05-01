@@ -8,6 +8,23 @@ from vedic_ai.domain.enums import Graha
 from vedic_ai.features.base import DUSTHANA_HOUSES, HOUSE_TYPES, KENDRA_HOUSES, TRIKONA_HOUSES
 from vedic_ai.features.strength import full_dignity
 
+# ── Step 3.1: Natural house karakas (significators) ──────────────────────────
+# Based on B.V. Raman HTJH.
+HOUSE_KARAKAS: dict[int, list[str]] = {
+    1:  ["Sun"],
+    2:  ["Jupiter"],
+    3:  ["Mars"],
+    4:  ["Moon", "Venus"],
+    5:  ["Jupiter"],
+    6:  ["Mars", "Saturn"],
+    7:  ["Venus"],
+    8:  ["Saturn"],
+    9:  ["Jupiter", "Sun"],
+    10: ["Sun", "Mercury", "Jupiter", "Saturn"],
+    11: ["Jupiter"],
+    12: ["Saturn", "Ketu"],
+}
+
 
 def compute_house_lordships(bundle: ChartBundle) -> dict[int, dict]:
     """Map each house to its lord and the lord's full placement profile.
@@ -30,6 +47,26 @@ def compute_house_lordships(bundle: ChartBundle) -> dict[int, dict]:
         lord_deg = lord_placement.rasi.degree_in_rasi
         lord_dignity_str = full_dignity(lord_graha, lord_rasi, lord_deg)
 
+        # Karaka (natural significator) condition
+        karakas = HOUSE_KARAKAS.get(house_num, [])
+        karaka_conditions: list[dict] = []
+        for kname in karakas:
+            try:
+                kp = bundle.d1.planets[kname]
+                kdig = full_dignity(Graha(kname), kp.rasi.rasi, kp.rasi.degree_in_rasi)
+                karaka_conditions.append({
+                    "karaka": kname,
+                    "house": kp.house,
+                    "rasi": kp.rasi.rasi.value,
+                    "dignity": kdig,
+                    "is_retrograde": kp.is_retrograde,
+                    "in_dusthana": kp.house in DUSTHANA_HOUSES,
+                    "in_kendra": kp.house in KENDRA_HOUSES,
+                    "in_trikona": kp.house in TRIKONA_HOUSES,
+                })
+            except (KeyError, ValueError):
+                pass
+
         result[house_num] = {
             "house": house_num,
             "rasi": house.rasi.value,
@@ -46,5 +83,7 @@ def compute_house_lordships(bundle: ChartBundle) -> dict[int, dict]:
             "lord_house_type": HOUSE_TYPES[lord_house],
             "occupants": [g.value for g in house.occupants],
             "is_occupied": len(house.occupants) > 0,
+            "karakas": karakas,
+            "karaka_conditions": karaka_conditions,
         }
     return result

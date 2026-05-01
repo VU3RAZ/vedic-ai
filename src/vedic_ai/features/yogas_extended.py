@@ -589,3 +589,86 @@ def detect_nabhasa_yogas(bundle: ChartBundle) -> list[dict]:
         })
 
     return yogas
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7. KARTARI YOGA PER HOUSE (Step 2.4 extended to all 12 houses)
+# ─────────────────────────────────────────────────────────────────────────────
+
+_KARTARI_MALEFICS = frozenset({Graha.SUN, Graha.MARS, Graha.SATURN, Graha.RAHU, Graha.KETU})
+_KARTARI_BENEFICS = frozenset({Graha.JUPITER, Graha.VENUS, Graha.MERCURY, Graha.MOON})
+
+_HOUSE_SIGNIF = {
+    1: "self/body/vitality", 2: "wealth/speech/family", 3: "courage/siblings",
+    4: "home/mother/peace", 5: "intellect/children/dharma", 6: "health/enemies/debt",
+    7: "marriage/partnerships", 8: "longevity/transformation", 9: "fortune/father/dharma",
+    10: "career/status/authority", 11: "gains/income/aspirations", 12: "losses/liberation",
+}
+
+
+def detect_kartari_yogas(bundle: ChartBundle) -> list[dict]:
+    """Detect Subha Kartari and Papa Kartari for all 12 houses.
+
+    A house is hemmed when both its flanking houses (H-1 and H+1) are
+    occupied.  Pure malefic flankers → Papa Kartari; pure benefic → Subha.
+    """
+    yogas: list[dict] = []
+    ph = _ph(bundle)
+
+    house_occupants: dict[int, list[Graha]] = {h: [] for h in range(1, 13)}
+    for g in Graha:
+        house_occupants[ph[g.value]].append(g)
+
+    for house in range(1, 13):
+        prev_h = _h(house, -1)
+        next_h = _h(house, 1)
+
+        prev_occ = house_occupants[prev_h]
+        next_occ = house_occupants[next_h]
+
+        if not prev_occ or not next_occ:
+            continue
+
+        prev_mal = [g for g in prev_occ if g in _KARTARI_MALEFICS]
+        prev_ben = [g for g in prev_occ if g in _KARTARI_BENEFICS]
+        next_mal = [g for g in next_occ if g in _KARTARI_MALEFICS]
+        next_ben = [g for g in next_occ if g in _KARTARI_BENEFICS]
+
+        signif = _HOUSE_SIGNIF.get(house, "")
+
+        if prev_mal and next_mal and not prev_ben and not next_ben:
+            yogas.append({
+                "house": house,
+                "name": f"Papa Kartari Yoga (H{house})",
+                "type": "papa_kartari",
+                "h_before": prev_h,
+                "h_after": next_h,
+                "malefics_before": [g.value for g in prev_mal],
+                "malefics_after":  [g.value for g in next_mal],
+                "detail": (
+                    f"H{house} ({signif}) hemmed between malefics — "
+                    f"H{prev_h}: {', '.join(g.value for g in prev_mal)}; "
+                    f"H{next_h}: {', '.join(g.value for g in next_mal)}. "
+                    "Significations weakened or obstructed."
+                ),
+                "source": "BPHS",
+            })
+        elif prev_ben and next_ben and not prev_mal and not next_mal:
+            yogas.append({
+                "house": house,
+                "name": f"Subha Kartari Yoga (H{house})",
+                "type": "subha_kartari",
+                "h_before": prev_h,
+                "h_after": next_h,
+                "benefics_before": [g.value for g in prev_ben],
+                "benefics_after":  [g.value for g in next_ben],
+                "detail": (
+                    f"H{house} ({signif}) hemmed between benefics — "
+                    f"H{prev_h}: {', '.join(g.value for g in prev_ben)}; "
+                    f"H{next_h}: {', '.join(g.value for g in next_ben)}. "
+                    "Significations strengthened and protected."
+                ),
+                "source": "BPHS",
+            })
+
+    return yogas

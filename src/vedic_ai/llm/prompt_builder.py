@@ -11,6 +11,8 @@ from vedic_ai.domain.prediction import RuleTrigger
 # Section header tokens — fixed order for snapshot stability
 _SECTION_CHART_FACTS = "### CHART FACTS"
 _SECTION_DERIVED     = "### DERIVED FEATURES"
+_SECTION_FUNCTIONAL  = "### FUNCTIONAL PLANETARY NATURE (RAMAN)"
+_SECTION_DASHA_STR   = "### DASHA LORD STRENGTH"
 _SECTION_VARGA       = "### VARGA (DIVISIONAL) ANALYSIS"
 _SECTION_DASHA       = "### DASHA TIMING"
 _SECTION_RULES       = "### TRIGGERED RULES"
@@ -72,6 +74,10 @@ def _derived_features_section(features: dict, scope: str) -> str:
                 " DEBILITATED" if p.get("is_debilitated") else "",
                 " OWN-SIGN"    if p.get("is_own_sign") else "",
                 " VARGOTTAMA"  if p.get("is_vargottama") else "",
+                " COMBUST"     if p.get("is_combust") and not p.get("combust_exempt") else "",
+                " COMBUST(exempt)" if p.get("is_combust") and p.get("combust_exempt") else "",
+                " YOGAKARAKA"  if p.get("is_yogakaraka") else "",
+                " MARAKA"      if p.get("is_maraka") else "",
             ])
             sandhi = ""
             if p.get("is_sandhi"):
@@ -81,20 +87,29 @@ def _derived_features_section(features: dict, scope: str) -> str:
             lines.append(
                 f"  {name}: {p.get('rasi','?')} H{p.get('house','?')}"
                 f"{retro}{flags}{sandhi}  nak={p.get('nakshatra','?')}"
-                f"  strength={p.get('total_strength','?')}"
+                f"  fn={p.get('functional_role','?')}  strength={p.get('total_strength','?')}"
             )
 
     houses = features.get("houses", {})
     if houses:
-        lines.append("House lords:")
+        lines.append("Houses (lord, occupants, aspects, karakas):")
         for h in range(1, 13):
             hd = houses.get(h, {})
             occ = ",".join(hd.get("occupants", [])) or "empty"
             asp = ",".join(hd.get("aspects_received_from", [])) or "none"
+            karakas = hd.get("karakas", [])
+            karaka_cond = hd.get("karaka_conditions", [])
+            kara_str = ""
+            if karaka_cond:
+                kara_str = "  karakas=" + "; ".join(
+                    f"{k['karaka']} H{k['house']} {k.get('dignity') or 'neutral'}"
+                    + (" DUSTHANA" if k.get("in_dusthana") else "")
+                    for k in karaka_cond
+                )
             lines.append(
                 f"  H{h}: lord={hd.get('lord','?')} in H{hd.get('lord_house','?')}"
                 f" {hd.get('lord_rasi','?')}  dignity={hd.get('lord_dignity','?')}"
-                f"  occ=[{occ}]  asp=[{asp}]"
+                f"  occ=[{occ}]  asp=[{asp}]{kara_str}"
             )
 
     # Drishti matrix for key houses by scope
@@ -133,6 +148,8 @@ def _derived_features_section(features: dict, scope: str) -> str:
             lines.append(f"  Neechabhanga: {y.get('graha')} cancelled by {y.get('cancellation_by')}")
         for y in yogas.get("viparita_raja_yogas", []):
             lines.append(f"  Viparita Raja: {y.get('lord')} owns H{y.get('owns_house')} placed H{y.get('placed_in_house')}")
+        for y in yogas.get("kartari_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
 
     lagna = features.get("lagna", {})
     if lagna:
@@ -143,6 +160,63 @@ def _derived_features_section(features: dict, scope: str) -> str:
         )
 
     return "\n".join(lines) if lines else json.dumps(features, sort_keys=True, ensure_ascii=False)
+
+
+def _functional_nature_section(features: dict) -> str:
+    """Summarise functional planetary nature and yogakarakas for this lagna."""
+    fn = features.get("functional_nature", {})
+    if not fn:
+        return "(functional nature not available)"
+
+    lines: list[str] = []
+    lagna = fn.get("lagna_rasi", "?")
+    yks   = fn.get("yogakarakas", [])
+    mks   = fn.get("maraka_lords", [])
+    lines.append(f"Lagna: {lagna}")
+    lines.append(f"Yogakarakas (owns kendra+trikona): {', '.join(yks) if yks else 'none'}")
+    lines.append(f"Maraka lords (H2/H7 lords): {', '.join(mks) if mks else 'none'}")
+
+    _ROLE_ORDER = ["yogakaraka", "benefic", "neutral", "malefic"]
+    by_role: dict[str, list[str]] = {}
+    for name, info in fn.get("planets", {}).items():
+        role = info.get("role", "neutral")
+        houses = info.get("houses_owned", [])
+        tag = f"{name}(H{'|H'.join(str(h) for h in houses)})"
+        by_role.setdefault(role, []).append(tag)
+    for role in _ROLE_ORDER:
+        grps = by_role.get(role, [])
+        if grps:
+            lines.append(f"  {role.upper()}: {', '.join(grps)}")
+    return "\n".join(lines)
+
+
+def _dasha_strength_section(features: dict) -> str:
+    """7-point Raman dasha lord strength assessment."""
+    ds = features.get("dasha_strength", {})
+    if not ds:
+        return "(dasha strength not available)"
+
+    lines: list[str] = []
+    for key in ("mahadasha", "antardasha"):
+        rec = ds.get(key)
+        if not rec:
+            continue
+        label = "Mahadasha" if key == "mahadasha" else "Antardasha"
+        lord  = rec.get("lord", "?")
+        lines.append(f"{label} Lord: {lord}")
+        lines.append(f"  1. Houses owned: H{', H'.join(str(h) for h in rec.get('houses_owned', []))}")
+        lines.append(f"  2. Placement: H{rec.get('placement_house','?')}")
+        lines.append(f"  3. Sign strength: {rec.get('sign_strength','?')}")
+        asp = rec.get("aspects_received", []) or []
+        lines.append(f"  4. Aspects received from: {', '.join(asp) or 'none'}")
+        conj = rec.get("conjunctions", []) or []
+        lines.append(f"  5. Conjunctions: {', '.join(conj) or 'none'}")
+        lines.append(f"  6. Vargottama: {rec.get('is_vargottama', False)}")
+        lines.append(f"  7. Retrograde: {rec.get('is_retrograde', False)}")
+        lines.append(f"  Role: {rec.get('functional_role','?')}  Score: {rec.get('assessment_score','?')}")
+        for note in rec.get("notes", []):
+            lines.append(f"  → {note}")
+    return "\n".join(lines) if lines else "(no active dasha)"
 
 
 def _varga_section(features: dict, scope: str) -> str:
@@ -312,6 +386,12 @@ def build_interpretation_prompt(
         "",
         _SECTION_DERIVED,
         _derived_features_section(features, scope),
+        "",
+        _SECTION_FUNCTIONAL,
+        _functional_nature_section(features),
+        "",
+        _SECTION_DASHA_STR,
+        _dasha_strength_section(features),
         "",
         _SECTION_VARGA,
         _varga_section(features, scope),

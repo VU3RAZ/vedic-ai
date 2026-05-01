@@ -56,6 +56,57 @@ _HOUSE_STRENGTH: dict[str, float] = {
 
 _RETROGRADE_PENALTY = 0.10
 
+# ── Combustion (Step 2.3) ─────────────────────────────────────────────────────
+# Orb in degrees within which a planet is combust (conjunct Sun).
+# Venus and Saturn are flagged but EXEMPT from power reduction per Raman.
+_COMBUST_ORB: dict[Graha, float] = {
+    Graha.MOON:    0.0,   # Moon is never combust (too important)
+    Graha.MARS:    17.0,
+    Graha.MERCURY: 14.0,  # 12° if retrograde
+    Graha.JUPITER: 11.0,
+    Graha.VENUS:   10.0,  # 8° if retrograde — exempt from strength reduction
+    Graha.SATURN:  5.0,   # exempt from strength reduction
+}
+_COMBUST_EXEMPT = frozenset({Graha.VENUS, Graha.SATURN})
+
+
+def compute_combustion(bundle: ChartBundle) -> dict[str, dict]:
+    """Detect planets combust (burnt) by the Sun.
+
+    Returns dict keyed by planet name with:
+      is_combust     : bool
+      orb_degrees    : float  — angular separation from Sun (0 if not combust)
+      exempt         : bool   — Venus/Saturn retain strength despite combustion
+    """
+    sun_lon = bundle.d1.planets[Graha.SUN.value].longitude
+    result: dict[str, dict] = {}
+    for graha in Graha:
+        if graha == Graha.SUN:
+            result[graha.value] = {"is_combust": False, "orb_degrees": 0.0, "exempt": False}
+            continue
+        base_orb = _COMBUST_ORB.get(graha, 0.0)
+        if base_orb == 0.0:
+            result[graha.value] = {"is_combust": False, "orb_degrees": 0.0, "exempt": False}
+            continue
+        p = bundle.d1.planets[graha.value]
+        # Adjust orb for retrograde Mercury/Venus
+        orb = base_orb
+        if p.is_retrograde and graha == Graha.MERCURY:
+            orb = 12.0
+        elif p.is_retrograde and graha == Graha.VENUS:
+            orb = 8.0
+        # Angular separation (shortest arc)
+        diff = abs(p.longitude - sun_lon) % 360
+        if diff > 180:
+            diff = 360 - diff
+        is_combust = diff <= orb
+        result[graha.value] = {
+            "is_combust": is_combust,
+            "orb_degrees": round(diff, 4) if is_combust else 0.0,
+            "exempt": graha in _COMBUST_EXEMPT,
+        }
+    return result
+
 
 def natural_relationship(graha: Graha, sign_lord: Graha) -> str:
     """Return 'friend', 'neutral', or 'enemy' based on natural planetary friendship."""

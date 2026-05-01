@@ -23,10 +23,13 @@ from vedic_ai.features.drishti import compute_full_drishti_matrix, compute_rashi
 from vedic_ai.features.lordships import compute_house_lordships
 from vedic_ai.features.nakshatra_features import extract_nakshatra_features
 from vedic_ai.features.sandhi import compute_sandhi_analysis
-from vedic_ai.features.strength import compute_planet_strengths, full_dignity
+from vedic_ai.features.dasha_features import assess_dasha_lord, compute_timing_features
+from vedic_ai.features.functional_nature import compute_functional_nature
+from vedic_ai.features.strength import compute_combustion, compute_planet_strengths, full_dignity
 from vedic_ai.features.varga_analysis import extract_varga_analysis
 from vedic_ai.features.yogas_extended import (
     detect_conjunction_yogas,
+    detect_kartari_yogas,
     detect_lunar_yogas,
     detect_nabhasa_yogas,
     detect_solar_yogas,
@@ -303,6 +306,8 @@ def extract_core_features(bundle: ChartBundle) -> dict:
     rashi_drishti = compute_rashi_drishti(bundle)
     drishti_matrix = compute_full_drishti_matrix(bundle)
     varga_analysis = extract_varga_analysis(bundle)
+    functional_nature = compute_functional_nature(bundle)
+    combustion = compute_combustion(bundle)
 
     # Build per-planet record
     planets_out: dict[str, dict] = {}
@@ -349,6 +354,15 @@ def extract_core_features(bundle: ChartBundle) -> dict:
             "distance_from_cusp": sh["distance_from_cusp"],
             # Vargottama flag
             "is_vargottama": vargottama.get(graha.value, False),
+            # Combustion
+            "is_combust": combustion[graha.value]["is_combust"],
+            "combust_orb": combustion[graha.value]["orb_degrees"],
+            "combust_exempt": combustion[graha.value]["exempt"],
+            # Functional nature for this lagna
+            "functional_role": functional_nature["planets"][graha.value]["role"],
+            "is_yogakaraka": functional_nature["planets"][graha.value]["is_yogakaraka"],
+            "is_maraka": functional_nature["planets"][graha.value]["is_maraka"],
+            "functional_label": functional_nature["planets"][graha.value]["label"],
         }
 
     # Build per-house record
@@ -372,6 +386,8 @@ def extract_core_features(bundle: ChartBundle) -> dict:
             "house_type": HOUSE_TYPES[h],
             "aspects_received_from": aspects["aspected_by"][h],
             "total_aspect_strength": round(aspects["aspect_strength_on_house"][h], 2),
+            "karakas": ld["karakas"],
+            "karaka_conditions": ld["karaka_conditions"],
         }
 
     # Yoga detection
@@ -389,7 +405,27 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         "wealth_yogas": detect_wealth_yogas(bundle, lordships),
         "special_yogas": detect_special_yogas(bundle, lordships, aspects["aspected_by"]),
         "nabhasa_yogas": detect_nabhasa_yogas(bundle),
+        "kartari_yogas": detect_kartari_yogas(bundle),
     }
+
+    # Dasha lord strength assessment (needs functional_nature + aspects already computed)
+    dasha_strength: dict = {}
+    if bundle.dashas:
+        from datetime import datetime, timezone
+        from vedic_ai.features.dasha_features import get_active_mahadasha, get_active_antardasha
+        today = datetime.now(timezone.utc).date()
+        maha = get_active_mahadasha(bundle.dashas, today)
+        if maha:
+            maha_name = maha.graha.value
+            dasha_strength["mahadasha"] = assess_dasha_lord(
+                maha_name, bundle, lordships, aspects, vargottama, functional_nature
+            )
+            from vedic_ai.engines.vimshottari import compute_antardasha_periods
+            antar = get_active_antardasha(maha, today)
+            if antar:
+                dasha_strength["antardasha"] = assess_dasha_lord(
+                    antar.graha.value, bundle, lordships, aspects, vargottama, functional_nature
+                )
 
     return {
         "planets": planets_out,
@@ -410,6 +446,8 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         "varga_analysis": varga_analysis,
         "lagna": _build_lagna_features(bundle, lordships),
         "nakshatra_ascendant": nak_features["ascendant"],
+        "functional_nature": functional_nature,
+        "dasha_strength": dasha_strength,
         "metadata": {
             "engine": bundle.engine,
             "ayanamsa": bundle.ayanamsa,
