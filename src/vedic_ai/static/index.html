@@ -17,6 +17,7 @@
       --border:    #313859;
       --error:     #f87171;
       --success:   #34d399;
+      --info:      #60a5fa;
       --radius:    10px;
       --transition: 0.2s ease;
     }
@@ -190,6 +191,32 @@
     }
     .error-banner.active { display: block; }
 
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: -1px;
+      padding: 8px 14px;
+      text-transform: uppercase;
+      transition: color var(--transition), border-color var(--transition);
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { border-bottom-color: var(--accent); color: var(--accent); }
+    .tab-panel { display: none; flex-direction: column; gap: 16px; }
+    .tab-panel.active { display: flex; }
+
     /* Chart table */
     .result-card {
       background: var(--card-bg);
@@ -226,6 +253,81 @@
     tr:hover td { background: rgba(255,255,255,0.03); }
     .retro { color: var(--error); font-size: 0.8rem; }
     .planet-sym { font-size: 1.1rem; margin-right: 4px; }
+
+    /* Aspect / drishti badges */
+    .badge {
+      display: inline-block;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      margin: 1px 2px;
+    }
+    .badge-graha  { background: rgba(245,158,11,0.18); color: var(--accent); }
+    .badge-rashi  { background: rgba(96,165,250,0.18); color: var(--info); }
+    .badge-double { background: rgba(52,211,153,0.18); color: var(--success); }
+    .badge-occ    { background: rgba(248,113,113,0.18); color: var(--error); }
+
+    /* Sandhi / dignity badges */
+    .dg-exalted   { color: var(--success); font-size: 0.75rem; }
+    .dg-own       { color: var(--accent);  font-size: 0.75rem; }
+    .dg-debi      { color: var(--error);   font-size: 0.75rem; }
+    .dg-mula      { color: var(--info);    font-size: 0.75rem; }
+    .sandhi-label { font-size: 0.72rem; color: var(--muted); font-style: italic; }
+    .sandhi-warn  { font-size: 0.72rem; color: var(--error); font-style: italic; }
+    .madhya-ok    { font-size: 0.72rem; color: var(--success); font-style: italic; }
+
+    /* Varga cards */
+    .varga-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+    .varga-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .varga-card-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .varga-badge {
+      background: rgba(245,158,11,0.15);
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 2px 8px;
+    }
+    .varga-title { font-weight: 700; font-size: 0.92rem; }
+    .varga-domain { font-size: 0.75rem; color: var(--muted); }
+    .varga-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 0.84rem; }
+    .varga-row { display: flex; justify-content: space-between; align-items: center; }
+    .varga-row .label { color: var(--muted); font-size: 0.8rem; }
+    .varga-yogas { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; border-top: 1px solid var(--border); margin-top: 4px; }
+    .yoga-item {
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding-left: 10px;
+      position: relative;
+    }
+    .yoga-item::before { content: "›"; position: absolute; left: 0; color: var(--accent); }
+    .stats-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .stat-chip {
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 7px;
+    }
+    .stat-exalted  { background: rgba(52,211,153,0.15); color: var(--success); }
+    .stat-own      { background: rgba(245,158,11,0.15); color: var(--accent); }
+    .stat-debi     { background: rgba(248,113,113,0.15); color: var(--error); }
+    .stat-score    { background: rgba(96,165,250,0.15); color: var(--info); }
 
     /* Prediction cards */
     .pred-card {
@@ -473,7 +575,6 @@
     const dt = document.getElementById('bdt').value;
     const tz = document.getElementById('tz').value;
     if (!dt) return null;
-    // datetime-local gives "YYYY-MM-DDTHH:MM", append seconds + offset
     return dt + ':00' + tz;
   }
 
@@ -492,6 +593,28 @@
       scope:     document.getElementById('scope').value,
       dry_run:   document.getElementById('dryrun').checked,
     };
+  }
+
+  // ── Tab switching ───────────────────────────────────────────────────────────
+  function switchTab(barId, panelClass, activeId) {
+    document.querySelectorAll('#' + barId + ' .tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.' + panelClass).forEach(p => p.classList.remove('active'));
+    document.getElementById(activeId + '-btn').classList.add('active');
+    document.getElementById(activeId + '-panel').classList.add('active');
+  }
+
+  // ── Dignity display helpers ─────────────────────────────────────────────────
+  function dignityHTML(d) {
+    if (!d) return '';
+    const cls = d === 'exalted' ? 'dg-exalted' : d === 'debilitated' ? 'dg-debi' : d === 'moolatrikona' ? 'dg-mula' : (d === 'own' ? 'dg-own' : '');
+    return cls ? ` <span class="${cls}">${escapeHTML(d)}</span>` : ` <span style="color:var(--muted);font-size:0.75rem">${escapeHTML(d)}</span>`;
+  }
+
+  function sandhiHTML(p) {
+    if (!p) return '';
+    if (p.is_sandhi) return `<br><span class="sandhi-warn">⚠ ${escapeHTML(p.sandhi_label || 'Sandhi')}</span>`;
+    if (p.is_bhava_madhya) return `<br><span class="madhya-ok">✓ Bhava Madhya</span>`;
+    return '';
   }
 
   // ── Compute Chart ───────────────────────────────────────────────────────────
@@ -526,39 +649,45 @@
   }
 
   function renderChart(data) {
-    const d1       = data.d1 || {};
+    const d1         = data.d1 || {};
     const planetsMap = d1.planets || {};
-    const houses   = d1.houses   || {};
-    const dashas   = data.dashas || [];
+    const houses     = d1.houses  || {};
+    const dashas     = data.dashas || [];
+    const features   = data.derived_features || {};
+    const drishti    = features.drishti || {};
+    const vargas     = features.varga_analysis || {};
+    const sandhi     = features.sandhi || {};
 
     // Lagna sign from house 1
     const lagna = (houses['1'] || houses[1] || {}).rasi || '—';
 
-    // Planet rows — planetsMap is { "Sun": { graha, rasi: {rasi}, house, is_retrograde, dignity } }
+    // ── Planet rows ─────────────────────────────────────────────────────────
     const ORDER = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
     let tbody = '';
     ORDER.forEach(name => {
-      const p = planetsMap[name];
+      const p  = planetsMap[name];
       if (!p) return;
+      const fp = (features.planets || {})[name] || {};
+      const sh = sandhi[name] || {};
       const sym    = PLANET_SYMS[name] || '';
       const sign   = (p.rasi || {}).rasi || '—';
       const deg    = (p.rasi || {}).degree_in_rasi;
       const degStr = deg != null ? deg.toFixed(2) + '°' : '—';
       const retro  = p.is_retrograde ? '<span class="retro" title="Retrograde">℞</span>' : '—';
-      const dignity = p.dignity ? `<span style="color:var(--muted);font-size:0.75rem">${escapeHTML(p.dignity)}</span>` : '';
+      const vargo  = fp.is_vargottama ? ' <span style="color:var(--info);font-size:0.72rem" title="Vargottama">V</span>' : '';
       tbody += `<tr>
-        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}</td>
-        <td>${escapeHTML(sign)} ${dignity}</td>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}${vargo}</td>
+        <td>${escapeHTML(sign)}${dignityHTML(p.dignity)}${sandhiHTML(sh)}</td>
         <td style="text-align:center">${p.house ?? '—'}</td>
         <td style="text-align:center">${degStr}</td>
         <td style="text-align:center">${retro}</td>
       </tr>`;
     });
 
-    // Houses summary
+    // ── House rows ──────────────────────────────────────────────────────────
     let houseTbody = '';
     for (let i = 1; i <= 12; i++) {
-      const h = houses[String(i)] || houses[i] || {};
+      const h   = houses[String(i)] || houses[i] || {};
       const occ = (h.occupants || []).join(', ') || '—';
       houseTbody += `<tr>
         <td style="text-align:center;color:var(--accent)">${i}</td>
@@ -568,7 +697,7 @@
       </tr>`;
     }
 
-    // Dashas
+    // ── Dasha rows ──────────────────────────────────────────────────────────
     let dashaRows = '';
     dashas.filter(d => d.level === 1).slice(0, 9).forEach(d => {
       const sym = PLANET_SYMS[d.graha] || '';
@@ -579,28 +708,144 @@
       </tr>`;
     });
 
+    // ── Drishti matrix tab ──────────────────────────────────────────────────
+    const matrix = (drishti.matrix || []);
+    let drishtiRows = '';
+    matrix.forEach(row => {
+      const occ = (row.occupants || []).map(g =>
+        `<span class="badge badge-occ">${escapeHTML(g)}</span>`).join('');
+      const gd  = (row.graha_drishti || []).map(g =>
+        (row.double_aspect || []).includes(g)
+          ? `<span class="badge badge-double" title="Graha + Rashi drishti">${escapeHTML(g)}</span>`
+          : `<span class="badge badge-graha">${escapeHTML(g)}</span>`).join('');
+      const rd  = (row.rashi_drishti || []).filter(g => !(row.graha_drishti||[]).includes(g))
+        .map(g => `<span class="badge badge-rashi">${escapeHTML(g)}</span>`).join('');
+      drishtiRows += `<tr>
+        <td style="text-align:center;color:var(--accent);font-weight:700">${row.house}</td>
+        <td>${escapeHTML(row.rasi || '—')}</td>
+        <td>${occ || '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${(gd + rd) || '<span style="color:var(--muted)">—</span>'}</td>
+        <td style="text-align:center;color:var(--muted);font-size:0.82rem">${row.graha_strength ?? '—'}</td>
+      </tr>`;
+    });
+
+    // ── Varga cards tab ─────────────────────────────────────────────────────
+    const VARGA_ORDER = ['D9','D10','D3','D7','D12'];
+    let vargaCards = '<div class="varga-grid">';
+    VARGA_ORDER.forEach(div => {
+      const v = vargas[div];
+      if (!v) return;
+      const stats = v.dignity_stats || {};
+      const yogas = (v.yogas || []).slice(0, 5);
+      const karakas = (v.karaka_analysis || []);
+      const yogaHTML = yogas.length ? `
+        <div class="varga-yogas">
+          ${yogas.map(y => `<div class="yoga-item">${escapeHTML(formatYoga(y))}</div>`).join('')}
+        </div>` : '';
+      const karakaHTML = karakas.length ? `
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:4px">
+          ${karakas.map(k => `<span><strong style="color:var(--text)">${escapeHTML(k.graha)}</strong>: ${escapeHTML(k.rasi)} H${k.house}${k.dignity ? dignityHTML(k.dignity) : ''}</span>`).join(' &nbsp;·&nbsp; ')}
+        </div>` : '';
+      vargaCards += `
+        <div class="varga-card">
+          <div class="varga-card-header">
+            <span class="varga-badge">${escapeHTML(div)}</span>
+            <div>
+              <div class="varga-title">${escapeHTML(v.name)}</div>
+              <div class="varga-domain">${escapeHTML(v.domain)}</div>
+            </div>
+          </div>
+          <div class="varga-body">
+            <div class="varga-row">
+              <span class="label">Lagna</span>
+              <span>${escapeHTML(v.lagna || '—')} · lord <strong>${escapeHTML(v.lagna_lord||'')}</strong> H${v.lagna_lord_house ?? '?'}${dignityHTML(v.lagna_lord_dignity)}</span>
+            </div>
+            <div class="stats-row">
+              ${stats.exalted  ? `<span class="stat-chip stat-exalted">&#9650; ${stats.exalted} exalted</span>` : ''}
+              ${stats.own_sign ? `<span class="stat-chip stat-own">&#9679; ${stats.own_sign} own</span>` : ''}
+              ${stats.debilitated ? `<span class="stat-chip stat-debi">&#9660; ${stats.debilitated} debilitated</span>` : ''}
+              <span class="stat-chip stat-score">score ${stats.strength_score >= 0 ? '+' : ''}${stats.strength_score}</span>
+            </div>
+            ${karakaHTML}
+            ${yogaHTML}
+          </div>
+        </div>`;
+    });
+    vargaCards += '</div>';
+
+    // ── Assemble output with tabs ────────────────────────────────────────────
     document.getElementById('chart-section').innerHTML = `
-      <div class="result-card" style="margin-bottom:0">
-        <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
-        <table>
-          <thead><tr><th>Planet</th><th>Sign</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th></tr></thead>
-          <tbody>${tbody || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No planet data.</td></tr>'}</tbody>
-        </table>
+      <div class="tab-bar" id="chart-tabs">
+        <button class="tab-btn active" id="tab-chart-btn"   onclick="switchTab('chart-tabs','chart-panel','tab-chart')">&#9728; Chart</button>
+        <button class="tab-btn"        id="tab-drishti-btn" onclick="switchTab('chart-tabs','chart-panel','tab-drishti')">&#128257; Drishti</button>
+        <button class="tab-btn"        id="tab-vargas-btn"  onclick="switchTab('chart-tabs','chart-panel','tab-vargas')">&#9651; Vargas</button>
       </div>
-      <div class="result-card" style="margin-top:16px;margin-bottom:0">
-        <div class="result-card-header">&#9651; Houses</div>
-        <table>
-          <thead><tr><th>House</th><th>Sign</th><th>Lord</th><th>Occupants</th></tr></thead>
-          <tbody>${houseTbody}</tbody>
-        </table>
+
+      <!-- Chart tab -->
+      <div class="tab-panel chart-panel active" id="tab-chart-panel">
+        <div class="result-card">
+          <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
+          <table>
+            <thead><tr><th>Planet</th><th>Sign / Dignity</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th></tr></thead>
+            <tbody>${tbody || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No planet data.</td></tr>'}</tbody>
+          </table>
+        </div>
+        <div class="result-card">
+          <div class="result-card-header">&#9651; Houses</div>
+          <table>
+            <thead><tr><th>House</th><th>Sign</th><th>Lord</th><th>Occupants</th></tr></thead>
+            <tbody>${houseTbody}</tbody>
+          </table>
+        </div>
+        ${dashaRows ? `<div class="result-card">
+          <div class="result-card-header">&#9679; Vimshottari Dashas</div>
+          <table>
+            <thead><tr><th>Dasha</th><th>Start</th><th>End</th></tr></thead>
+            <tbody>${dashaRows}</tbody>
+          </table>
+        </div>` : ''}
       </div>
-      ${dashaRows ? `<div class="result-card" style="margin-top:16px">
-        <div class="result-card-header">&#9679; Vimshottari Dashas</div>
-        <table>
-          <thead><tr><th>Dasha</th><th>Start</th><th>End</th></tr></thead>
-          <tbody>${dashaRows}</tbody>
-        </table>
-      </div>` : ''}`;
+
+      <!-- Drishti tab -->
+      <div class="tab-panel chart-panel" id="tab-drishti-panel">
+        <div class="result-card">
+          <div class="result-card-header">&#128257; Drishti Matrix
+            <span style="font-weight:400;font-size:0.76rem;color:var(--muted);margin-left:8px">
+              <span class="badge badge-graha">orange</span> graha drishti &nbsp;
+              <span class="badge badge-rashi">blue</span> rashi drishti &nbsp;
+              <span class="badge badge-double">green</span> double aspect &nbsp;
+              <span class="badge badge-occ">red</span> occupant
+            </span>
+          </div>
+          <table>
+            <thead><tr><th>H</th><th>Sign</th><th>Occupants</th><th>Aspected by</th><th style="text-align:center">Strength</th></tr></thead>
+            <tbody>${drishtiRows || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No drishti data.</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Vargas tab -->
+      <div class="tab-panel chart-panel" id="tab-vargas-panel">
+        <div style="font-size:0.82rem;color:var(--muted);padding:4px 0 8px">
+          Divisional charts (scope-related). V = Vargottama in planet table.
+        </div>
+        ${vargaCards}
+      </div>`;
+  }
+
+  function formatYoga(y) {
+    const t = y.type || '';
+    if (t === 'lagna_lord_kendra')    return `Lagna lord ${y.graha} in kendra (H${y.house})`;
+    if (t === 'lagna_lord_trikona')   return `Lagna lord ${y.graha} in trikona (H${y.house})`;
+    if (t === 'lagna_lord_strong')    return `Lagna lord ${y.graha} ${y.dignity}`;
+    if (t === 'lagna_lord_dusthana')  return `Lagna lord ${y.graha} in dusthana (H${y.house})`;
+    if (t === 'sign_exchange')        return `${y.graha_a} ↔ ${y.graha_b} exchange (H${y.house_a}↔H${y.house_b})`;
+    if (t === 'd9_7th_lord_strong')   return `7th lord ${y.graha} ${y.dignity} (marriage strength)`;
+    if (t === 'd9_7th_lord_kendra')   return `7th lord ${y.graha} in kendra H${y.house}`;
+    if (t === 'd10_career_planet_prominent') return `${y.graha} in H${y.house} (career emphasis)`;
+    if (t === 'd12_parent_luminary_exalted')    return `${y.graha} exalted (parent benefic)`;
+    if (t === 'd12_parent_luminary_debilitated') return `${y.graha} debilitated (parent challenge)`;
+    return t.replace(/_/g, ' ');
   }
 
   // ── Generate Prediction ─────────────────────────────────────────────────────
@@ -632,7 +877,6 @@
   // ── Parse a possibly-stringified dict into display text ─────────────────────
   function parseDetail(raw) {
     if (typeof raw !== 'string') return String(raw);
-    // Looks like "{'scope': 'career', 'description': 'some text'}"?
     const m = raw.match(/['\"]description['\"]\s*:\s*['"]([^'"]+)['"]/);
     if (m) return m[1];
     return raw;
@@ -655,7 +899,6 @@
         `<li>${escapeHTML(parseDetail(d))}</li>`
       ).join('');
 
-      // Evidence passages
       const evidence = sec.evidence || [];
       const evCount  = evidence.length;
       const evId     = 'ev-' + idx;

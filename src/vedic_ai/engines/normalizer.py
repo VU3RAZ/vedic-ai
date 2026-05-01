@@ -163,3 +163,60 @@ def normalize_engine_output(
         raise
     except Exception as exc:
         raise EngineError(f"Normalization failed: {exc}") from exc
+
+
+def build_varga_chart(d1: DivisionalChart, division: str) -> DivisionalChart:
+    """Derive a divisional chart from D1 by applying the varga formula.
+
+    Planet longitudes in the returned chart use the midpoint (15°) of each
+    varga sign as a representative value — sufficient for sign/house/dignity
+    analysis. Nakshatra data in varga charts is not traditionally interpreted.
+
+    Args:
+        d1: The natal (D1) DivisionalChart.
+        division: Varga code — 'D3', 'D7', 'D9', 'D10', 'D12'.
+
+    Returns:
+        A DivisionalChart for the requested division.
+    """
+    from vedic_ai.engines.varga import compute_varga_rasi
+
+    # Varga ascendant
+    asc_rasi, asc_deg = _longitude_to_rasi(d1.ascendant_longitude)
+    varga_asc_rasi = compute_varga_rasi(asc_rasi, asc_deg, division)
+    varga_asc_lon = float(_RASI_SEQUENCE.index(varga_asc_rasi) * 30)
+
+    varga_planets: dict[str, PlanetPlacement] = {}
+    for graha in Graha:
+        p = d1.planets[graha.value]
+        vrasi = compute_varga_rasi(p.rasi.rasi, p.rasi.degree_in_rasi, division)
+        vhouse = _planet_house(vrasi, varga_asc_rasi)
+        vdignity = compute_dignity(graha, vrasi, 15.0)
+
+        # Use sign midpoint as representative longitude for nakshatra computation
+        vlon = float(_RASI_SEQUENCE.index(vrasi) * 30 + 15.0)
+        nak_name, pada, nak_lord, deg_in_nak = _longitude_to_nakshatra(vlon)
+
+        varga_planets[graha.value] = PlanetPlacement(
+            graha=graha,
+            longitude=vlon,
+            latitude=p.latitude,
+            speed=p.speed,
+            is_retrograde=p.is_retrograde,
+            rasi=RasiPlacement(rasi=vrasi, degree_in_rasi=15.0),
+            nakshatra=NakshatraPlacement(
+                nakshatra=nak_name,
+                pada=pada,
+                nakshatra_lord=nak_lord,
+                degree_in_nakshatra=deg_in_nak,
+            ),
+            house=vhouse,
+            dignity=vdignity,
+        )
+
+    return DivisionalChart(
+        division=division,
+        ascendant_longitude=varga_asc_lon,
+        planets=varga_planets,
+        houses=_build_houses(varga_asc_rasi, varga_planets),
+    )

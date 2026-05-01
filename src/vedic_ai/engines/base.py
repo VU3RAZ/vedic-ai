@@ -54,8 +54,8 @@ def compute_core_chart(
         bundle.dashas = engine.compute_dashas(birth)
 
     if include_vargas:
+        from vedic_ai.engines.normalizer import build_varga_chart
         for varga in include_vargas:
-            d = engine.compute_divisional_chart(birth, varga)
-            bundle.vargas[varga] = d
+            bundle.vargas[varga] = build_varga_chart(bundle.d1, varga)
 
     return bundle

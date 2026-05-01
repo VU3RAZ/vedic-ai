@@ -152,11 +152,11 @@ class SwissEphAdapter:
     def compute_divisional_chart(
         self, birth: BirthData, division: str, options: dict | None = None
     ) -> DivisionalChart:
+        d1 = self.compute_birth_chart(birth, options).d1
         if division == "D1":
-            return self.compute_birth_chart(birth, options).d1
-        raise EngineError(
-            f"Divisional chart {division!r} is not supported yet. Only D1 is available in Phase 2."
-        )
+            return d1
+        from vedic_ai.engines.normalizer import build_varga_chart
+        return build_varga_chart(d1, division)
 
     def compute_dashas(
         self, birth: BirthData, options: dict | None = None

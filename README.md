@@ -6,7 +6,16 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 
 ## Status
 
-**All 13 phases complete — 538 tests passing.**
+**All 13 phases complete — 353 unit tests passing.**
+
+## What's new (2026-05)
+
+- **Graha Drishti** — classical aspect computation with strength fractions (full / 3/4 / 1/2) per graha
+- **Rashi Drishti (Jaimini)** — sign-to-sign aspects; moveable→fixed, fixed→moveable, dual→dual
+- **Full Drishti Matrix** — per-house view combining both drishti types with double-aspect detection
+- **Bhava Sandhi / Madhya** — per-planet cusp-proximity and strength-zone classification
+- **Scope-aware Varga Analysis** — D9 (marriage/dharma), D10 (career), D3 (siblings), D7 (children), D12 (parents): lagna lord placement, dignity stats, karaka positions, varga yogas
+- **Updated Web UI** — tabbed interface: Chart / Drishti Matrix / Vargas; dignity inline, sandhi warnings, Vargottama marker
 
 ## Canonical pipeline
 
@@ -14,7 +23,8 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 Birth Data
   → Calculation Engine       (SwissEphAdapter — pyswisseph + Moshier ephemeris, Lahiri ayanamsa)
   → Canonical ChartBundle    (Pydantic v2, schema-versioned JSON)
-  → Feature Extractor        (strengths, lordships, aspects, yogas, nakshatras, dasha timing)
+  → Feature Extractor        (strengths, lordships, graha+rashi drishti, yogas, sandhi, nakshatras,
+                               varga analysis D3/D7/D9/D10/D12, dasha timing)
   → Rule Evaluator           (YAML micro-DSL, 4 rule scopes, conflict resolution)
   → Retrieval Layer          (FAISS + sentence-transformers, 3 054 chunks, all-MiniLM-L6-v2)
   → Prompt Builder           (structured, evidence-linked prompt contract)
@@ -197,8 +207,11 @@ To add your own texts:
 |---|---|---|---|
 | 0 | Project bootstrap | ✅ | `core/config`, `core/logging`, `cli/main` |
 | 1 | Domain schemas | ✅ | `domain/` — BirthData, ChartBundle, PredictionReport |
-| 2 | Calculation engine | ✅ | `engines/swisseph_adapter`, `engines/normalizer` |
+| 2 | Calculation engine | ✅ | `engines/swisseph_adapter`, `engines/normalizer`, `engines/varga` |
 | 3 | Feature extraction | ✅ | `features/` — strength, lordships, aspects, nakshatra, yogas |
+| 3a | Drishti (graha + rashi) | ✅ | `features/drishti` — full drishti matrix with double-aspect detection |
+| 3b | Bhava sandhi / madhya | ✅ | `features/sandhi` — cusp proximity, bhava madhya zone |
+| 3c | Varga analysis | ✅ | `features/varga_analysis` — D3/D7/D9/D10/D12 scope-aware analysis |
 | 4 | Rule engine | ✅ | `core/rule_evaluator`, `data/corpus/rules/*.yaml` |
 | 5 | Corpus ingestion & retrieval | ✅ | `retrieval/` — FAISS, sentence-transformers, chunker |
 | 6 | Prompt contracts & LLM wrapper | ✅ | `llm/local_client`, `llm/prompt_builder`, `llm/output_parser` |
@@ -206,7 +219,7 @@ To add your own texts:
 | 8 | Timing engine | ✅ | `features/dasha_features`, `features/transit_features` |
 | 9 | Evaluation framework | ✅ | `evaluation/dataset`, `evaluation/metrics`, `evaluation/runner` |
 | 10 | Fine-tuning data prep | ✅ | `evaluation/training_data`, `llm/fine_tune_prep` |
-| 11 | FastAPI + CLI + Web UI | ✅ | `api/`, `cli/`, `static/index.html` |
+| 11 | FastAPI + CLI + Web UI | ✅ | `api/`, `cli/`, `static/index.html` (tabbed — Chart/Drishti/Vargas) |
 | 12 | Hardening (cache, repo, repro) | ✅ | `storage/cache`, `storage/repository`, `utils/repro` |
 
 ## Repository layout
@@ -232,8 +245,10 @@ data/
 src/vedic_ai/
   core/                 Config loader, logging, exceptions, rule engine
   domain/               Pydantic schemas — BirthData, ChartBundle, PredictionReport, …
-  engines/              SwissEphAdapter (primary), vimshottari, normalizer
-  features/             core_features, strength, lordships, nakshatra, dasha, transit
+  engines/              SwissEphAdapter (primary), vimshottari, normalizer, varga
+  features/             core_features, strength, lordships, nakshatra, dasha, transit,
+                        aspects (graha drishti), drishti (rashi drishti + matrix),
+                        sandhi (bhava sandhi/madhya), varga_analysis (D3/D7/D9/D10/D12)
   retrieval/            corpus_loader, chunker, embedder, vector_store, retriever
   llm/                  LocalLLMClient (Ollama/LM Studio), prompt_builder, output_parser
   orchestration/        pipeline, prediction_service, evidence_builder, timing_service
@@ -316,7 +331,7 @@ Expected throughput (CPU-only): ~3–5 tokens/sec. A 500-token report takes ~2 m
   conflict_policy: merge
 ```
 
-Valid feature namespaces: `planets`, `houses`, `yogas`, `lagna`, `aspects`, `nakshatra_ascendant`, `timing`, `transit`.
+Valid feature namespaces: `planets`, `houses`, `yogas`, `lagna`, `aspects`, `drishti`, `sandhi`, `vargas`, `varga_analysis`, `nakshatra_ascendant`, `timing`, `transit`.
 
 ## License
 

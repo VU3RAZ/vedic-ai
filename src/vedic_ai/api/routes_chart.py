@@ -12,8 +12,11 @@ from vedic_ai.domain.birth import BirthData, GeoLocation
 from vedic_ai.domain.chart import ChartBundle, serialize_chart_bundle
 from vedic_ai.engines.base import compute_core_chart
 from vedic_ai.engines.swisseph_adapter import SwissEphAdapter
+from vedic_ai.features.core_features import extract_core_features
 
 router = APIRouter()
+
+_DEFAULT_VARGAS = ["D9", "D10", "D3", "D7", "D12"]
 
 
 class ComputeChartRequest(BaseModel):
@@ -24,13 +27,15 @@ class ComputeChartRequest(BaseModel):
     name: str | None = None
     ayanamsa: str = "lahiri"
     house_system: str = "whole_sign"
+    include_vargas: bool = True
 
 
 @router.post("/compute")
 def compute_chart(request: ComputeChartRequest) -> dict:
     """Compute a natal chart from birth data.
 
-    Returns a serialized ChartBundle including planets, houses, and dashas.
+    Returns a serialized ChartBundle including planets, houses, dashas,
+    divisional charts (D9/D10/D3/D7/D12), and extracted features.
     """
     if request.birth_datetime.tzinfo is None:
         raise HTTPException(
@@ -53,7 +58,9 @@ def compute_chart(request: ComputeChartRequest) -> dict:
             ayanamsa=request.ayanamsa,
             house_system=request.house_system,
         )
-        bundle = compute_core_chart(birth, engine)
+        vargas = _DEFAULT_VARGAS if request.include_vargas else None
+        bundle = compute_core_chart(birth, engine, include_vargas=vargas)
+        bundle.derived_features = extract_core_features(bundle)
     except EngineError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
