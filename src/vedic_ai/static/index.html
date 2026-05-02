@@ -12,6 +12,8 @@
       --card-bg:   #252b45;
       --accent:    #f59e0b;
       --accent-dim:#b45309;
+      --accent2:   #7c5cbf;
+      --accent2-dim:#5b3f9a;
       --text:      #e8eaf0;
       --muted:     #8892a4;
       --border:    #313859;
@@ -117,6 +119,7 @@
     .btn:active { transform: scale(0.97); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-primary   { background: var(--accent); color: #0f1220; }
+    .btn-raman     { background: var(--accent2); color: #fff; }
     .btn-secondary { background: var(--border); color: var(--text); }
     .btn-primary:hover:not(:disabled)   { background: #fbbf24; }
     .btn-secondary:hover:not(:disabled) { background: #3d4668; }
@@ -561,7 +564,10 @@
 
     <div class="btn-group">
       <button class="btn btn-secondary" onclick="computeChart()">Compute Chart</button>
-      <button class="btn btn-primary"   onclick="generatePrediction()">Generate Prediction</button>
+    </div>
+    <div class="btn-group" style="margin-top:8px;">
+      <button class="btn btn-primary"   onclick="runPrediction(false)">&#9788; Standard</button>
+      <button class="btn btn-raman"     onclick="runPrediction(true)">&#9775; Raman</button>
     </div>
 
     <hr class="divider" />
@@ -1212,42 +1218,9 @@
   }
 
   // ── Generate Prediction ─────────────────────────────────────────────────────
-  async function generatePrediction() {
-    const form = collectForm();
-    if (!form) return;
-
-    document.getElementById('prediction-section').innerHTML = '';
-
-    const postPred = async (extraFields) => {
-      const resp = await fetch('/predictions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, ...extraFields }),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-        throw new Error(err.detail || resp.statusText);
-      }
-      return resp.json();
-    };
-
-    // Run sequentially so single-threaded LLM servers (llama.cpp) are not overloaded.
-    try {
-      showSpinner('Generating Standard prediction (1/2)…');
-      const stdData = await postPred({ raman_method: false });
-
-      showSpinner('Generating Raman prediction (2/2)…');
-      const ramanData = await postPred({ raman_method: true });
-
-      hideSpinner();
-      renderPredictionTabs(stdData, ramanData);
-    } catch (err) {
-      showError('Prediction error: ' + err.message);
-    }
-  }
-
-  function renderPredictionTabs(stdData, ramanData) {
+  function ensurePredTabs() {
     const sec = document.getElementById('prediction-section');
+    if (document.getElementById('pred-tabs')) return;
     sec.innerHTML = `
       <div class="tab-bar" id="pred-tabs">
         <button class="tab-btn active" id="pred-standard-btn"
@@ -1258,8 +1231,38 @@
       <div class="tab-panel ptab active" id="pred-standard-panel"></div>
       <div class="tab-panel ptab"        id="pred-raman-panel"></div>
     `;
-    renderPrediction(stdData,   'pred-standard-panel');
-    renderPrediction(ramanData, 'pred-raman-panel');
+  }
+
+  async function runPrediction(ramanMethod) {
+    const form = collectForm();
+    if (!form) return;
+
+    const label   = ramanMethod ? 'Raman' : 'Standard';
+    const panelId = ramanMethod ? 'pred-raman-panel' : 'pred-standard-panel';
+    const tabId   = ramanMethod ? 'pred-raman'       : 'pred-standard';
+
+    ensurePredTabs();
+    document.getElementById(panelId).innerHTML =
+      '<div style="color:var(--muted);padding:16px;">Generating…</div>';
+    switchTab('pred-tabs', 'ptab', tabId);
+    showSpinner('Generating ' + label + ' prediction…');
+
+    try {
+      const resp = await fetch('/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, raman_method: ramanMethod }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || resp.statusText);
+      }
+      const data = await resp.json();
+      hideSpinner();
+      renderPrediction(data, panelId);
+    } catch (err) {
+      showError('Prediction error: ' + err.message);
+    }
   }
 
   // ── Parse a possibly-stringified dict into display text ─────────────────────
