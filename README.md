@@ -37,32 +37,44 @@ Birth Data
 
 ## Quick start
 
-### Install
+**Prerequisites:** Python 3.11+, internet access for first run (downloads ~90 MB embedding model once).
+
+### Option A — Make (recommended)
 
 ```bash
 git clone https://github.com/VU3RAZ/vedic-ai.git
 cd vedic-ai
-python -m venv .venv && source .venv/bin/activate
+make install        # creates .venv and installs all dependencies
+make build-index    # downloads embedding model + builds FAISS index (one-time, needs internet)
+make serve          # http://127.0.0.1:8000
+```
+
+All subsequent runs work fully offline — the embedding model is cached locally after the first `build-index`.
+
+### Option B — Manual
+
+```bash
+git clone https://github.com/VU3RAZ/vedic-ai.git
+cd vedic-ai
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# Install all dependencies
+pip install -r requirements.txt
+# or equivalently:
 pip install -e ".[dev,engine,retrieval,llm,api]"
-```
 
-### Build the retrieval index (one-time)
-
-```bash
+# Build the retrieval index (one-time — downloads all-MiniLM-L6-v2 ~90 MB on first run)
 vedic-ai build-index
-# → 9 sources — 1 525 642 chars — 3 054 vectors embedded in data/processed/faiss.index
-```
+# → 9 sources — 1 525 642 chars — 3 054 vectors written to data/processed/faiss.index
 
-### Option A — Web UI
-
-```bash
+# Start the web server
 vedic-ai serve                # http://127.0.0.1:8000
 vedic-ai serve --port 8080    # custom port
 ```
 
 Open your browser at the printed URL. Fill in birth data, click **Compute Chart** for the natal chart + dashas, or **Generate Prediction** for the full LLM-powered reading.
 
-### Option B — CLI
+### Option C — CLI predict
 
 ```bash
 # All three scopes (personality + career + relationships) — full LLM run
@@ -82,6 +94,8 @@ pytest tests/unit -q          # fast, no external deps
 pytest tests/integration -q   # requires corpus index built
 pytest tests/ -q              # full suite (538 tests)
 ```
+
+> **Note:** Predictions also require a local LLM server — see [LLM configuration](#llm-configuration-configsmodelsyaml) below. Chart computation (`vedic-ai serve` + **Compute Chart** button) works without an LLM.
 
 ## CLI reference
 

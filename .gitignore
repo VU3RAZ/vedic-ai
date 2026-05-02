@@ -57,3 +57,15 @@ cache/
 *.tar.gz
 *.whl
 MANIFEST
+
+# Personal report outputs (generated at runtime — not part of the project)
+nagpur_*.json
+rahul_*.json
+*_report.json
+*_career.json
+*_personality.json
+*_relationships.json
+
+# Session / scratch files
+session
+FIXES_AND_CONFIG.md

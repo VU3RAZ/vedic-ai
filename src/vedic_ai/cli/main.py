@@ -8,9 +8,14 @@ from typing import Optional
 
 import typer
 
-# Keep all ML model loading fully local — no network calls to HuggingFace Hub.
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+# After the embedding model is cached locally (first run of build-index downloads it),
+# prevent further HuggingFace Hub network calls.  Only activate when the cache exists
+# so that a fresh-machine `build-index` can still download all-MiniLM-L6-v2.
+_HF_CACHE = Path.home() / ".cache" / "huggingface" / "hub"
+_ST_CACHE = Path.home() / ".cache" / "torch" / "sentence_transformers"
+if _HF_CACHE.exists() or _ST_CACHE.exists():
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
 
 from vedic_ai.core.config import load_app_config
 from vedic_ai.core.exceptions import ConfigError
