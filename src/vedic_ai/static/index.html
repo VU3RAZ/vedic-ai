@@ -1216,30 +1216,29 @@
     const form = collectForm();
     if (!form) return;
 
-    showSpinner('Generating predictions (Standard + Raman)…');
     document.getElementById('prediction-section').innerHTML = '';
 
-    const postPred = (extraFields) => fetch('/predictions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, ...extraFields }),
-    });
+    const postPred = async (extraFields) => {
+      const resp = await fetch('/predictions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, ...extraFields }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || resp.statusText);
+      }
+      return resp.json();
+    };
 
+    // Run sequentially so single-threaded LLM servers (llama.cpp) are not overloaded.
     try {
-      const [stdResp, ramanResp] = await Promise.all([
-        postPred({ raman_method: false }),
-        postPred({ raman_method: true  }),
-      ]);
+      showSpinner('Generating Standard prediction (1/2)…');
+      const stdData = await postPred({ raman_method: false });
 
-      const parseResp = async (resp) => {
-        if (!resp.ok) {
-          const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-          throw new Error(err.detail || resp.statusText);
-        }
-        return resp.json();
-      };
+      showSpinner('Generating Raman prediction (2/2)…');
+      const ramanData = await postPred({ raman_method: true });
 
-      const [stdData, ramanData] = await Promise.all([parseResp(stdResp), parseResp(ramanResp)]);
       hideSpinner();
       renderPredictionTabs(stdData, ramanData);
     } catch (err) {
