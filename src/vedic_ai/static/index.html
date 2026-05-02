@@ -529,10 +529,6 @@
           </select>
         </div>
         <div class="toggle-row">
-          <input type="checkbox" id="raman" />
-          <label for="raman">Raman Method — B.V. Raman-style analysis</label>
-        </div>
-        <div class="toggle-row">
           <input type="checkbox" id="dryrun" />
           <label for="dryrun">Dry Run — skip LLM, show evidence only</label>
         </div>
@@ -718,10 +714,9 @@
       latitude:  lat,
       longitude: lon,
       name:      document.getElementById('name').value.trim() || null,
-      scope:        document.getElementById('scope').value,
-      dry_run:      document.getElementById('dryrun').checked,
-      raman_method: document.getElementById('raman').checked,
-      llm_backend:  llmBackend || null,
+      scope:       document.getElementById('scope').value,
+      dry_run:     document.getElementById('dryrun').checked,
+      llm_backend: llmBackend || null,
       llm_base_url: llmUrl    || null,
       llm_model:    llmModel  || null,
     };
@@ -1221,25 +1216,51 @@
     const form = collectForm();
     if (!form) return;
 
-    showSpinner('Generating prediction…');
+    showSpinner('Generating predictions (Standard + Raman)…');
     document.getElementById('prediction-section').innerHTML = '';
 
+    const postPred = (extraFields) => fetch('/predictions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, ...extraFields }),
+    });
+
     try {
-      const resp = await fetch('/predictions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-        throw new Error(err.detail || resp.statusText);
-      }
-      const data = await resp.json();
+      const [stdResp, ramanResp] = await Promise.all([
+        postPred({ raman_method: false }),
+        postPred({ raman_method: true  }),
+      ]);
+
+      const parseResp = async (resp) => {
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+          throw new Error(err.detail || resp.statusText);
+        }
+        return resp.json();
+      };
+
+      const [stdData, ramanData] = await Promise.all([parseResp(stdResp), parseResp(ramanResp)]);
       hideSpinner();
-      renderPrediction(data);
+      renderPredictionTabs(stdData, ramanData);
     } catch (err) {
       showError('Prediction error: ' + err.message);
     }
+  }
+
+  function renderPredictionTabs(stdData, ramanData) {
+    const sec = document.getElementById('prediction-section');
+    sec.innerHTML = `
+      <div class="tab-bar" id="pred-tabs">
+        <button class="tab-btn active" id="pred-standard-btn"
+          onclick="switchTab('pred-tabs','ptab','pred-standard')">&#9788; Standard</button>
+        <button class="tab-btn" id="pred-raman-btn"
+          onclick="switchTab('pred-tabs','ptab','pred-raman')">&#9775; Raman</button>
+      </div>
+      <div class="tab-panel ptab active" id="pred-standard-panel"></div>
+      <div class="tab-panel ptab"        id="pred-raman-panel"></div>
+    `;
+    renderPrediction(stdData,   'pred-standard-panel');
+    renderPrediction(ramanData, 'pred-raman-panel');
   }
 
   // ── Parse a possibly-stringified dict into display text ─────────────────────
@@ -1250,14 +1271,17 @@
     return raw;
   }
 
-  function renderPrediction(data) {
+  function renderPrediction(data, containerId) {
+    const target = containerId
+      ? document.getElementById(containerId)
+      : document.getElementById('prediction-section');
     const sections = data.sections || [];
     if (!sections.length) {
-      document.getElementById('prediction-section').innerHTML =
-        '<div class="error-banner active">No prediction sections returned.</div>';
+      target.innerHTML = '<div class="error-banner active">No prediction sections returned.</div>';
       return;
     }
 
+    const idPrefix = containerId || 'pred';
     let html = '';
     sections.forEach((sec, idx) => {
       const icon  = SCOPE_ICONS[sec.scope] || '&#9733;';
@@ -1269,7 +1293,7 @@
 
       const evidence = sec.evidence || [];
       const evCount  = evidence.length;
-      const evId     = 'ev-' + idx;
+      const evId     = idPrefix + '-ev-' + idx;
       let evHTML = '';
       if (evCount > 0) {
         const items = evidence.map(ev =>
@@ -1299,7 +1323,7 @@
         </div>`;
     });
 
-    document.getElementById('prediction-section').innerHTML = html;
+    target.innerHTML = html;
   }
 
   function toggleEvidence(id, btn) {
