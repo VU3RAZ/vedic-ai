@@ -440,6 +440,21 @@
     .yoga-flag-no    { background: rgba(248,113,113,0.12); color: var(--error);   border: 1px solid rgba(248,113,113,0.3); }
     .yoga-flag-neutral { background: rgba(96,165,250,0.12); color: var(--info);   border: 1px solid rgba(96,165,250,0.3); }
 
+    /* Yoga summary chips */
+    .yoga-summary-counts { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .ysc-count { font-size: 0.82rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .ysc-pos   { background: rgba(52,211,153,0.12); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+    .ysc-neg   { background: rgba(248,113,113,0.12); color: var(--error);   border: 1px solid rgba(248,113,113,0.3); }
+    .ysc-neu   { background: rgba(96,165,250,0.12);  color: var(--info);    border: 1px solid rgba(96,165,250,0.3); }
+    .yoga-summary-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .yoga-summary-chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 6px;
+      font-size: 0.81rem; padding: 4px 10px; cursor: default; }
+    .yoga-chip-pos { background: rgba(52,211,153,0.10); color: var(--success); border: 1px solid rgba(52,211,153,0.25); }
+    .yoga-chip-neg { background: rgba(248,113,113,0.10); color: var(--error);  border: 1px solid rgba(248,113,113,0.25); }
+    .yoga-chip-neu { background: rgba(96,165,250,0.10);  color: var(--info);   border: 1px solid rgba(96,165,250,0.25); }
+    .ysc-icon { font-size: 0.75rem; opacity: 0.85; }
+    .ysc-name { font-weight: 600; }
+
     /* Varga planet mini-table */
     .varga-planets { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
     .varga-planets summary {
@@ -464,6 +479,301 @@
       .layout { grid-template-columns: 1fr; height: auto; }
       .panel-left { border-right: none; border-bottom: 1px solid var(--border); }
     }
+
+    /* ── Flowchart ── */
+    .fc-module {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .fc-module > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .fc-module > summary::-webkit-details-marker { display: none; }
+    .fc-module > summary .fc-tog { font-size: 0.7rem; transition: transform 0.15s; }
+    .fc-module[open] > summary .fc-tog { transform: rotate(90deg); }
+    .fc-steps { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .fc-step {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .fc-step > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 9px 14px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      user-select: none;
+    }
+    .fc-step > summary::-webkit-details-marker { display: none; }
+    .fc-step > summary .fc-step-tog { font-size: 0.68rem; color: var(--muted); transition: transform 0.15s; }
+    .fc-step[open] > summary .fc-step-tog { transform: rotate(90deg); }
+    .fc-step-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .fc-badge {
+      display: inline-block;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .fc-badge-favorable { background: rgba(52,211,153,0.18); color: var(--success); }
+    .fc-badge-mixed     { background: rgba(245,158,11,0.18);  color: var(--accent);  }
+    .fc-badge-concern   { background: rgba(248,113,113,0.18); color: var(--error);   }
+    .fc-badge-ok        { background: rgba(96,165,250,0.18);  color: var(--info);    }
+    .fc-findings {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.82rem;
+    }
+    .fc-findings li {
+      color: var(--muted);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .fc-findings li::before { content: "›"; position: absolute; left: 0; color: var(--accent); }
+    .fc-findings li:empty, .fc-findings li:only-child:empty { display: none; }
+    .fc-findings li[data-separator] { color: transparent; height: 4px; padding: 0; }
+    .fc-findings li[data-separator]::before { display: none; }
+    .fc-table-wrap { overflow-x: auto; margin-top: 4px; border-radius: 6px; border: 1px solid var(--border); }
+    .fc-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .fc-table th {
+      background: rgba(245,158,11,0.07);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 7px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .fc-table td {
+      padding: 6px 10px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .fc-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .fc-table td:first-child { color: var(--text); font-weight: 600; }
+    .fc-intro {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 6px 0 10px;
+    }
+
+    /* ── Final Assessment Card ── */
+    .fa-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .fa-header {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .fa-grade-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 18px;
+      min-width: 72px;
+    }
+    .fa-grade-letter {
+      font-size: 2.4rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .fa-grade-letter.grade-A { color: var(--success); }
+    .fa-grade-letter.grade-B { color: var(--info); }
+    .fa-grade-letter.grade-C { color: var(--accent); }
+    .fa-grade-letter.grade-D { color: var(--error); }
+    .fa-grade-score {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .fa-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .fa-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .fa-subtitle { font-size: 0.8rem; color: var(--muted); }
+    .fa-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+    .fa-chip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      padding: 2px 10px;
+      color: var(--muted);
+    }
+    .fa-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 14px; }
+    .fa-verdict {
+      font-size: 0.87rem;
+      line-height: 1.75;
+      color: var(--text);
+      background: rgba(245,158,11,0.05);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 14px;
+    }
+    .fa-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 7px;
+    }
+    .fa-obs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .fa-obs-list li {
+      font-size: 0.83rem;
+      color: var(--text);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .fa-obs-list li::before {
+      content: "◆";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 0.55rem;
+      top: 5px;
+    }
+    .fa-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .fa-two-col { grid-template-columns: 1fr; } }
+    .fa-sc-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .fa-sc-title-pos { color: var(--success); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .fa-sc-title-neg { color: var(--error);   font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .fa-sc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .fa-sc-list li {
+      font-size: 0.79rem;
+      color: var(--muted);
+      padding-left: 12px;
+      position: relative;
+      line-height: 1.45;
+    }
+    .fa-sc-list.pos li::before { content: "✓"; position: absolute; left: 0; color: var(--success); font-size: 0.72rem; }
+    .fa-sc-list.neg li::before { content: "✗"; position: absolute; left: 0; color: var(--error);   font-size: 0.72rem; }
+    /* Module score chips */
+    .fa-mod-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .fa-mod-chip {
+      border-radius: 6px;
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+    .fa-mod-chip .mod-id   { color: var(--muted); font-weight: 400; font-size: 0.68rem; margin-right: 3px; }
+    .fa-mod-chip .mod-pct  { font-size: 0.82rem; }
+    .fa-mod-favorable { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--success); }
+    .fa-mod-mixed     { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--accent); }
+    .fa-mod-concern   { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--error); }
+    /* Life areas grid */
+    .fa-life-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 7px;
+    }
+    .fa-life-cell {
+      border-radius: 7px;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+    .fa-life-cell .lc-area   { font-weight: 700; color: var(--text); font-size: 0.8rem; margin-bottom: 2px; }
+    .fa-life-cell .lc-finding { color: var(--muted); font-size: 0.73rem; line-height: 1.35; }
+    .fa-life-cell .lc-badge  { font-size: 0.64rem; font-weight: 700; text-transform: uppercase; margin-bottom: 3px; display: inline-block; border-radius: 3px; padding: 0 5px; }
+    .lc-favorable { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.25); }
+    .lc-mixed     { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); }
+    .lc-concern   { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.25); }
+    .lc-ok        { background: rgba(96,165,250,0.1);  border-color: rgba(96,165,250,0.25); }
+    .lc-badge-favorable { background: rgba(52,211,153,0.2); color: var(--success); }
+    .lc-badge-mixed     { background: rgba(245,158,11,0.2); color: var(--accent); }
+    .lc-badge-concern   { background: rgba(248,113,113,0.2); color: var(--error); }
+    .lc-badge-ok        { background: rgba(96,165,250,0.2);  color: var(--info); }
+    /* Timing outlook */
+    .fa-timing {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 7px 7px 0;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    /* Yoga summary */
+    .fa-yoga-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
+    .fa-yoga-tag {
+      border-radius: 5px;
+      font-size: 0.75rem;
+      padding: 3px 9px;
+      font-weight: 600;
+    }
+    .fa-yoga-pos { background: rgba(52,211,153,0.15); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
+    .fa-yoga-neg { background: rgba(248,113,113,0.15); color: var(--error);   border: 1px solid rgba(248,113,113,0.3); }
   </style>
 </head>
 <body>
@@ -954,6 +1264,67 @@
     const gajakesariFlag = yogaFlagHTML('Gajakesari', !!yogas.gajakesari, 'present', 'absent');
     const kemadrumaFlag  = yogaFlagHTML('Kemadruma',  !!yogas.kemadruma,  'present (affliction)', 'absent');
 
+    // ── Full yoga summary ─────────────────────────────────────────────────────
+    const _NEG_TYPES = new Set(['kuja_dosha', 'papa_kartari', 'guru_chandala', 'shrapit']);
+    const _NEU_TYPES = new Set(['subha_kartari']);
+    const summaryPositive = [];
+    const summaryNegative = [];
+    const summaryNeutral  = [];
+
+    if (yogas.gajakesari) summaryPositive.push({ name: 'Gajakesari', detail: 'Jupiter in kendra from Moon — fame, intelligence, success' });
+    if (yogas.kemadruma)  summaryNegative.push({ name: 'Kemadruma',  detail: 'Moon has no planetary support — emotional struggles' });
+
+    for (const ry of yogas.raja_yogas || [])
+      summaryPositive.push({ name: `Raja Yoga (${ry.trikona_lord}+${ry.kendra_lord})`, detail: ry.association });
+    for (const dy of yogas.dhana_yogas || [])
+      summaryPositive.push({ name: `Dhana Yoga (${dy.wealth_lord}+${dy.prosperity_lord})`, detail: dy.association });
+    for (const pm of yogas.pancha_mahapurusha || [])
+      summaryPositive.push({ name: pm.name, detail: `${pm.graha} in ${pm.rasi} H${pm.house}` });
+    for (const nb of yogas.neechabhanga || [])
+      summaryPositive.push({ name: `Neechabhanga (${nb.graha||nb.name||'?'})`, detail: `${nb.graha||''} debilitation in ${nb.debilitation_sign||''} cancelled` });
+    for (const vr of yogas.viparita_raja_yogas || [])
+      summaryPositive.push({ name: `Viparita Raja (${vr.lord})`, detail: `H${vr.owns_house} lord in H${vr.placed_in_house} — gain through loss` });
+    for (const wy of yogas.wealth_yogas || [])
+      summaryPositive.push({ name: wy.name, detail: wy.detail });
+    for (const ly of yogas.lunar_yogas || [])
+      summaryPositive.push({ name: ly.name, detail: ly.detail });
+    for (const sy of yogas.solar_yogas || [])
+      summaryPositive.push({ name: sy.name, detail: sy.detail });
+    for (const ny of yogas.nabhasa_yogas || [])
+      summaryNeutral.push({ name: ny.name, detail: ny.detail });
+    for (const cy of yogas.conjunction_yogas || []) {
+      if (_NEG_TYPES.has(cy.type)) summaryNegative.push({ name: cy.name, detail: cy.detail });
+      else                         summaryPositive.push({ name: cy.name, detail: cy.detail });
+    }
+    for (const sy of yogas.special_yogas || []) {
+      if (_NEG_TYPES.has(sy.type))  summaryNegative.push({ name: sy.name, detail: sy.detail });
+      else                          summaryPositive.push({ name: sy.name, detail: sy.detail });
+    }
+    for (const kt of yogas.kartari_yogas || []) {
+      if (_NEU_TYPES.has(kt.type) || (kt.name||'').includes('Subha'))
+        summaryNeutral.push({ name: kt.name, detail: kt.detail });
+      else
+        summaryNegative.push({ name: kt.name, detail: kt.detail });
+    }
+
+    function yogaSummaryChip(y, cls) {
+      return `<div class="yoga-summary-chip yoga-chip-${cls}" title="${escapeHTML(y.detail)}">
+        <span class="ysc-icon">${cls==='pos'?'✓':cls==='neg'?'✗':'~'}</span>
+        <span class="ysc-name">${escapeHTML(y.name)}</span>
+      </div>`;
+    }
+    const summaryHTML = `
+      <div class="yoga-summary-counts">
+        <span class="ysc-count ysc-pos">${summaryPositive.length} positive</span>
+        <span class="ysc-count ysc-neg">${summaryNegative.length} affliction${summaryNegative.length!==1?'s':''}</span>
+        <span class="ysc-count ysc-neu">${summaryNeutral.length} neutral</span>
+      </div>
+      <div class="yoga-summary-chips">
+        ${summaryPositive.map(y=>yogaSummaryChip(y,'pos')).join('')}
+        ${summaryNeutral.map(y=>yogaSummaryChip(y,'neu')).join('')}
+        ${summaryNegative.map(y=>yogaSummaryChip(y,'neg')).join('')}
+      </div>`;
+
     const rajaCards = (yogas.raja_yogas || []).length
       ? (yogas.raja_yogas).map(y => `<div class="yoga-card">
           <div class="yoga-card-name">Raja Yoga — ${escapeHTML(y.trikona_lord)} + ${escapeHTML(y.kendra_lord)}</div>
@@ -1032,10 +1403,7 @@
       </div>
       <div class="result-card">
         <div class="result-card-header">&#9733; Yoga Summary</div>
-        <div style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px">
-          ${gajakesariFlag}
-          ${kemadrumaFlag}
-        </div>
+        <div style="padding:12px 16px">${summaryHTML}</div>
       </div>
       <div class="result-card">
         <div class="result-card-header">Raja Yogas &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— trikona + kendra lord association</span></div>
@@ -1087,12 +1455,14 @@
       </div>`;
 
     // ── Assemble output with tabs ────────────────────────────────────────────
+    const flowchart = (data.derived_features || {}).flowchart || {};
     document.getElementById('chart-section').innerHTML = `
       <div class="tab-bar" id="chart-tabs">
-        <button class="tab-btn active" id="tab-chart-btn"   onclick="switchTab('chart-tabs','ctab','tab-chart')">&#9728; Chart</button>
-        <button class="tab-btn"        id="tab-drishti-btn" onclick="switchTab('chart-tabs','ctab','tab-drishti')">&#128257; Drishti</button>
-        <button class="tab-btn"        id="tab-vargas-btn"  onclick="switchTab('chart-tabs','ctab','tab-vargas')">&#9651; Vargas</button>
-        <button class="tab-btn"        id="tab-yogas-btn"   onclick="switchTab('chart-tabs','ctab','tab-yogas')">&#9733; Yogas</button>
+        <button class="tab-btn active" id="tab-chart-btn"      onclick="switchTab('chart-tabs','ctab','tab-chart')">&#9728; Chart</button>
+        <button class="tab-btn"        id="tab-drishti-btn"    onclick="switchTab('chart-tabs','ctab','tab-drishti')">&#128257; Drishti</button>
+        <button class="tab-btn"        id="tab-vargas-btn"     onclick="switchTab('chart-tabs','ctab','tab-vargas')">&#9651; Vargas</button>
+        <button class="tab-btn"        id="tab-yogas-btn"      onclick="switchTab('chart-tabs','ctab','tab-yogas')">&#9733; Yogas</button>
+        <button class="tab-btn"        id="tab-flowchart-btn"  onclick="switchTab('chart-tabs','ctab','tab-flowchart')">&#9775; Raman-Analysis</button>
       </div>
 
       <!-- Chart tab -->
@@ -1149,7 +1519,222 @@
       <!-- Yogas tab -->
       <div class="tab-panel ctab" id="tab-yogas-panel">
         ${yogasPanel}
+      </div>
+
+      <!-- Raman-Analysis tab -->
+      <div class="tab-panel ctab" id="tab-flowchart-panel">
+        ${renderFinalAssessment(flowchart.final_assessment)}
+        <div class="fc-intro" style="margin-top:4px">
+          &#9660; Detailed 8-Module HTJH Analysis &nbsp;·&nbsp;
+          <span class="fc-badge fc-badge-favorable">FAVORABLE</span>
+          <span class="fc-badge fc-badge-mixed">MIXED</span>
+          <span class="fc-badge fc-badge-concern">CONCERN</span>
+          <span class="fc-badge fc-badge-ok">OK</span>
+          &nbsp;·&nbsp; Expand each module to see step-by-step findings.
+        </div>
+        ${renderFlowchartHTML(flowchart)}
       </div>`;
+  }
+
+  // ── Final Assessment Card renderer ─────────────────────────────────────────
+  function renderFinalAssessment(fa) {
+    if (!fa || !fa.grade) return '';
+
+    const gradeColor = {A:'var(--success)',B:'var(--info)',C:'var(--accent)',D:'var(--error)'}[fa.grade] || 'var(--muted)';
+    const scoreBar   = Math.min(100, fa.score || 0);
+    const scoreFill  = `background:linear-gradient(90deg,${gradeColor} ${scoreBar}%,rgba(255,255,255,0.06) ${scoreBar}%)`;
+
+    // Module scores row
+    const modChips = (fa.module_scores || []).map(m => {
+      const cls = `fa-mod-chip fa-mod-${m.status}`;
+      const stepCounts = [
+        m.favorable ? `${m.favorable}✓` : '',
+        m.ok        ? `${m.ok}~` : '',
+        m.mixed     ? `${m.mixed}±` : '',
+        m.concern   ? `${m.concern}✗` : '',
+      ].filter(Boolean).join(' ');
+      return `<div class="${cls}">
+        <span class="mod-id">${escapeHTML(m.id)}</span>
+        <span class="mod-pct">${m.score}%</span>
+        <span style="font-size:0.66rem;color:inherit;opacity:0.8;margin-left:3px">${escapeHTML(m.status.toUpperCase())}</span>
+        <span style="font-size:0.60rem;color:inherit;opacity:0.65;margin-left:4px">${stepCounts}</span>
+      </div>`;
+    }).join('');
+
+    // Life areas grid
+    const lifeCells = (fa.life_areas || []).map(la => {
+      const st = la.status || 'ok';
+      return `<div class="fa-life-cell lc-${st}">
+        <div class="lc-area">H${la.house} ${escapeHTML(la.area)}</div>
+        <span class="lc-badge lc-badge-${st}">${st.toUpperCase()}</span>
+        <div class="lc-finding">${escapeHTML(la.key_finding)}</div>
+      </div>`;
+    }).join('');
+
+    // Strengths / Challenges
+    const strHTML = (fa.strengths || []).map(s => `<li>${escapeHTML(s)}</li>`).join('');
+    const chalHTML = (fa.challenges || []).map(c => `<li>${escapeHTML(c)}</li>`).join('');
+
+    // Key observations
+    const obsHTML = (fa.key_observations || []).map(o => `<li>${escapeHTML(o)}</li>`).join('');
+
+    // Yoga tags
+    const posYogaTags = (fa.yogas_positive || []).map(y =>
+      `<span class="fa-yoga-tag fa-yoga-pos">${escapeHTML(y)}</span>`).join('');
+    const negYogaTags = (fa.yogas_negative || []).map(y =>
+      `<span class="fa-yoga-tag fa-yoga-neg">${escapeHTML(y)}</span>`).join('');
+
+    // Info chips
+    const chips = [
+      fa.lagna       ? `Lagna: ${escapeHTML(fa.lagna)}`             : '',
+      fa.lagna_lord  ? `LL: ${escapeHTML(fa.lagna_lord)}`           : '',
+      fa.moon        ? `Moon: ${escapeHTML(fa.moon)}`               : '',
+      fa.current_dasha ? `Dasha: ${escapeHTML(fa.current_dasha)}`   : '',
+    ].filter(Boolean).map(c => `<span class="fa-chip">${c}</span>`).join('');
+
+    // Verdict: split on double-space (sentence separators we used in Python)
+    const verdictFormatted = escapeHTML(fa.verdict || '')
+      .replace(/  /g, '<br><br>');
+
+    return `
+    <div class="fa-card">
+      <div class="fa-header">
+        <div class="fa-grade-box">
+          <div class="fa-grade-letter grade-${escapeHTML(fa.grade)}">${escapeHTML(fa.grade)}</div>
+          <div class="fa-grade-score">${fa.score}/100</div>
+        </div>
+        <div class="fa-meta">
+          <div class="fa-title">Final Assessment — ${escapeHTML(fa.grade_label)} Chart</div>
+          <div class="fa-subtitle">Raman HTJH 8-Module Rule-Based Analysis</div>
+          <div class="fa-chips">${chips}</div>
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          <div style="font-size:0.7rem;color:var(--muted);margin-bottom:2px">Overall Score</div>
+          <div style="width:160px;height:8px;border-radius:4px;${scoreFill};border:1px solid var(--border)"></div>
+          <div style="font-size:0.72rem;color:${gradeColor};font-weight:700">${fa.score}% — ${escapeHTML(fa.grade_label)}</div>
+        </div>
+      </div>
+
+      <div class="fa-body">
+
+        <!-- Verdict -->
+        <div>
+          <div class="fa-section-title">Overall Verdict</div>
+          <div class="fa-verdict">${verdictFormatted}</div>
+        </div>
+
+        <!-- Key Observations -->
+        <div>
+          <div class="fa-section-title">Key Observations</div>
+          <ul class="fa-obs-list">${obsHTML}</ul>
+        </div>
+
+        <!-- Module Scores -->
+        <div>
+          <div class="fa-section-title">Module Scores</div>
+          <div class="fa-mod-grid">${modChips}</div>
+        </div>
+
+        <!-- Strengths + Challenges -->
+        <div class="fa-two-col">
+          <div class="fa-sc-panel">
+            <div class="fa-sc-title-pos">Strengths (${(fa.strengths||[]).length})</div>
+            <ul class="fa-sc-list pos">${strHTML || '<li style="list-style:none;padding:0;color:var(--muted)">None detected.</li>'}</ul>
+          </div>
+          <div class="fa-sc-panel">
+            <div class="fa-sc-title-neg">Challenges (${(fa.challenges||[]).length})</div>
+            <ul class="fa-sc-list neg">${chalHTML || '<li style="list-style:none;padding:0;color:var(--muted)">None detected.</li>'}</ul>
+          </div>
+        </div>
+
+        <!-- Yogas -->
+        ${(posYogaTags || negYogaTags) ? `
+        <div>
+          <div class="fa-section-title">Yoga Summary</div>
+          <div class="fa-yoga-row">
+            ${posYogaTags}
+            ${negYogaTags}
+          </div>
+        </div>` : ''}
+
+        <!-- Life Areas Grid -->
+        <div>
+          <div class="fa-section-title">House-by-House Life Area Assessment</div>
+          <div class="fa-life-grid">${lifeCells}</div>
+        </div>
+
+        <!-- Timing Outlook -->
+        <div>
+          <div class="fa-section-title">Current Period Timing Outlook</div>
+          <div class="fa-timing">${escapeHTML(fa.timing_outlook)}</div>
+        </div>
+
+      </div>
+    </div>`;
+  }
+
+  // ── Flowchart renderer ──────────────────────────────────────────────────────
+  function renderFlowchartHTML(flowchart) {
+    if (!flowchart || !flowchart.modules || !flowchart.modules.length) {
+      return '<div class="error-banner active" style="display:block">Flowchart data not available — please compute the chart first.</div>';
+    }
+
+    function badgeHTML(status) {
+      const cls = 'fc-badge fc-badge-' + (status || 'ok');
+      const label = (status || 'ok').toUpperCase();
+      return `<span class="${cls}">${label}</span>`;
+    }
+
+    function tableHTML(rows) {
+      if (!rows || !rows.length) return '';
+      const cols = Object.keys(rows[0]);
+      const thead = `<tr>${cols.map(c => `<th>${escapeHTML(c)}</th>`).join('')}</tr>`;
+      const tbody = rows.map(row =>
+        `<tr>${cols.map(c => `<td>${escapeHTML(String(row[c] != null ? row[c] : ''))}</td>`).join('')}</tr>`
+      ).join('');
+      return `<div class="fc-table-wrap"><table class="fc-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+    }
+
+    function findingsHTML(findings) {
+      if (!findings || !findings.length) return '';
+      return `<ul class="fc-findings">${findings.map(f => {
+        if (!f || f === '—') return `<li data-separator="1">&nbsp;</li>`;
+        // Colour inline markers
+        const html = escapeHTML(f)
+          .replace(/^(✓)/,   '<span style="color:var(--success)">✓</span>')
+          .replace(/^(✗)/,   '<span style="color:var(--error)">✗</span>')
+          .replace(/^(⚠)/,   '<span style="color:var(--accent)">⚠</span>')
+          .replace(/^(Note:)/,'<span style="color:var(--info)">Note:</span>');
+        return `<li>${html}</li>`;
+      }).join('')}</ul>`;
+    }
+
+    return flowchart.modules.map((mod, mi) => {
+      const stepsHTML = (mod.steps || []).map(step => {
+        const body = `
+          <div class="fc-step-body">
+            ${findingsHTML(step.findings)}
+            ${tableHTML(step.table)}
+          </div>`;
+        return `<details class="fc-step">
+          <summary>
+            <span class="fc-step-tog">&#9658;</span>
+            ${badgeHTML(step.status)}
+            <span style="color:var(--text)">${escapeHTML(step.title)}</span>
+          </summary>
+          ${body}
+        </details>`;
+      }).join('');
+
+      const openAttr = mi === 0 ? ' open' : '';
+      return `<details class="fc-module"${openAttr}>
+        <summary>
+          <span class="fc-tog">&#9658;</span>
+          ${escapeHTML(mod.title)}
+        </summary>
+        <div class="fc-steps">${stepsHTML}</div>
+      </details>`;
+    }).join('');
   }
 
   function formatYoga(y) {

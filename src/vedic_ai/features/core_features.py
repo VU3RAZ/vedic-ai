@@ -417,17 +417,23 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         maha = get_active_mahadasha(bundle.dashas, today)
         if maha:
             maha_name = maha.graha.value
-            dasha_strength["mahadasha"] = assess_dasha_lord(
+            maha_assessment = assess_dasha_lord(
                 maha_name, bundle, lordships, aspects, vargottama, functional_nature
             )
+            maha_assessment["start"] = maha.start_date.isoformat()
+            maha_assessment["end"]   = maha.end_date.isoformat()
+            dasha_strength["mahadasha"] = maha_assessment
             from vedic_ai.engines.vimshottari import compute_antardasha_periods
             antar = get_active_antardasha(maha, today)
             if antar:
-                dasha_strength["antardasha"] = assess_dasha_lord(
+                antar_assessment = assess_dasha_lord(
                     antar.graha.value, bundle, lordships, aspects, vargottama, functional_nature
                 )
+                antar_assessment["start"] = antar.start_date.isoformat()
+                antar_assessment["end"]   = antar.end_date.isoformat()
+                dasha_strength["antardasha"] = antar_assessment
 
-    return {
+    result = {
         "planets": planets_out,
         "houses": houses_out,
         "aspects": {
@@ -455,3 +461,12 @@ def extract_core_features(bundle: ChartBundle) -> dict:
             "schema_version": bundle.schema_version,
         },
     }
+
+    # Build Raman HTJH flowchart (static rule-based analysis, no LLM)
+    try:
+        from vedic_ai.features.raman_flowchart import build_raman_flowchart
+        result["flowchart"] = build_raman_flowchart(bundle, result)
+    except Exception:
+        result["flowchart"] = {"modules": []}
+
+    return result
