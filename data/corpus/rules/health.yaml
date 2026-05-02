@@ -246,3 +246,260 @@
   source_refs:
     - "BPHS 36.1"
   conflict_policy: override
+
+# --- New Health Rules (H016–H030) ---
+
+- rule_id: H016
+  name: Mars in 1st House — Energetic Constitution with Injury Risk
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Mars in the Lagna produces a hot, energetic constitution with strong physical
+    drive, but also susceptibility to fevers, inflammation, injuries, and
+    impulsive accidents. The native tends toward physical activity and
+    recovers quickly, but should avoid excess heat and recklessness.
+  source_refs:
+    - "BPHS 15.7"
+  conflict_policy: merge
+
+- rule_id: H017
+  name: Mars in 8th House — Surgical Risk and Chronic Inflammation
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Mars in the 8th house of longevity (Ayu bhava) indicates a susceptibility
+    to surgeries, traumatic injuries, inflammatory conditions, or chronic
+    blood-related disorders. The native should take extra care with physical
+    safety and monitor chronic health indicators proactively.
+  source_refs:
+    - "BPHS 16.7"
+  conflict_policy: merge
+
+- rule_id: H018
+  name: 6th Lord in 8th House — Disease Becomes Chronic
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 8
+  explanation_template: >-
+    The 6th lord (disease) placed in the 8th house (chronic illness/longevity)
+    creates a connection between acute illness and long-term health complications.
+    Conditions that begin as short-term ailments can become entrenched without
+    timely and disciplined treatment.
+  source_refs:
+    - "BPHS 16.18"
+  conflict_policy: merge
+
+- rule_id: H019
+  name: 6th Lord in 12th House — Hospitalisation or Hidden Illness
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 12
+  explanation_template: >-
+    The 6th lord placed in the 12th house of isolation and hospitals indicates
+    potential for hospitalisations, institutionalised care, or prolonged periods
+    of convalescence. Hidden illnesses or those requiring bed rest are indicated.
+  source_refs:
+    - "BPHS 16.24"
+  conflict_policy: merge
+
+- rule_id: H020
+  name: 8th Lord in 6th House — Longevity Challenged by Disease
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: houses.8.lord_house
+      op: eq
+      value: 6
+  explanation_template: >-
+    The 8th lord (longevity) placed in the 6th house of illness indicates
+    that recurring or chronic disease can become a threat to long-term vitality.
+    Regular health monitoring and proactive lifestyle management are essential.
+  source_refs:
+    - "BPHS 17.6"
+  conflict_policy: merge
+
+- rule_id: H021
+  name: 8th Lord in 12th House — Longevity and Hospitalisation Concern
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: houses.8.lord_house
+      op: eq
+      value: 12
+  explanation_template: >-
+    The 8th lord in the 12th house connects longevity (8th) with hospitalisation
+    and isolation (12th). Extended stays in medical facilities or serious health
+    events requiring intensive care are possible. Spiritual practices support
+    physical recovery.
+  source_refs:
+    - "BPHS 17.12"
+  conflict_policy: merge
+
+- rule_id: H022
+  name: Rahu in 8th House — Mysterious Chronic Conditions
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Rahu in the 8th house of chronic illness and longevity is associated with
+    unusual, difficult-to-diagnose, or karmic health challenges. The native
+    may encounter unconventional or foreign-origin illnesses; alternative
+    and integrative medicine can be particularly beneficial.
+  source_refs:
+    - "BPHS 17.8"
+  conflict_policy: merge
+
+- rule_id: H023
+  name: Ketu in 8th House — Karmic Health Vulnerabilities
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Ketu in the 8th house brings karmic or spiritual dimensions to health
+    challenges, particularly related to the nervous system, immune system,
+    or mysterious conditions. The native may experience sudden health
+    transformations; spiritual practices aid healing.
+  source_refs:
+    - "BPHS 17.9"
+  conflict_policy: merge
+
+- rule_id: H024
+  name: Ketu in 6th House — Unusual Disease Patterns
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Ketu in the 6th house brings atypical or spiritually-rooted disease patterns.
+    The native may experience conditions that respond better to alternative or
+    energy-based medicine than to conventional treatment. Past-life karmas
+    may manifest as unusual physical ailments.
+  source_refs:
+    - "BPHS 16.9"
+  conflict_policy: merge
+
+- rule_id: H025
+  name: Saturn Aspecting Moon — Anxiety and Melancholy Tendency
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: planets.Saturn.aspects_to_houses
+      op: contains
+      value: 1
+    - feature: planets.Moon.in_kendra
+      op: eq
+      value: false
+  explanation_template: >-
+    Saturn's aspect on Moon-ruled areas of the chart creates a tendency toward
+    anxiety, depression, emotional repression, and psychosomatic illness.
+    The native benefits greatly from establishing emotional boundaries,
+    stress management practices, and regular mental health care.
+  source_refs:
+    - "BPHS 26.13"
+  conflict_policy: merge
+
+- rule_id: H026
+  name: 12th Lord in 1st House — Health Sacrificed for Others
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: houses.12.lord_house
+      op: eq
+      value: 1
+  explanation_template: >-
+    The 12th lord (isolation, loss, foreign lands) placed in the Lagna can
+    indicate health expenditure through service, sacrificial tendencies, or
+    a constitution that absorbs stress from the environment. The native should
+    guard against depleting their vitality in service to others.
+  source_refs:
+    - "BPHS 18.1"
+  conflict_policy: merge
+
+- rule_id: H027
+  name: 12th Lord in 6th House — Potential for Hospitalisation
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: houses.12.lord_house
+      op: eq
+      value: 6
+  explanation_template: >-
+    The 12th lord in the 6th house creates a connection between disease (6th)
+    and convalescence or hospitalisation (12th). The native should be attentive
+    to recurring health conditions and take proactive preventive measures to
+    avoid escalation requiring institutional care.
+  source_refs:
+    - "BPHS 18.6"
+  conflict_policy: merge
+
+- rule_id: H028
+  name: Jupiter in Trikona — Healing Constitution and Recovery
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Jupiter.in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter placed in a trikona (1st, 5th, or 9th house) provides protective
+    blessings for health, a healing constitution, and the capacity to recover
+    from illness. Dharmic living and optimism directly support the native's
+    physical wellbeing.
+  source_refs:
+    - "BPHS 15.7"
+  conflict_policy: merge
+
+- rule_id: H029
+  name: Lagna Lord Exalted — Excellent Constitution
+  scope: health
+  weight: 0.8
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The Lagna lord is exalted, conferring an excellent physical constitution,
+    strong immunity, and above-average vitality. The native possesses a
+    powerful physical vehicle and generally enjoys good health throughout life.
+  source_refs:
+    - "BPHS 15.1"
+  conflict_policy: override
+
+- rule_id: H030
+  name: Lagna Lord Debilitated — Constitutional Weakness
+  scope: health
+  weight: 0.5
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The Lagna lord is debilitated, weakening the native's physical constitution
+    and general vitality. The native is more susceptible to illness and slower
+    to recover; disciplined health habits, regular exercise, and preventive
+    care are essential safeguards.
+  source_refs:
+    - "BPHS 15.2"
+  conflict_policy: merge

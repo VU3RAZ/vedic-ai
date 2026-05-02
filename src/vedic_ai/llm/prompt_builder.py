@@ -348,7 +348,6 @@ def _passages_section(passages: list[RetrievedPassage]) -> str:
 
 
 def _task_section(scope: str, output_schema: dict, raman_method: bool) -> str:
-    schema_str = json.dumps(output_schema, sort_keys=True, indent=2)
     method_note = (
         " Use B.V. Raman's method: analyse the relevant house, its lord's placement, "
         "occupants, aspects, and confirm via the appropriate divisional chart."
@@ -357,8 +356,17 @@ def _task_section(scope: str, output_schema: dict, raman_method: bool) -> str:
         "and dasha periods that substantiate each point."
     )
     return (
-        f"Generate a {scope} interpretation.{method_note}\n"
-        f"Output schema:\n{schema_str}"
+        f"Generate a {scope} interpretation.{method_note}\n\n"
+        f"Respond with ONLY this JSON object — no markdown fences, no explanation, no extra keys:\n"
+        f'{{\n'
+        f'  "summary": "2-3 sentence overall {scope} reading grounded in the chart",\n'
+        f'  "details": [\n'
+        f'    "Plain English sentence citing a specific planet, house, sign, or yoga.",\n'
+        f'    "Another plain English sentence. Up to 5 items. Each item is a STRING, not an object."\n'
+        f'  ],\n'
+        f'  "rule_refs": ["rule_id_1", "rule_id_2"],\n'
+        f'  "passage_refs": ["chunk_id_1"]\n'
+        f'}}'
     )
 
 

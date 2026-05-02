@@ -1,3 +1,7 @@
+# Relationships scope rules — based on classical Jyotish principles
+# Primary significators: 7th house (marriage/partnerships), Venus (romance/spouse),
+# Jupiter (husband-significator for female charts), 2nd house (family)
+
 - rule_id: R001
   name: Venus in 7th House — Charming Partner
   scope: relationships
@@ -101,4 +105,427 @@
     energy toward partnerships, marriage, and committed relationships.
   source_refs:
     - "BPHS 23.0"
+  conflict_policy: merge
+
+# --- 7th Lord Positional Rules (R008–R019) ---
+# These fire based on where the 7th lord has gone, regardless of H7 occupants.
+
+- rule_id: R008
+  name: 7th Lord in 1st House — Partner Reflects Native's Identity
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 1
+  explanation_template: >-
+    The lord of the 7th house is placed in the Lagna, linking partnership deeply
+    to personal identity. The native and spouse often share similar traits,
+    appearance, or life goals; the native may meet the partner through
+    self-expression or personal endeavours.
+  source_refs:
+    - "BPHS 23.20"
+  conflict_policy: merge
+
+- rule_id: R009
+  name: 7th Lord in 2nd House — Spouse Supports Family Wealth
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 2
+  explanation_template: >-
+    The 7th lord is in the 2nd house of wealth and family, indicating that
+    marriage enhances the native's financial standing and family bonds.
+    The spouse is likely to be wealth-conscious and supportive of family values.
+  source_refs:
+    - "BPHS 23.21"
+  conflict_policy: merge
+
+- rule_id: R010
+  name: 7th Lord in 3rd House — Partnership Through Communication
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 3
+  explanation_template: >-
+    The 7th lord occupies the 3rd house of communication and siblings, suggesting
+    the native may meet a partner through sibling networks, short travels, or
+    media-related activities. Communication is central to the partnership.
+  source_refs:
+    - "BPHS 23.22"
+  conflict_policy: merge
+
+- rule_id: R011
+  name: 7th Lord in 4th House — Domestic Harmony in Marriage
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 4
+  explanation_template: >-
+    The lord of the 7th is placed in the 4th house (home and happiness), indicating
+    that the marriage is rooted in domestic harmony, emotional security, and
+    shared living. The spouse is likely nurturing and home-loving.
+  source_refs:
+    - "BPHS 23.23"
+  conflict_policy: merge
+
+- rule_id: R012
+  name: 7th Lord in 5th House — Romantic and Creative Partnership
+  scope: relationships
+  weight: 0.65
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 5
+  explanation_template: >-
+    The 7th lord in the 5th house of romance, children, and creativity indicates
+    a love match with strong romantic chemistry. The relationship is deeply
+    fulfilling emotionally; children and creative pursuits are central to the bond.
+  source_refs:
+    - "BPHS 23.24"
+  conflict_policy: merge
+
+- rule_id: R013
+  name: 7th Lord in 6th House — Marriage Involves Effort and Service
+  scope: relationships
+  weight: 0.45
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 6
+  explanation_template: >-
+    The 7th lord in the 6th house (dusthana) can indicate challenges in marriage
+    — conflicts, health issues of the spouse, or a relationship that demands
+    significant effort to maintain. The partner may be in a service profession.
+  source_refs:
+    - "BPHS 23.25"
+  conflict_policy: merge
+
+- rule_id: R014
+  name: 7th Lord in 8th House — Transformative or Hidden Partnerships
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 8
+  explanation_template: >-
+    The 7th lord in the 8th house (longevity/secrets) can indicate a transformative,
+    intense, or secretive relationship. There may be hidden aspects to partnerships,
+    or the marriage goes through deep regenerative phases. Longevity of the
+    spouse or marriage may require conscious attention.
+  source_refs:
+    - "BPHS 23.27"
+  conflict_policy: merge
+
+- rule_id: R015
+  name: 7th Lord in 9th House — Dharmic or Cross-Cultural Partnership
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 9
+  explanation_template: >-
+    The 7th lord placed in the 9th house of dharma and higher philosophy indicates
+    a spiritually or philosophically aligned partner. The native may marry someone
+    from a different culture, religion, or background, enriching their worldview.
+  source_refs:
+    - "BPHS 23.28"
+  conflict_policy: merge
+
+- rule_id: R016
+  name: 7th Lord in 10th House — Spouse is Career-Oriented
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The lord of the 7th house is placed in the 10th house of career and public life,
+    indicating a partner who is career-driven and publicly visible. The marriage
+    may have a practical, status-conscious dimension, and the partner often holds
+    professional authority.
+  source_refs:
+    - "BPHS 23.29"
+  conflict_policy: merge
+
+- rule_id: R017
+  name: 7th Lord in 11th House — Marriage Brings Social Gains
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 11
+  explanation_template: >-
+    The 7th lord in the 11th house of gains and social networks suggests that
+    marriage enhances the native's social circle and brings material or social
+    rewards. The partner is likely well-connected and helpful for the native's
+    ambitions.
+  source_refs:
+    - "BPHS 23.30"
+  conflict_policy: merge
+
+- rule_id: R018
+  name: 7th Lord in 12th House — Distant or Spiritually Oriented Spouse
+  scope: relationships
+  weight: 0.45
+  conditions:
+    - feature: houses.7.lord_house
+      op: eq
+      value: 12
+  explanation_template: >-
+    The 7th lord is placed in the 12th house of isolation, foreign lands, and
+    spirituality. The native may marry a foreigner or settle abroad after marriage;
+    alternatively, the partner may be spiritually inclined, reclusive, or the
+    relationship may involve separation or sacrifice.
+  source_refs:
+    - "BPHS 23.31"
+  conflict_policy: merge
+
+# --- Additional Planets in H7 (R019–R023) ---
+
+- rule_id: R019
+  name: Sun in 7th House — Authoritative Partner
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Sun in the 7th house brings an authoritative, proud, or government-connected
+    partner. The native may attract a dominant spouse; ego conflicts in the
+    relationship are possible if both partners seek control.
+  source_refs:
+    - "BPHS 23.5"
+  conflict_policy: merge
+
+- rule_id: R020
+  name: Moon in 7th House — Sensitive and Changeable Partnerships
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Moon in the 7th house indicates an emotionally sensitive, nurturing, and
+    somewhat changeable partner. The relationship is deeply feeling-oriented;
+    the spouse may be caring but also moody or dependent on emotional support.
+  source_refs:
+    - "BPHS 23.4"
+  conflict_policy: merge
+
+- rule_id: R021
+  name: Mercury in 7th House — Intellectual Partnership
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Mercury.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Mercury placed in the 7th house indicates a partner who is communicative,
+    intellectually stimulating, and youthful in temperament. The couple thrives
+    through shared ideas, writing, or intellectual pursuits.
+  source_refs:
+    - "BPHS 23.9"
+  conflict_policy: merge
+
+- rule_id: R022
+  name: Rahu in 7th House — Unconventional or Foreign Partnership
+  scope: relationships
+  weight: 0.45
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Rahu in the 7th house indicates attraction to unconventional, foreign, or
+    atypical partners. Marriage may come later, be with a foreign national, or
+    carry an unusual quality. Intense desire but potential for instability.
+  source_refs:
+    - "BPHS 23.17"
+  conflict_policy: merge
+
+- rule_id: R023
+  name: Ketu in 7th House — Spiritual Disengagement from Partnerships
+  scope: relationships
+  weight: 0.4
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Ketu in the 7th house brings spiritual disinterest in conventional marriage.
+    The native may find worldly partnerships unfulfilling; the partner may be
+    spiritually inclined, distant, or the relationship involves past-life karmas.
+  source_refs:
+    - "BPHS 23.18"
+  conflict_policy: merge
+
+# --- Kuja Dosha (R024) ---
+
+- rule_id: R024
+  name: Kuja Dosha — Mars in Sensitive Houses
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: planets.Mars.house
+      op: in
+      value: [1, 4, 8, 12]
+  explanation_template: >-
+    Mars is placed in one of the houses associated with Kuja Dosha (1st, 4th,
+    8th, or 12th), indicating an intense, sometimes volatile energy around
+    relationships and marriage. Classical texts recommend matching with a partner
+    who also carries Kuja Dosha or has a strong Mars, to harmonise this fiery energy.
+  source_refs:
+    - "BPHS 73.1"
+  conflict_policy: merge
+
+# --- Venus Dignity and Affliction (R025–R028) ---
+
+- rule_id: R025
+  name: Venus Debilitated — Romantic Challenges
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Venus.is_debilitated
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is debilitated in Virgo, weakening its capacity for love, harmony,
+    and romantic fulfilment. The native may be overly critical in relationships,
+    struggle to express affection, or face challenges finding or sustaining
+    a loving partnership.
+  source_refs:
+    - "BPHS 3.14"
+  conflict_policy: merge
+
+- rule_id: R026
+  name: Venus in Enemy Sign — Strained Romantic Expression
+  scope: relationships
+  weight: 0.45
+  conditions:
+    - feature: planets.Venus.in_enemy_sign
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is placed in an enemy sign, dampening its natural warmth and grace.
+    The native may experience friction in romantic relationships, difficulty
+    with emotional expression, or a tendency to attract unsuitable partners.
+  source_refs:
+    - "BPHS 3.15"
+  conflict_policy: merge
+
+- rule_id: R027
+  name: Venus Combust — Hidden Romantic Difficulties
+  scope: relationships
+  weight: 0.4
+  conditions:
+    - feature: planets.Venus.is_combust
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is combust the Sun, obscuring its natural capacity for love and
+    relationship harmony. Romantic matters may be overshadowed by ego or
+    authority figures; the native benefits from conscious cultivation of
+    emotional sensitivity and partnership skills.
+  source_refs:
+    - "BPHS 3.16"
+  conflict_policy: merge
+
+- rule_id: R028
+  name: Venus in Friend Sign — Warm Romantic Nature
+  scope: relationships
+  weight: 0.45
+  conditions:
+    - feature: planets.Venus.in_friend_sign
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus placed in a friendly sign expresses its romantic and aesthetic
+    qualities with ease. The native has a naturally warm, sociable disposition
+    toward relationships and typically enjoys harmonious partnerships.
+  source_refs:
+    - "BPHS 3.15"
+  conflict_policy: merge
+
+# --- 7th Lord Dignity (R029–R030) ---
+
+- rule_id: R029
+  name: 7th Lord Exalted — Excellent Partnership Prospects
+  scope: relationships
+  weight: 0.8
+  conditions:
+    - feature: houses.7.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The lord of the 7th house of marriage is exalted, indicating an exceptionally
+    favourable promise for partnerships. The native is likely to attract a
+    high-quality, accomplished, and supportive spouse.
+  source_refs:
+    - "BPHS 23.3"
+  conflict_policy: override
+
+- rule_id: R030
+  name: 7th Lord Debilitated — Partnership Struggles
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: houses.7.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The 7th house lord is debilitated, indicating challenges in forming or
+    sustaining a harmonious partnership. The native may attract an unsuitable
+    partner or face recurring difficulties in marriage that require active
+    spiritual and practical remediation.
+  source_refs:
+    - "BPHS 23.4"
+  conflict_policy: merge
+
+# --- 7th Lord in Kendra / Dusthana (R031–R032) ---
+
+- rule_id: R031
+  name: 7th Lord in Kendra — Stable and Visible Partnerships
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: houses.7.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 7th house is placed in a kendra (angular house), conferring
+    stability, social visibility, and endurance to the native's partnerships.
+    Marriage is likely to be a prominent and anchoring force in the native's life.
+  source_refs:
+    - "BPHS 23.5"
+  conflict_policy: merge
+
+- rule_id: R032
+  name: 7th Lord in Dusthana — Relationship Hardships
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: houses.7.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th house lord placed in a dusthana (6th, 8th, or 12th house) can bring
+    hardships, separations, or karmic challenges to the native's partnerships.
+    The native benefits from patience, conscious communication, and spiritual
+    perspective in navigating relationship difficulties.
+  source_refs:
+    - "BPHS 23.6"
   conflict_policy: merge

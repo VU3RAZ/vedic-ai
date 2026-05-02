@@ -1,12 +1,16 @@
 llm:
-  backend: ollama  # ollama | lm_studio
+  backend: ollama  # ollama | lm_studio | llamacpp
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
     timeout_seconds: 600
   lm_studio:
-    base_url: "http://localhost:1234/v1"
+    base_url: "http://localhost:1234"
     model: "local-model"
     timeout_seconds: 600
+  llamacpp:
+    base_url: "http://localhost:8080"
+    model: "default"
+    timeout_seconds: 600
   temperature: 0.2
-  max_tokens: 2048
+  max_tokens: 1024

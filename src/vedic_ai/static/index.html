@@ -539,6 +539,30 @@
       </div>
     </div>
 
+    <hr class="divider" />
+
+    <div>
+      <div class="section-title">LLM Backend</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="field">
+          <label for="llm-backend">Backend</label>
+          <select id="llm-backend" onchange="onBackendChange()">
+            <option value="ollama">Ollama</option>
+            <option value="lmstudio">LM Studio</option>
+            <option value="llamacpp">llama.cpp</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="llm-url">Base URL</label>
+          <input type="text" id="llm-url" placeholder="http://localhost:11434" />
+        </div>
+        <div class="field">
+          <label for="llm-model">Model</label>
+          <input type="text" id="llm-model" placeholder="qwen2.5:14b" />
+        </div>
+      </div>
+    </div>
+
     <div class="btn-group">
       <button class="btn btn-secondary" onclick="computeChart()">Compute Chart</button>
       <button class="btn btn-primary"   onclick="generatePrediction()">Generate Prediction</button>
@@ -579,6 +603,45 @@
 </div>
 
 <script>
+  // ── LLM backend defaults ───────────────────────────────────────────────────
+  const BACKEND_DEFAULTS = {
+    ollama:   { url: 'http://localhost:11434', model: 'qwen2.5:14b' },
+    lmstudio: { url: 'http://localhost:1234',  model: 'local-model' },
+    llamacpp: { url: 'http://localhost:8080',  model: 'default' },
+  };
+
+  function onBackendChange() {
+    const backend = document.getElementById('llm-backend').value;
+    const def = BACKEND_DEFAULTS[backend] || {};
+    document.getElementById('llm-url').value   = def.url   || '';
+    document.getElementById('llm-model').value = def.model || '';
+  }
+
+  async function initBackendSelector() {
+    try {
+      const resp = await fetch('/predictions/backends');
+      if (!resp.ok) return;
+      const data = await resp.json();
+      // Set active backend in selector
+      const sel = document.getElementById('llm-backend');
+      if (data.active && sel) {
+        sel.value = data.active;
+      }
+      // Merge server-side defaults (model names from models.yaml)
+      if (data.backends) {
+        for (const [key, cfg] of Object.entries(data.backends)) {
+          if (BACKEND_DEFAULTS[key]) {
+            if (cfg.base_url) BACKEND_DEFAULTS[key].url   = cfg.base_url;
+            if (cfg.model)    BACKEND_DEFAULTS[key].model = cfg.model;
+          }
+        }
+      }
+      onBackendChange();
+    } catch (_) {
+      onBackendChange();
+    }
+  }
+
   // ── Planet symbols ──────────────────────────────────────────────────────────
   const PLANET_SYMS = {
     Sun:     '&#9737;',
@@ -647,6 +710,9 @@
     const lat = parseFloat(document.getElementById('lat').value);
     const lon = parseFloat(document.getElementById('lon').value);
     if (isNaN(lat) || isNaN(lon)) { showError('Please enter valid latitude and longitude.'); return null; }
+    const llmBackend = document.getElementById('llm-backend').value;
+    const llmUrl     = document.getElementById('llm-url').value.trim();
+    const llmModel   = document.getElementById('llm-model').value.trim();
     return {
       birth_datetime: iso,
       latitude:  lat,
@@ -655,6 +721,9 @@
       scope:        document.getElementById('scope').value,
       dry_run:      document.getElementById('dryrun').checked,
       raman_method: document.getElementById('raman').checked,
+      llm_backend:  llmBackend || null,
+      llm_base_url: llmUrl    || null,
+      llm_model:    llmModel  || null,
     };
   }
 
@@ -1084,16 +1153,66 @@
 
   function formatYoga(y) {
     const t = y.type || '';
+    const note = y.note ? ` — ${y.note}` : '';
     if (t === 'lagna_lord_kendra')    return `Lagna lord ${y.graha} in kendra (H${y.house})`;
     if (t === 'lagna_lord_trikona')   return `Lagna lord ${y.graha} in trikona (H${y.house})`;
     if (t === 'lagna_lord_strong')    return `Lagna lord ${y.graha} ${y.dignity}`;
     if (t === 'lagna_lord_dusthana')  return `Lagna lord ${y.graha} in dusthana (H${y.house})`;
     if (t === 'sign_exchange')        return `${y.graha_a} ↔ ${y.graha_b} exchange (H${y.house_a}↔H${y.house_b})`;
-    if (t === 'd9_7th_lord_strong')   return `7th lord ${y.graha} ${y.dignity} (marriage strength)`;
+    // D6
+    if (t === 'd6_h6_lord_strong')    return `H6 lord ${y.graha} ${y.dignity} (health challenge)`;
+    if (t === 'd6_h8_lord_strong')    return `H8 lord ${y.graha} ${y.dignity} (obstacle indicated)`;
+    if (t === 'd6_h6_lord_kendra')    return `H6 lord ${y.graha} in kendra H${y.house}`;
+    if (t === 'd6_h8_lord_kendra')    return `H8 lord ${y.graha} in kendra H${y.house}`;
+    if (t === 'd6_malefic_in_lagna')  return `${y.graha} in D6 lagna (constitutional vulnerability)`;
+    // D8
+    if (t === 'd8_8th_lord_strong')   return `8th lord ${y.graha} ${y.dignity} (longevity factor)`;
+    if (t === 'd8_8th_lord_dusthana') return `8th lord ${y.graha} in dusthana H${y.house}`;
+    // D9
+    if (t === 'd9_7th_lord_strong')   return `7th lord ${y.graha} ${y.dignity} in H${y.house} (marriage strength)`;
     if (t === 'd9_7th_lord_kendra')   return `7th lord ${y.graha} in kendra H${y.house}`;
+    if (t === 'd9_venus_strong')      return `Venus ${y.dignity} in H${y.house} (partnership quality)`;
+    // D10
     if (t === 'd10_career_planet_prominent') return `${y.graha} in H${y.house} (career emphasis)`;
+    // D12
     if (t === 'd12_parent_luminary_exalted')    return `${y.graha} exalted (parent benefic)`;
     if (t === 'd12_parent_luminary_debilitated') return `${y.graha} debilitated (parent challenge)`;
+    // D16
+    if (t === 'd16_venus_strong')     return `Venus ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd16_venus_dusthana')   return `Venus in dusthana H${y.house}${note}`;
+    if (t === 'd16_moon_strong')      return `Moon ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd16_moon_debilitated') return `Moon debilitated in H${y.house}${note}`;
+    if (t === 'd16_4th_lord_strong')  return `4th lord ${y.graha} ${y.dignity} (vehicle fortune)`;
+    // D20
+    if (t === 'd20_jupiter_strong')   return `Jupiter ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd20_jupiter_angular')  return `Jupiter in H${y.house}${note}`;
+    if (t === 'd20_ketu_trikona')     return `Ketu in trikona H${y.house}${note}`;
+    if (t === 'd20_moon_strong')      return `Moon ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd20_9th_lord_strong')  return `9th lord ${y.graha} ${y.dignity}${note}`;
+    // D24
+    if (t === 'd24_mercury_strong')   return `Mercury ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd24_mercury_dusthana') return `Mercury in dusthana H${y.house}${note}`;
+    if (t === 'd24_jupiter_strong')   return `Jupiter ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd24_h4_lord_strong')   return `4th lord ${y.graha} ${y.dignity} (academic foundation)`;
+    if (t === 'd24_h5_lord_strong')   return `5th lord ${y.graha} ${y.dignity} (intelligence strong)`;
+    if (t === 'd24_h4_lord_dusthana') return `4th lord ${y.graha} in dusthana H${y.house}`;
+    if (t === 'd24_h5_lord_dusthana') return `5th lord ${y.graha} in dusthana H${y.house}`;
+    // D27
+    if (t === 'd27_sun_strong')       return `Sun ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd27_sun_debilitated')  return `Sun debilitated in H${y.house}${note}`;
+    if (t === 'd27_mars_strong')      return `Mars ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd27_mars_dusthana')    return `Mars in dusthana H${y.house}${note}`;
+    if (t === 'd27_saturn_exalted')   return `Saturn exalted in H${y.house}${note}`;
+    if (t === 'd27_saturn_debilitated') return `Saturn debilitated in H${y.house}${note}`;
+    if (t === 'd27_lagna_lord_dusthana') return `Lagna lord ${y.graha} in H${y.house}${note}`;
+    // D30
+    if (t === 'd30_malefic_sensitive_house') return `${y.graha} in H${y.house} (misfortune area)`;
+    // D60
+    if (t === 'd60_saturn_strong')    return `Saturn ${y.dignity} in H${y.house}${note}`;
+    if (t === 'd60_saturn_debilitated') return `Saturn debilitated in H${y.house}${note}`;
+    if (t === 'd60_rahu_trikona')     return `Rahu in trikona H${y.house}${note}`;
+    if (t === 'd60_ketu_trikona')     return `Ketu in trikona H${y.house}${note}`;
+    if (t === 'd60_lagna_lord_strong') return `Lagna lord ${y.graha} ${y.dignity}${note}`;
     return t.replace(/_/g, ' ');
   }
 
@@ -1199,6 +1318,9 @@
       .replace(/"/g,  '&quot;')
       .replace(/'/g,  '&#039;');
   }
+
+  // Initialise on load
+  initBackendSelector();
 </script>
 
 </body>

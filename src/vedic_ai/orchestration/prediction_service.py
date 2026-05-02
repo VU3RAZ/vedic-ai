@@ -99,9 +99,14 @@ def call_llm_for_interpretation(
 
     try:
         import json
-        payload = json.loads(raw)
+        from vedic_ai.llm.output_parser import _unwrap_if_list, _strip_think_tags, _normalize_details
+        payload = _normalize_details(_unwrap_if_list(json.loads(_strip_think_tags(raw))))
     except Exception:
         payload = repair_llm_output(raw, _OUTPUT_SCHEMA)
+
+    if not isinstance(payload, dict):
+        logger.warning("LLM returned non-dict payload (%s); falling back to empty", type(payload).__name__)
+        payload = {"summary": str(payload), "details": [], "rule_refs": [], "passage_refs": []}
 
     errors = validate_llm_output(payload, _OUTPUT_SCHEMA)
     if errors:

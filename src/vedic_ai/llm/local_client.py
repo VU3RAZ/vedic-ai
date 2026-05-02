@@ -1,4 +1,4 @@
-"""Local LLM client supporting Ollama and LM Studio HTTP backends."""
+"""Local LLM client supporting Ollama, LM Studio, and llama.cpp HTTP backends."""
 
 from __future__ import annotations
 
@@ -6,12 +6,18 @@ import json
 
 from vedic_ai.core.exceptions import ConfigError
 
+_VALID_BACKENDS = ("ollama", "lmstudio", "llamacpp")
+
 
 class LocalLLMClient:
-    """HTTP client for a local LLM running on Ollama or LM Studio.
+    """HTTP client for a local LLM running on Ollama, LM Studio, or llama.cpp.
 
     Ollama:    base_url="http://localhost:11434", backend="ollama"
     LM Studio: base_url="http://localhost:1234",  backend="lmstudio"
+    llama.cpp: base_url="http://localhost:8080",  backend="llamacpp"
+
+    llamacpp uses /v1/chat/completions (chat template applied by server).
+    lmstudio uses /v1/completions (raw completion).
     """
 
     def __init__(
@@ -20,24 +26,28 @@ class LocalLLMClient:
         base_url: str = "http://localhost:11434",
         backend: str = "ollama",
         timeout: int = 120,
+        max_tokens: int = 1024,
     ) -> None:
-        if backend not in ("ollama", "lmstudio"):
-            raise ConfigError(f"Unknown backend '{backend}'. Use 'ollama' or 'lmstudio'.")
+        if backend not in _VALID_BACKENDS:
+            raise ConfigError(f"Unknown backend '{backend}'. Use one of: {', '.join(_VALID_BACKENDS)}.")
         self.model_name = model_name
         self.base_url = base_url.rstrip("/")
         self.backend = backend
         self.timeout = timeout
+        self.max_tokens = max_tokens
 
     def generate(self, prompt: str, temperature: float = 0.2) -> str:
         """Send prompt to the local model and return the raw response text."""
         try:
-            import requests
+            import requests  # noqa: F401
         except ImportError as exc:  # pragma: no cover
             raise ImportError("requests is required: pip install requests") from exc
 
         if self.backend == "ollama":
             return self._generate_ollama(prompt, temperature)
-        return self._generate_lmstudio(prompt, temperature)
+        if self.backend == "llamacpp":
+            return self._generate_chat_completions(prompt, temperature)
+        return self._generate_openai_compat(prompt, temperature)
 
     def _generate_ollama(self, prompt: str, temperature: float) -> str:
         import requests
@@ -53,7 +63,26 @@ class LocalLLMClient:
         resp.raise_for_status()
         return resp.json().get("response", "")
 
-    def _generate_lmstudio(self, prompt: str, temperature: float) -> str:
+    def _generate_chat_completions(self, prompt: str, temperature: float) -> str:
+        """POST to /v1/chat/completions — used for llama.cpp (applies chat template server-side)."""
+        import requests
+
+        url = f"{self.base_url}/v1/chat/completions"
+        payload = {
+            "model": self.model_name,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": self.max_tokens,
+        }
+        resp = requests.post(url, json=payload, timeout=self.timeout)
+        resp.raise_for_status()
+        choices = resp.json().get("choices", [])
+        if not choices:
+            return ""
+        return choices[0].get("message", {}).get("content", "")
+
+    def _generate_openai_compat(self, prompt: str, temperature: float) -> str:
+        """POST to /v1/completions — used for LM Studio (raw completion, no chat template)."""
         import requests
 
         url = f"{self.base_url}/v1/completions"
@@ -61,7 +90,7 @@ class LocalLLMClient:
             "model": self.model_name,
             "prompt": prompt,
             "temperature": temperature,
-            "max_tokens": 2048,
+            "max_tokens": self.max_tokens,
         }
         resp = requests.post(url, json=payload, timeout=self.timeout)
         resp.raise_for_status()
@@ -69,6 +98,7 @@ class LocalLLMClient:
         if not choices:
             return ""
         return choices[0].get("text", "")
+
 
 def generate_structured_interpretation(
     prompt: str,
@@ -96,4 +126,3 @@ def generate_structured_interpretation(
         return json.loads(raw)
     except json.JSONDecodeError:
         return repair_llm_output(raw, schema={})
-

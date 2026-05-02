@@ -277,7 +277,7 @@ tests/
 | Astrology engine | pyswisseph (Moshier ephemeris, Lahiri ayanamsa) |
 | Embeddings | sentence-transformers `all-MiniLM-L6-v2` (384-dim, CPU) |
 | Vector store | FAISS `IndexFlatIP` (cosine similarity) |
-| LLM serving | Ollama (`qwen2.5:14b`) or LM Studio (OpenAI-compatible) |
+| LLM serving | Ollama, LM Studio, or llama.cpp — selectable in UI or `configs/models.yaml` |
 | API | FastAPI + uvicorn |
 | Web UI | Vanilla HTML/CSS/JS (no npm, no CDN, fully offline) |
 | Cache / storage | SQLite |
@@ -285,23 +285,41 @@ tests/
 
 ## LLM configuration (`configs/models.yaml`)
 
+Three backends are supported. Set `backend` to whichever server you are running:
+
 ```yaml
 llm:
-  backend: ollama         # or lm_studio
+  backend: ollama         # ollama | lm_studio | llamacpp
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
-    timeout_seconds: 600  # CPU inference can be slow
+    timeout_seconds: 600
+  lm_studio:
+    base_url: "http://localhost:1234"
+    model: "local-model"
+    timeout_seconds: 600
+  llamacpp:
+    base_url: "http://localhost:8080"
+    model: "default"
+    timeout_seconds: 600
   temperature: 0.2
   max_tokens: 2048
 ```
 
-Start Ollama and pull the model once:
-
+**Ollama** — start server and pull model once:
 ```bash
 sudo systemctl start ollama
 ollama pull qwen2.5:14b
 ```
+
+**LM Studio** — load a model in the LM Studio app, enable the local server on port 1234.
+
+**llama.cpp** — build `llama-server` and point it at a GGUF file:
+```bash
+llama-server --model /path/to/model.gguf --host 0.0.0.0 --port 8080 --ctx-size 4096
+```
+
+The backend can also be switched **per-request** from the web UI — a "LLM Backend" section in the left panel lets you choose the backend, base URL, and model without restarting the server.
 
 Expected throughput (CPU-only): ~3–5 tokens/sec. A 500-token report takes ~2 minutes.
 

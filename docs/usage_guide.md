@@ -28,6 +28,7 @@
 9. [Caching and storage](#9-caching-and-storage)
 10. [Evaluation and reproducibility](#10-evaluation-and-reproducibility)
 11. [Common issues](#11-common-issues)
+12. [Recommended models for CPU-only inference](#12-recommended-models-for-cpu-only-inference)
 
 ---
 
@@ -36,16 +37,41 @@
 | Requirement | Detail |
 |---|---|
 | Python | 3.11 or later |
-| Ollama | Running on `http://localhost:11434` |
-| Model pulled | `ollama pull qwen2.5:14b` |
+| LLM server | Ollama, LM Studio, or llama.cpp (one of them running) |
 | System RAM | ≥ 16 GB recommended (14B model loads ~9 GB) |
 
-Verify Ollama is ready:
+### Option A — Ollama (default)
 
 ```bash
-ollama list              # should show qwen2.5:14b
-curl http://localhost:11434/api/tags   # should return JSON
+sudo systemctl start ollama
+ollama pull qwen2.5:14b
+ollama list                           # confirm model is present
+curl http://localhost:11434/api/tags  # should return JSON
 ```
+
+### Option B — LM Studio
+
+Load any GGUF model inside the LM Studio app and start the local server on port 1234.
+Set `backend: lm_studio` in `configs/models.yaml` (or select it in the web UI).
+
+### Option C — llama.cpp server
+
+```bash
+# Build llama.cpp (first time only)
+git clone https://github.com/ggerganov/llama.cpp && cd llama.cpp
+cmake -B build && cmake --build build --config Release -j
+
+# Start the server
+./build/bin/llama-server \
+  --model /path/to/model.gguf \
+  --host 0.0.0.0 --port 8080 \
+  --ctx-size 4096 --n-predict 2048
+
+# Verify
+curl http://localhost:8080/v1/models
+```
+
+Set `backend: llamacpp` in `configs/models.yaml` (or select it in the web UI).
 
 ---
 
@@ -100,26 +126,34 @@ All configuration lives in `configs/`. You rarely need to edit these for basic u
 
 ```yaml
 llm:
-  backend: ollama          # ollama | lm_studio
+  backend: ollama          # ollama | lm_studio | llamacpp
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
     timeout_seconds: 600   # CPU inference — increase if needed
+  lm_studio:
+    base_url: "http://localhost:1234"
+    model: "local-model"
+    timeout_seconds: 600
+  llamacpp:
+    base_url: "http://localhost:8080"
+    model: "default"
+    timeout_seconds: 600
   temperature: 0.2
   max_tokens: 2048
 ```
 
+To switch backends, change the `backend` key. Alternatively, use the **LLM Backend** selector in the web UI — it overrides the config for that request without editing any files.
+
 To switch to a different model (e.g. `llama3.1:8b`):
 ```yaml
-model: "llama3.1:8b"
+ollama:
+  model: "llama3.1:8b"
 ```
 
-To use LM Studio instead of Ollama:
-```yaml
-backend: lm_studio
-lm_studio:
-  base_url: "http://localhost:1234/v1"
-  model: "local-model"
+llama.cpp server startup:
+```bash
+llama-server --model /path/to/model.gguf --port 8080 --ctx-size 4096
 ```
 
 ### `configs/app.yaml` — Engine and logging
@@ -166,6 +200,7 @@ vedic-ai serve --host 0.0.0.0 --port 8080   # accessible on your LAN
 Open the printed URL in any browser. The interface provides:
 
 - **Birth Data form** — name, date/time, timezone selector (14 presets), lat/lon, scope, dry-run toggle
+- **LLM Backend selector** — choose Ollama / LM Studio / llama.cpp, with editable base URL and model name; overrides `configs/models.yaml` per-request without a server restart
 - **Quick Fill chips** — one-click example charts (Nagpur 1972, Delhi 1985, Mumbai 2000)
 - **Compute Chart** button — shows the natal chart table (planet, sign, degree, house, retrograde), house table (sign, lord, occupants), and Vimshottari dasha table
 - **Generate Prediction** button — runs the full pipeline and shows one prediction card per scope, each with summary, details, and a collapsible evidence accordion (rule triggers + BPHS passages)
@@ -815,6 +850,102 @@ pip install faiss-cpu sentence-transformers
 
 ---
 
+## 12. Recommended models for CPU-only inference
+
+All models below are quantized GGUF (Q4_K_M) and work with both Ollama and llama.cpp server.
+Tested for structured JSON output, which is critical for this pipeline.
+
+### By RAM tier
+
+#### Tier 1 — Fast (≤8 GB RAM · ~4–8 tok/s on a modern 6-core CPU)
+
+| Model | RAM | Ollama pull | llama.cpp `-hf` |
+|---|---|---|---|
+| **Qwen2.5 7B Instruct** | ~4.5 GB | `ollama pull qwen2.5:7b` | `Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M` |
+| **Phi-4 Mini 3.8B** | ~2.5 GB | `ollama pull phi4-mini` | `microsoft/Phi-4-mini-instruct-GGUF:Q4_K_M` |
+| **Llama 3.2 3B Instruct** | ~2 GB | `ollama pull llama3.2:3b` | `bartowski/Llama-3.2-3B-Instruct-GGUF:Q4_K_M` |
+| **Mistral 7B Instruct v0.3** | ~4.5 GB | `ollama pull mistral:7b-instruct` | `bartowski/Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M` |
+
+#### Tier 2 — Balanced (8–16 GB RAM · ~2–4 tok/s)
+
+| Model | RAM | Ollama pull | llama.cpp `-hf` |
+|---|---|---|---|
+| **Qwen2.5 14B Instruct** *(default)* | ~9 GB | `ollama pull qwen2.5:14b` | `Qwen/Qwen2.5-14B-Instruct-GGUF:Q4_K_M` |
+| **Gemma 3 12B** | ~7.5 GB | `ollama pull gemma3:12b` | `google/gemma-3-12b-it-GGUF:Q4_K_M` |
+| **Llama 3.1 8B Instruct** | ~5 GB | `ollama pull llama3.1:8b` | `bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M` |
+| **Phi-3 Medium 14B** | ~9 GB | `ollama pull phi3:14b` | `microsoft/Phi-3-medium-4k-instruct-GGUF:Q4_K_M` |
+
+#### Tier 3 — Quality (16–32 GB RAM · ~1–2 tok/s)
+
+| Model | RAM | Ollama pull | llama.cpp `-hf` |
+|---|---|---|---|
+| **Qwen2.5 32B Instruct** | ~20 GB | `ollama pull qwen2.5:32b` | `Qwen/Qwen2.5-32B-Instruct-GGUF:Q4_K_M` |
+| **Gemma 3 27B** | ~17 GB | `ollama pull gemma3:27b` | `google/gemma-3-27b-it-GGUF:Q4_K_M` |
+| **Mistral Small 22B** | ~14 GB | `ollama pull mistral-small` | `bartowski/Mistral-Small-3.1-22B-Instruct-2503-GGUF:Q4_K_M` |
+
+### Starting each backend
+
+#### Ollama
+```bash
+sudo systemctl start ollama
+ollama pull qwen2.5:7b        # or any model from the table above
+```
+
+Set in `configs/models.yaml`:
+```yaml
+llm:
+  backend: ollama
+  ollama:
+    model: "qwen2.5:7b"
+```
+
+#### llama.cpp server (`-hf` auto-downloads from HuggingFace)
+```bash
+# Qwen2.5 7B — best speed/quality balance
+./llama.cpp/build/bin/llama-server \
+  -hf Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 4096
+
+# Qwen2.5 14B — higher quality (current default equivalent)
+./llama.cpp/build/bin/llama-server \
+  -hf Qwen/Qwen2.5-14B-Instruct-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 4096
+
+# Gemma 3 12B — strong alternative
+./llama.cpp/build/bin/llama-server \
+  -hf google/gemma-3-12b-it-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 8192
+
+# Mistral 7B
+./llama.cpp/build/bin/llama-server \
+  -hf bartowski/Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 4096
+```
+
+Models are cached in `~/.cache/llama.cpp/` after the first download.
+If a model requires a HuggingFace login: `huggingface-cli login`
+
+Set in `configs/models.yaml` (or use the web UI backend selector):
+```yaml
+llm:
+  backend: llamacpp
+  llamacpp:
+    base_url: "http://localhost:8080"
+    model: "default"
+```
+
+### Why Qwen2.5 for this pipeline
+
+Prompts in this app request **structured JSON** with nested keys. Qwen2.5 was trained heavily on function-calling and structured-output tasks — it produces well-formed JSON more reliably than Llama or Mistral at the same parameter count, which means the `repair_llm_output` fallback triggers less often.
+
+### What to avoid on CPU-only
+
+- **70B models** — even Q2 quantization needs ~30 GB and runs at ~0.3 tok/s
+- **Unquantized F16/F32** — 2–4× the RAM for marginal quality gain
+- **Code-specialized models** (DeepSeek-Coder, CodeLlama) — weaker natural language reasoning than instruct variants for prediction prose
+
+---
+
 ## Quick-reference cheat sheet
 
 ```bash
@@ -858,12 +989,29 @@ curl -X POST http://localhost:8000/charts/compute \
   -H "Content-Type: application/json" \
   -d '{"birth_datetime":"1990-04-05T10:30:00+05:30","latitude":28.61,"longitude":77.21}'
 
-# ── LLM ──────────────────────────────────────────────────────────────────────
+# ── LLM — OLLAMA ─────────────────────────────────────────────────────────────
 sudo systemctl start ollama
-ollama pull qwen2.5:14b
+ollama pull qwen2.5:14b           # default (quality)
+ollama pull qwen2.5:7b            # faster alternative
 # Keep model warm (avoids cold-start delay):
 curl http://localhost:11434/api/generate \
   -d '{"model":"qwen2.5:14b","keep_alive":"1h","prompt":"","stream":false}'
+
+# ── LLM — LLAMA.CPP (-hf auto-downloads GGUF) ────────────────────────────────
+./llama.cpp/build/bin/llama-server \
+  -hf Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 4096
+
+./llama.cpp/build/bin/llama-server \
+  -hf Qwen/Qwen2.5-14B-Instruct-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 4096
+
+./llama.cpp/build/bin/llama-server \
+  -hf google/gemma-3-12b-it-GGUF:Q4_K_M \
+  --port 8080 --ctx-size 8192
+
+# ── LLM — BACKEND API ────────────────────────────────────────────────────────
+curl http://localhost:8000/predictions/backends   # show active backend + defaults
 
 # ── TESTS AND DEBUG ───────────────────────────────────────────────────────────
 pytest tests/unit -q

@@ -1,3 +1,6 @@
+# Personality scope rules — based on classical Jyotish principles
+# Primary significators: 1st house (Lagna/self), Lagna lord, Sun (soul/identity)
+
 - rule_id: P001
   name: Sun in Lagna — Natural Leader
   scope: personality
@@ -162,3 +165,286 @@
   source_refs:
     - "BPHS 26.4"
   conflict_policy: defer
+
+# --- Additional Planets in Lagna (P012–P015) ---
+
+- rule_id: P012
+  name: Mars in Lagna — Assertive and Courageous Nature
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Mars placed in the Lagna produces an energetic, bold, and assertive
+    personality with strong physical vitality and a pioneering spirit.
+    The native is direct, competitive, and may have a hot or impulsive temperament.
+  source_refs:
+    - "BPHS 15.7"
+  conflict_policy: merge
+
+- rule_id: P013
+  name: Venus in Lagna — Refined and Aesthetic Personality
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Venus in the Lagna blesses the native with a charming, artistic, and
+    pleasure-loving temperament. Physical attractiveness is often present;
+    the personality radiates grace, sociability, and a love of beauty.
+  source_refs:
+    - "BPHS 15.11"
+  conflict_policy: merge
+
+- rule_id: P014
+  name: Mercury in Lagna — Intellectual and Communicative Nature
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: planets.Mercury.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Mercury in the Lagna produces a quick, analytical, and communicative
+    personality. The native is curious, versatile, and expresses ideas with
+    clarity and wit; youthful energy is maintained throughout life.
+  source_refs:
+    - "BPHS 15.9"
+  conflict_policy: merge
+
+- rule_id: P015
+  name: Ketu in Lagna — Spiritual and Detached Personality
+  scope: personality
+  weight: 0.5
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Ketu in the Lagna indicates a spiritually inclined, introspective, and
+    somewhat detached personality. The native may be drawn to mysticism or
+    ascetic pursuits, and may carry a sense of otherworldliness in their manner.
+  source_refs:
+    - "BPHS 15.15"
+  conflict_policy: merge
+
+# --- Lagna Lord Positional Rules (P016–P023) ---
+
+- rule_id: P016
+  name: Lagna Lord in 10th House — Career-Driven Identity
+  scope: personality
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The Lagna lord is placed in the 10th house of career and public life.
+    The native's core identity is expressed through professional achievement;
+    they are driven, ambitious, and naturally visible in public or social arenas.
+  source_refs:
+    - "BPHS 7.10"
+  conflict_policy: merge
+
+- rule_id: P017
+  name: Lagna Lord in 4th House — Rooted and Home-Loving Nature
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: houses.1.lord_house
+      op: eq
+      value: 4
+  explanation_template: >-
+    The Lagna lord rests in the 4th house of home and inner happiness. The native's
+    personality is deeply shaped by family, cultural roots, and domestic life.
+    Emotional security through property and home-building is a defining theme.
+  source_refs:
+    - "BPHS 7.4"
+  conflict_policy: merge
+
+- rule_id: P018
+  name: Lagna Lord in 7th House — Partnership-Focused Identity
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: houses.1.lord_house
+      op: eq
+      value: 7
+  explanation_template: >-
+    The Lagna lord is in the 7th house, placing relationships and partnerships
+    at the core of the native's identity. The native often defines themselves
+    through their primary relationship and may be naturally diplomatic.
+  source_refs:
+    - "BPHS 7.7"
+  conflict_policy: merge
+
+- rule_id: P019
+  name: Lagna Lord in 9th House — Dharmic and Philosophical Nature
+  scope: personality
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_house
+      op: eq
+      value: 9
+  explanation_template: >-
+    The Lagna lord placed in the 9th house of dharma and philosophy bestows
+    a naturally principled, truth-seeking, and spiritually oriented personality.
+    The native is often philosophical, interested in higher learning and travel.
+  source_refs:
+    - "BPHS 7.9"
+  conflict_policy: merge
+
+- rule_id: P020
+  name: Lagna Lord in 5th House — Creative and Intellectual Identity
+  scope: personality
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_house
+      op: eq
+      value: 5
+  explanation_template: >-
+    The Lagna lord in the 5th house of intellect, creativity, and children
+    indicates a native who expresses their identity through creative or
+    intellectual pursuits. Intelligence, playfulness, and artistic talent
+    are prominent personality traits.
+  source_refs:
+    - "BPHS 7.5"
+  conflict_policy: merge
+
+- rule_id: P021
+  name: Lagna Lord Exalted — Confident and Empowered Self
+  scope: personality
+  weight: 0.8
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The Lagna lord is exalted, conferring exceptional personal strength,
+    confidence, and vitality. The native possesses a powerful sense of self
+    and is capable of great achievement in their chosen field.
+  source_refs:
+    - "BPHS 7.1"
+  conflict_policy: override
+
+- rule_id: P022
+  name: Lagna Lord Debilitated — Personality Challenges and Inner Growth
+  scope: personality
+  weight: 0.5
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The Lagna lord is debilitated, indicating challenges to self-confidence
+    and personal expression. The native may struggle with self-doubt or
+    identity issues, but these very challenges often become the catalyst
+    for remarkable inner growth.
+  source_refs:
+    - "BPHS 7.3"
+  conflict_policy: merge
+
+- rule_id: P023
+  name: Lagna Lord in Dusthana — Personality Under Pressure
+  scope: personality
+  weight: 0.45
+  conditions:
+    - feature: houses.1.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The Lagna lord is placed in a dusthana (6th, 8th, or 12th house), indicating
+    that the native's self-expression is shaped by adversity, loss, or struggle.
+    Resilience and character development through hardship are recurring themes.
+  source_refs:
+    - "BPHS 7.6"
+  conflict_policy: merge
+
+# --- Special Yogas Affecting Personality (P024–P026) ---
+
+- rule_id: P024
+  name: Pancha Mahapurusha Yoga — Exceptional Personality
+  scope: personality
+  weight: 0.85
+  conditions:
+    - feature: yogas.pancha_mahapurusha
+      op: ne
+      value: []
+  explanation_template: >-
+    One or more Pancha Mahapurusha yogas are present (Ruchaka, Bhadra, Hamsa,
+    Malavya, or Sasa), indicating an extraordinary personality with outstanding
+    qualities associated with the yoga-forming planet. The native is blessed
+    with exceptional character, abilities, and recognition in their lifetime.
+  source_refs:
+    - "BPHS 36.4"
+  conflict_policy: override
+
+- rule_id: P025
+  name: Raja Yoga — Leadership Capacity and Elevated Status
+  scope: personality
+  weight: 0.75
+  conditions:
+    - feature: yogas.raja_yogas
+      op: ne
+      value: []
+  explanation_template: >-
+    One or more Raja Yogas are formed in the chart, indicating a personality
+    endowed with leadership qualities, natural authority, and the potential
+    for elevated social or professional status. Others naturally look to
+    this native for guidance and direction.
+  source_refs:
+    - "BPHS 39.1"
+  conflict_policy: merge
+
+- rule_id: P026
+  name: Lagna Lord Vargottama — Consistent and Steadfast Character
+  scope: personality
+  weight: 0.65
+  conditions:
+    - feature: planets.Sun.is_vargottama
+      op: eq
+      value: true
+  explanation_template: >-
+    The Sun is vargottama (same sign in D1 and D9), amplifying the native's
+    core identity, vitality, and self-expression. The character is consistent,
+    purposeful, and clearly defined throughout life.
+  source_refs:
+    - "BPHS 11.4"
+  conflict_policy: merge
+
+- rule_id: P027
+  name: Moon Debilitated — Emotional Sensitivity and Vulnerability
+  scope: personality
+  weight: 0.5
+  conditions:
+    - feature: planets.Moon.is_debilitated
+      op: eq
+      value: true
+  explanation_template: >-
+    Moon is debilitated in Scorpio, indicating deep emotional sensitivity,
+    inner turmoil, and a tendency toward anxiety or despondency. The native
+    has a complex inner world and may struggle with emotional consistency,
+    but gains great depth and empathy from these experiences.
+  source_refs:
+    - "BPHS 15.4"
+  conflict_policy: merge
+
+- rule_id: P028
+  name: Jupiter Aspecting Lagna — Blessed and Optimistic Outlook
+  scope: personality
+  weight: 0.6
+  conditions:
+    - feature: planets.Jupiter.aspects_to_houses
+      op: contains
+      value: 1
+  explanation_template: >-
+    Jupiter casts its benevolent aspect on the Lagna, blessing the native
+    with an optimistic outlook, moral integrity, and a naturally expansive
+    personality. Wisdom and generosity colour the self-expression.
+  source_refs:
+    - "BPHS 26.3"
+  conflict_policy: merge

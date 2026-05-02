@@ -78,6 +78,10 @@ class PredictionRequest(BaseModel):
     scope: str = "all"
     dry_run: bool = False
     raman_method: bool = False   # Emphasise B.V. Raman-style house analysis in retrieval
+    # Optional per-request LLM overrides (override configs/models.yaml)
+    llm_backend: str | None = None   # ollama | lmstudio | llamacpp
+    llm_base_url: str | None = None
+    llm_model: str | None = None
 
 
 def export_report(report: PredictionReport, fmt: str = "json") -> str | dict:
@@ -116,6 +120,25 @@ def list_scopes() -> list[str]:
     return list(_VALID_SCOPES)
 
 
+@router.get("/backends")
+def list_backends() -> dict:
+    """Return available LLM backend configurations and the active default."""
+    cfg_llm = _models_config.get("llm", {})
+    backends = {
+        "ollama":   {"base_url": "http://localhost:11434", "model": "qwen2.5:14b"},
+        "lmstudio": {"base_url": "http://localhost:1234",  "model": "local-model"},
+        "llamacpp": {"base_url": "http://localhost:8080",  "model": "default"},
+    }
+    # Merge in whatever is in models.yaml
+    for key in backends:
+        if key in cfg_llm:
+            backends[key].update(cfg_llm[key])
+    return {
+        "active": cfg_llm.get("backend", "ollama"),
+        "backends": backends,
+    }
+
+
 @router.post("")
 def predict(request: PredictionRequest) -> dict:
     """Generate a Vedic astrology prediction report from birth data.
@@ -150,18 +173,20 @@ def predict(request: PredictionRequest) -> dict:
         name=request.name,
     )
 
-    # Build LLM client from models.yaml config
+    # Build LLM client — per-request overrides take precedence over models.yaml
     llm_client = None
     if not request.dry_run:
         try:
             from vedic_ai.llm.local_client import LocalLLMClient
-            backend = _models_config.get("llm", {}).get("backend", "ollama")
-            backend_cfg = _models_config.get("llm", {}).get(backend, {})
+            cfg_llm = _models_config.get("llm", {})
+            backend = request.llm_backend or cfg_llm.get("backend", "ollama")
+            backend_cfg = cfg_llm.get(backend, {})
             llm_client = LocalLLMClient(
-                model_name=backend_cfg.get("model", "mistral:7b-instruct"),
-                base_url=backend_cfg.get("base_url", "http://localhost:11434"),
+                model_name=request.llm_model or backend_cfg.get("model", "default"),
+                base_url=request.llm_base_url or backend_cfg.get("base_url", "http://localhost:11434"),
                 backend=backend,
                 timeout=backend_cfg.get("timeout_seconds", 600),
+                max_tokens=cfg_llm.get("max_tokens", 4096),
             )
         except Exception:
             pass

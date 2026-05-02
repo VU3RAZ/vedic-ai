@@ -1,3 +1,7 @@
+# Career scope rules — based on classical Jyotish principles
+# Primary significators: 10th house (Karma bhava), 10th lord, Sun (authority/status),
+# Saturn (effort/service), Jupiter (wisdom professions)
+
 - rule_id: C001
   name: Sun in 10th House — Career Prominence
   scope: career
@@ -147,4 +151,295 @@
     underachievement in professional life that require conscious remediation.
   source_refs:
     - "BPHS 24.4"
+  conflict_policy: defer
+
+# --- Additional Planets in 10th House (C011–C015) ---
+
+- rule_id: C011
+  name: Venus in 10th House — Creative or Luxury Profession
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Venus in the 10th house brings success in creative fields such as the arts,
+    entertainment, fashion, beauty, or hospitality. The native excels in careers
+    that require aesthetic sensibility, social skills, and charm.
+  source_refs:
+    - "BPHS 24.11"
+  conflict_policy: merge
+
+- rule_id: C012
+  name: Moon in 10th House — Public-Facing and Nurturing Career
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Moon in the 10th house gives a career in the public eye — politics, media,
+    hospitality, healthcare, or nurturing professions. The native's professional
+    reputation fluctuates but has strong emotional resonance with the public.
+  source_refs:
+    - "BPHS 24.4"
+  conflict_policy: merge
+
+- rule_id: C013
+  name: Mercury in 10th House — Intellectual or Communications Career
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: planets.Mercury.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Mercury occupying the 10th house indicates a career in communication,
+    writing, teaching, trade, technology, or analytical fields. The native
+    thrives in environments that reward intellect, adaptability, and information
+    management.
+  source_refs:
+    - "BPHS 24.9"
+  conflict_policy: merge
+
+- rule_id: C014
+  name: Rahu in 10th House — Unconventional or Foreign Career
+  scope: career
+  weight: 0.55
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Rahu in the 10th house drives intense ambition for career success, often
+    through unconventional or foreign channels. The native may rise rapidly in
+    fields connected with technology, foreign cultures, or mass media.
+  source_refs:
+    - "BPHS 24.17"
+  conflict_policy: merge
+
+- rule_id: C015
+  name: Ketu in 10th House — Spiritual or Renunciative Career Path
+  scope: career
+  weight: 0.45
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Ketu in the 10th house can detach the native from conventional career
+    ambitions, leading toward spiritual, research-oriented, or behind-the-scenes
+    roles. There may be sudden changes in career direction or a pull toward
+    renunciation of worldly status.
+  source_refs:
+    - "BPHS 24.18"
+  conflict_policy: merge
+
+# --- 10th Lord Positional Rules (C016–C021) ---
+
+- rule_id: C016
+  name: 10th Lord in 1st House — Career Tied to Personal Identity
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 1
+  explanation_template: >-
+    The 10th house lord placed in the Lagna brings career matters directly into
+    the native's self-expression. The native's professional identity and personal
+    identity merge; they are known primarily through their work and achievements.
+  source_refs:
+    - "BPHS 24.20"
+  conflict_policy: merge
+
+- rule_id: C017
+  name: 10th Lord in 2nd House — Wealth-Focused Career
+  scope: career
+  weight: 0.55
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 2
+  explanation_template: >-
+    The 10th lord placed in the 2nd house of accumulated wealth indicates that
+    the native's career is strongly motivated by financial accumulation. Careers
+    in banking, finance, trade, or family business are indicated.
+  source_refs:
+    - "BPHS 24.21"
+  conflict_policy: merge
+
+- rule_id: C018
+  name: 10th Lord in 5th House — Creative or Speculative Career
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 5
+  explanation_template: >-
+    The 10th lord in the 5th house of creativity and speculation favours careers
+    in entertainment, education, creative arts, stock trading, or advisory roles.
+    The native's intelligence and creative vision drive professional success.
+  source_refs:
+    - "BPHS 24.24"
+  conflict_policy: merge
+
+- rule_id: C019
+  name: 10th Lord in 9th House — Career in Law, Philosophy, or Foreign Affairs
+  scope: career
+  weight: 0.6
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 9
+  explanation_template: >-
+    The 10th lord in the 9th house of dharma and higher wisdom indicates a career
+    in law, philosophy, religion, foreign affairs, higher education, or international
+    trade. The native's professional path is shaped by strong ethical principles.
+  source_refs:
+    - "BPHS 24.28"
+  conflict_policy: merge
+
+- rule_id: C020
+  name: 10th Lord in 11th House — Career Bringing High Gains
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 11
+  explanation_template: >-
+    The lord of the 10th placed in the 11th house of gains is one of the most
+    favourable placements for career income. The native achieves financial success
+    and social recognition through their professional efforts.
+  source_refs:
+    - "BPHS 24.30"
+  conflict_policy: merge
+
+# --- 11th Lord Placements (C021–C022) ---
+
+- rule_id: C021
+  name: 11th Lord in Kendra — Career Gains and Social Success
+  scope: career
+  weight: 0.55
+  conditions:
+    - feature: houses.11.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 11th house (gains, income, social network) is placed in an
+    angular house, indicating that career-related gains and social achievements
+    are a dominant theme in the native's life. Networking and professional
+    ambitions consistently produce results.
+  source_refs:
+    - "BPHS 25.1"
+  conflict_policy: merge
+
+- rule_id: C022
+  name: 11th Lord in Trikona — Fortunate Income and Social Standing
+  scope: career
+  weight: 0.55
+  conditions:
+    - feature: houses.11.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The 11th lord placed in a trine supports the native's income and social gains
+    through dharmic means. Fortune and professional recognition come relatively
+    naturally, often backed by good karma and past meritorious actions.
+  source_refs:
+    - "BPHS 25.2"
+  conflict_policy: merge
+
+# --- 6th Lord in Career Context (C023) ---
+
+- rule_id: C023
+  name: 6th Lord in 10th House — Service, Health, or Legal Career
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The 6th lord (service, health, conflict) placed in the 10th house indicates
+    a career in public service, medicine, law, military, or dispute resolution.
+    The native may rise through overcoming adversity or serving others in need.
+  source_refs:
+    - "BPHS 24.6"
+  conflict_policy: merge
+
+# --- Yoga-Based Career Indicators (C024–C026) ---
+
+- rule_id: C024
+  name: Raja Yoga — Professional Recognition and Authority
+  scope: career
+  weight: 0.8
+  conditions:
+    - feature: yogas.raja_yogas
+      op: ne
+      value: []
+  explanation_template: >-
+    One or more Raja Yogas are present in the chart, indicating the potential
+    for exceptional professional recognition, authority, and elevated social
+    status. The native carries the planetary blessings for leadership and
+    public achievement.
+  source_refs:
+    - "BPHS 39.1"
+  conflict_policy: merge
+
+- rule_id: C025
+  name: 10th Lord in Own Sign — Steady Career Path
+  scope: career
+  weight: 0.7
+  conditions:
+    - feature: houses.10.lord_dignity
+      op: in
+      value: ["own", "moolatrikona"]
+  explanation_template: >-
+    The 10th house lord is in its own sign or moolatrikona, conferring a stable,
+    self-directed career. The native excels in roles where they have autonomy
+    and operates with natural authority in their professional domain.
+  source_refs:
+    - "BPHS 24.2"
+  conflict_policy: override
+
+- rule_id: C026
+  name: Yogakaraka in 10th House — Exceptional Career Blessing
+  scope: career
+  weight: 0.8
+  conditions:
+    - feature: houses.10.is_occupied
+      op: eq
+      value: true
+    - feature: planets.Saturn.is_yogakaraka
+      op: eq
+      value: true
+  explanation_template: >-
+    A Yogakaraka planet (ruler of both a trikona and a kendra) occupies or
+    influences the 10th house, bestowing exceptional career potential. This
+    is one of the most powerful indicators of professional achievement and
+    lasting recognition in the native's chart.
+  source_refs:
+    - "BPHS 34.1"
+  conflict_policy: override
+
+- rule_id: C027
+  name: 10th Lord Retrograde — Non-Linear Career Path
+  scope: career
+  weight: 0.4
+  conditions:
+    - feature: houses.10.lord_is_retrograde
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th house lord is retrograde, indicating a career path that may
+    involve reversals, reconsiderations, or unusual trajectories. The native
+    often revisits professional choices and may achieve success through
+    unconventional or delayed routes.
+  source_refs:
+    - "BPHS 24.5"
   conflict_policy: defer

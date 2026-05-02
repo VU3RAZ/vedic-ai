@@ -192,9 +192,88 @@ def _detect_varga_yogas(chart: DivisionalChart, division: str) -> list[dict]:
         for g in (Graha.SUN, Graha.MOON):
             p = chart.planets.get(g.value)
             if p and p.dignity == Dignity.EXALTED:
-                yogas.append({"type": "d12_luminary_exalted", "graha": g.value})
+                yogas.append({"type": "d12_parent_luminary_exalted", "graha": g.value})
             elif p and p.dignity == Dignity.DEBILITATED:
-                yogas.append({"type": "d12_luminary_debilitated", "graha": g.value})
+                yogas.append({"type": "d12_parent_luminary_debilitated", "graha": g.value})
+
+    # D16-specific: Venus/Moon strength → vehicles and comforts
+    if division == "D16":
+        venus = chart.planets.get(Graha.VENUS.value)
+        moon = chart.planets.get(Graha.MOON.value)
+        if venus and venus.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d16_venus_strong", "dignity": venus.dignity.value, "house": venus.house, "note": "vehicle/comfort fortune"})
+        if venus and venus.house in DUSTHANA_HOUSES:
+            yogas.append({"type": "d16_venus_dusthana", "house": venus.house, "note": "vehicle obstacles/losses"})
+        if moon and moon.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d16_moon_strong", "dignity": moon.dignity.value, "house": moon.house, "note": "comforts and luxuries enhanced"})
+        if moon and moon.dignity == Dignity.DEBILITATED:
+            yogas.append({"type": "d16_moon_debilitated", "house": moon.house, "note": "domestic/comfort challenges"})
+        # 4th lord strong → property and vehicles from family
+        h4_lord = RASI_LORDS[chart.houses[4].rasi]
+        h4l = chart.planets.get(h4_lord.value)
+        if h4l and h4l.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d16_4th_lord_strong", "graha": h4_lord.value, "dignity": h4l.dignity.value})
+
+    # D20-specific: Jupiter/Ketu/Moon for spiritual progress
+    if division == "D20":
+        jupiter = chart.planets.get(Graha.JUPITER.value)
+        ketu = chart.planets.get(Graha.KETU.value)
+        moon = chart.planets.get(Graha.MOON.value)
+        if jupiter and jupiter.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d20_jupiter_strong", "dignity": jupiter.dignity.value, "house": jupiter.house, "note": "strong spiritual wisdom"})
+        if jupiter and jupiter.house in KENDRA_HOUSES | TRIKONA_HOUSES:
+            yogas.append({"type": "d20_jupiter_angular", "house": jupiter.house, "note": "dharmic path supported"})
+        if ketu and ketu.house in TRIKONA_HOUSES:
+            yogas.append({"type": "d20_ketu_trikona", "house": ketu.house, "note": "spiritual liberation potential"})
+        if moon and moon.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d20_moon_strong", "dignity": moon.dignity.value, "house": moon.house, "note": "devotional nature enhanced"})
+        # 9th lord strength → religious activities
+        h9_lord = RASI_LORDS[chart.houses[9].rasi]
+        h9l = chart.planets.get(h9_lord.value)
+        if h9l and h9l.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d20_9th_lord_strong", "graha": h9_lord.value, "dignity": h9l.dignity.value, "note": "religious merit"})
+
+    # D24-specific: Mercury/Jupiter for education and learning
+    if division == "D24":
+        mercury = chart.planets.get(Graha.MERCURY.value)
+        jupiter = chart.planets.get(Graha.JUPITER.value)
+        if mercury and mercury.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d24_mercury_strong", "dignity": mercury.dignity.value, "house": mercury.house, "note": "sharp intellect, academic success"})
+        if mercury and mercury.house in DUSTHANA_HOUSES:
+            yogas.append({"type": "d24_mercury_dusthana", "house": mercury.house, "note": "educational obstacles"})
+        if jupiter and jupiter.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d24_jupiter_strong", "dignity": jupiter.dignity.value, "house": jupiter.house, "note": "higher learning, philosophy"})
+        # 4th and 5th lord placement (education houses)
+        for h in (4, 5):
+            h_lord = RASI_LORDS[chart.houses[h].rasi]
+            hl = chart.planets.get(h_lord.value)
+            if hl and hl.dignity in _STRONG_DIGNITIES:
+                yogas.append({"type": f"d24_h{h}_lord_strong", "graha": h_lord.value, "dignity": hl.dignity.value})
+            if hl and hl.house in DUSTHANA_HOUSES:
+                yogas.append({"type": f"d24_h{h}_lord_dusthana", "graha": h_lord.value, "house": hl.house})
+
+    # D27-specific: Sun/Mars/Saturn for physical strength and vitality
+    if division == "D27":
+        sun = chart.planets.get(Graha.SUN.value)
+        mars = chart.planets.get(Graha.MARS.value)
+        saturn = chart.planets.get(Graha.SATURN.value)
+        if sun and sun.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d27_sun_strong", "dignity": sun.dignity.value, "house": sun.house, "note": "vitality and constitution strong"})
+        if sun and sun.dignity == Dignity.DEBILITATED:
+            yogas.append({"type": "d27_sun_debilitated", "house": sun.house, "note": "physical constitution weak"})
+        if mars and mars.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d27_mars_strong", "dignity": mars.dignity.value, "house": mars.house, "note": "physical strength and courage"})
+        if mars and mars.house in DUSTHANA_HOUSES:
+            yogas.append({"type": "d27_mars_dusthana", "house": mars.house, "note": "injury/accident risk"})
+        if saturn and saturn.dignity == Dignity.EXALTED:
+            yogas.append({"type": "d27_saturn_exalted", "house": saturn.house, "note": "endurance and stamina"})
+        if saturn and saturn.dignity == Dignity.DEBILITATED:
+            yogas.append({"type": "d27_saturn_debilitated", "house": saturn.house, "note": "chronic health issues"})
+        # Lagna lord in 6th or 8th → physical vulnerability
+        ll_graha = RASI_LORDS[chart.houses[1].rasi]
+        ll_p = chart.planets.get(ll_graha.value)
+        if ll_p and ll_p.house in (6, 8):
+            yogas.append({"type": "d27_lagna_lord_dusthana", "graha": ll_graha.value, "house": ll_p.house, "note": "physical resilience challenged"})
 
     # D30-specific: Saturn/Mars/Rahu/Ketu in 1st or 8th → misfortune area
     if division == "D30":
@@ -202,6 +281,25 @@ def _detect_varga_yogas(chart: DivisionalChart, division: str) -> list[dict]:
             p = chart.planets.get(g.value)
             if p and p.house in (1, 8):
                 yogas.append({"type": "d30_malefic_sensitive_house", "graha": g.value, "house": p.house})
+
+    # D60-specific: Saturn/Rahu for karma themes
+    if division == "D60":
+        saturn = chart.planets.get(Graha.SATURN.value)
+        rahu = chart.planets.get(Graha.RAHU.value)
+        ketu = chart.planets.get(Graha.KETU.value)
+        if saturn and saturn.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d60_saturn_strong", "dignity": saturn.dignity.value, "house": saturn.house, "note": "karmic debts being resolved"})
+        if saturn and saturn.dignity == Dignity.DEBILITATED:
+            yogas.append({"type": "d60_saturn_debilitated", "house": saturn.house, "note": "heavy karmic burden"})
+        if rahu and rahu.house in TRIKONA_HOUSES:
+            yogas.append({"type": "d60_rahu_trikona", "house": rahu.house, "note": "worldly karma active"})
+        if ketu and ketu.house in TRIKONA_HOUSES:
+            yogas.append({"type": "d60_ketu_trikona", "house": ketu.house, "note": "spiritual karma ripening"})
+        # Strong lagna lord → karmic merit carries forward
+        ll_graha = RASI_LORDS[chart.houses[1].rasi]
+        ll_p = chart.planets.get(ll_graha.value)
+        if ll_p and ll_p.dignity in _STRONG_DIGNITIES:
+            yogas.append({"type": "d60_lagna_lord_strong", "graha": ll_graha.value, "dignity": ll_p.dignity.value, "note": "past-life merit supports this life"})
 
     return yogas
 
