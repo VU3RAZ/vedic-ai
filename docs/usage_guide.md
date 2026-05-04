@@ -124,13 +124,20 @@ All configuration lives in `configs/`. You rarely need to edit these for basic u
 
 ### `configs/models.yaml` — LLM backend
 
+Four backends are supported. `configs/models.yaml` is gitignored so it is safe to store API keys there.
+
 ```yaml
 llm:
-  backend: ollama          # ollama | lm_studio | llamacpp
+  backend: gemini          # ollama | lm_studio | llamacpp | gemini
+  gemini:
+    model: "gemini-flash-lite-latest"   # free tier: 1,500 req/day, ~2 s/request
+    max_tokens: 4096
+    timeout_seconds: 60
+    api_key: ""            # paste key here OR set GEMINI_API_KEY env var
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
-    timeout_seconds: 600   # CPU inference — increase if needed
+    timeout_seconds: 600
   lm_studio:
     base_url: "http://localhost:1234"
     model: "local-model"
@@ -140,18 +147,23 @@ llm:
     model: "default"
     timeout_seconds: 600
   temperature: 0.2
-  max_tokens: 2048
+  max_tokens: 4096
 ```
 
-To switch backends, change the `backend` key. Alternatively, use the **LLM Backend** selector in the web UI — it overrides the config for that request without editing any files.
-
-To switch to a different model (e.g. `llama3.1:8b`):
-```yaml
-ollama:
-  model: "llama3.1:8b"
+**Gemini setup (recommended — free, fast):**
+```bash
+pip install google-genai
+# Get free key: https://aistudio.google.com/apikey
+# Then either:
+export GEMINI_API_KEY=AIza...
+# or paste it into configs/models.yaml under gemini.api_key
 ```
+Set `backend: gemini` — 1,500 free requests/day, ~2 seconds per scope.
 
-llama.cpp server startup:
+**Local backends:**  
+To switch, change the `backend` key. Use the **LLM Backend** selector in the web UI to override per-request without a server restart.
+
+llama.cpp server:
 ```bash
 llama-server --model /path/to/model.gguf --port 8080 --ctx-size 4096
 ```
@@ -385,8 +397,9 @@ The API is now available at `http://localhost:8000`. Interactive docs at `http:/
 | GET | `/` | Web UI (HTML frontend) |
 | GET | `/health` | Liveness check |
 | GET | `/predictions/scopes` | List valid scopes |
-| POST | `/predictions` | Run full prediction pipeline |
-| POST | `/charts/compute` | Compute chart only (no prediction) |
+| POST | `/predictions` | Full prediction pipeline (LLM synthesis) |
+| POST | `/charts/compute` | Compute natal chart only (no prediction) |
+| POST | `/transits/compute` | Gochara transit analysis (no LLM — instant) |
 
 ---
 
@@ -401,10 +414,14 @@ The API is now available at `http://localhost:8000`. Interactive docs at `http:/
   "place_name": "Delhi",
   "name": "Arjuna",
   "scope": "all",
-  "dry_run": false
+  "dry_run": false,
+  "transit_datetime": "2026-05-04T12:00:00+05:30"
 }
 ```
-`scope` accepts `"all"` (default — runs all three and merges sections), `"personality"`, `"career"`, or `"relationships"`.
+`scope` accepts `"all"` (runs all scopes and merges sections), `"personality"`, `"career"`, `"relationships"`, or `"health"`.  
+`transit_datetime` (optional) — triggers the Gochara engine; its findings are injected as structured context into the LLM prompt. The LLM synthesizes natal + transit without re-deriving positions.
+
+The response includes an `llm_debug` array with one entry per scope — each has `scope`, `prompt` (full text sent), and `llm_raw` (exact model response). This powers the ⚙ Debug tab in the web UI.
 
 **`curl` example:**
 ```bash
@@ -456,6 +473,31 @@ curl -s -X POST http://localhost:8000/charts/compute \
 
 ---
 
+#### `POST /transits/compute`
+
+Returns a full Gochara analysis — purely rule-based, no LLM, instant response.
+
+```bash
+curl -s -X POST http://localhost:8000/transits/compute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "birth_datetime": "1972-08-27T19:45:00+05:30",
+    "birth_latitude": 21.15,
+    "birth_longitude": 79.08,
+    "transit_datetime": "2026-05-04T12:00:00+05:30"
+  }' | python3 -m json.tool
+```
+
+**Response includes:**
+- `planet_results` — per-planet Gochara result (house from Moon, result_key, short_effect, Vedha status, dasha lord flag)
+- `sadhe_sati` — active/phase/description/Saturn house from Moon
+- `special_alerts` — Guru Chandala, Mars–Saturn conjunction, etc.
+- `observations` — engine-generated synthesis sentences
+- `overall_tone` — favorable / unfavorable / mixed / cautious
+- `remedies` — prioritized list with mantra (+ Mantra Mahodadhi citation), Vedic root mantra (RV/YV/AV verse), stotra, charity (+ BPHS Ch.88 verse), fasting, deity puja, gemstone note, behavioral upaya
+
+---
+
 ## 5. What happens inside the pipeline
 
 When you call `run_prediction_pipeline()` (or `vedic-ai predict`), the following sequence executes in order. Each step persists a debugging artifact to `data/processed/artifacts/`.
@@ -500,29 +542,45 @@ BirthData
   • Cosine search over indexed corpus chunks
   → list[RetrievedPassage] (BPHS, Phaladeepika, nakshatra notes, …)
     │
+    ▼ Step 5b  (only when transit_datetime is provided)
+[Gochara engine]  ←── engines/gochara.py
+  • Computes transit snapshot (planet positions at transit_datetime)
+  • Evaluates Gochara house effects from natal Moon (BPHS Ch.85–87)
+  • Checks Vedha obstruction table per graha
+  • Detects Sadhe Sati / Ashtama Shani / Kantaka Shani
+  • Flags Guru Chandala, Mars–Saturn special alerts
+  • Builds remedies with classical citations (Mantra Mahodadhi, BPHS Ch.88)
+  → GocharaReport dict  ── saved → artifacts/gochara.json
+    │
     ▼ Step 6
-[Build prompt]  ←── prompt_builder.py
-  • Fixed section order: CHART FACTS → DERIVED FEATURES →
-    TRIGGERED RULES → SUPPORTING PASSAGES → TASK
+[Build synthesis prompt]  ←── prompt_builder.py
+  • Synthesis-only design: LLM receives ENGINE FINDINGS, not raw chart data
+  • Section order: NATIVE CONTEXT → ENGINE FINDINGS → FUNCTIONAL NATURE →
+    DASHA STRENGTH → VARGA ANALYSIS → DASHA TIMING →
+    [TRANSIT / GOCHARA CONTEXT] → TRIGGERED RULE FINDINGS →
+    CLASSICAL PASSAGES → TASK
+  • Explicit prohibitions in instruction: no position re-derivation,
+    no remedy invention, no unsupported yogas, no contradicting engine tone
   • Deterministic for fixed input (snapshot-testable)
     │
     ▼ Step 7
-[Generate interpretation]  ←── LocalLLMClient → Ollama → qwen2.5:14b
-  • Sends prompt via HTTP to Ollama (or LM Studio)
-  • Expects valid JSON response: {summary, details, rule_refs, passage_refs}
+[Generate synthesis]  ←── LocalLLMClient (Ollama/llama.cpp) or GeminiClient
+  • Sends prompt to configured backend
+  • Expects valid JSON: {summary, details, rule_refs, passage_refs}
   • Falls back through json5 → regex extract → minimal fallback on parse error
+  • Captures (interpretation, prompt_sent, llm_raw) for debug tab
   → interpretation dict  ── saved → artifacts/interpretation.json
     │
     ▼ Step 8
 [Assemble report]  ←── evidence_builder.py
   • One PredictionEvidence per triggered rule (carries chart_facts)
   • One PredictionEvidence per retrieved passage (carries source)
-  • Wraps everything in a PredictionSection for the scope
-  • Wraps in PredictionReport with schema_version + generated_at
+  • Wraps in PredictionSection per scope
+  • Wraps in PredictionReport — sections + llm_debug (prompt + raw response)
   → PredictionReport  ──── saved → artifacts/report.json
 ```
 
-**Dry-run mode** skips Step 7. The interpretation is synthetically built from rule explanations alone — no LLM call, no Ollama dependency, near-instant response.
+**Dry-run mode** skips Steps 6–7. The interpretation is synthetically built from rule explanations alone — no LLM dependency, near-instant response.
 
 ---
 
@@ -588,6 +646,9 @@ All three entry points produce the same `PredictionReport` structure:
 | `evidence[].chart_facts` | Snapshot of natal planet positions for this trigger |
 | `model_name` | Which LLM generated this report (`dry-run` if skipped) |
 | `schema_version` | `1.0.0` — use this when deserialising stored reports |
+| `llm_debug[].scope` | Scope this debug entry belongs to |
+| `llm_debug[].prompt` | Full prompt text sent to the LLM |
+| `llm_debug[].llm_raw` | Exact raw response returned by the LLM |
 
 **Export to Markdown:**
 

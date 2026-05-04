@@ -69,3 +69,4 @@ rahul_*.json
 # Session / scratch files
 session
 FIXES_AND_CONFIG.md
+configs/models.yaml

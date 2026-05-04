@@ -1,8 +1,8 @@
 # Vedic AI
 
-A fully local, privacy-first Vedic astrology analysis and prediction framework with a browser-based UI.
+A local-first Vedic astrology analysis and prediction framework with a browser-based UI.
 
-Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris, evaluates a rule corpus, retrieves supporting passages from a 1.5 M-char local knowledge base (BPHS Santhanam Vols 1 & 2, Jaimini Sutras, and more), and generates grounded natural-language predictions through a local LLM — with every claim linked to chart facts, triggered rules, and source passages. Comes with a single-command web server so you can use the full framework from any browser.
+Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris, evaluates a deterministic rule corpus, retrieves supporting passages from a 1.5 M-char knowledge base (BPHS Santhanam Vols 1 & 2, Jaimini Sutras, and more), and uses an LLM **only for synthesis** — weaving pre-computed engine findings into readable narrative. Every claim links to triggered rules and source passages; the LLM never re-derives positions, dashas, or remedies. Supports local inference (Ollama / LM Studio / llama.cpp) and cloud inference (Gemini free tier). Comes with a single-command web server.
 
 ## Status
 
@@ -10,12 +10,17 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 
 ## What's new (2026-05)
 
+- **Gochara / Transit engine** — full rule-based transit analysis: Gochara house effects (BPHS Ch.85–87, Phaladeepika Ch.26), Vedha obstruction table, Sadhe Sati / Ashtama Shani / Kantaka Shani detection, Guru Chandala and Mars–Saturn special alerts, dasha-transit synergy, remedies with classical citations (Mantra Mahodadhi, BPHS Ch.88, Agni Purana). `POST /transits/compute` — no LLM required.
+- **Gochara tab in Web UI** — enter transit date → instant rule-based findings: planet matrix, Vedha cards, Sadhe Sati status, special alerts, per-planet remedies with Vedic mantra (RV/YV/AV verse) and beeja mantra source citations.
+- **LLM synthesis-only refactor** — the LLM no longer receives raw chart longitudes or re-derives positions. It receives only pre-computed ENGINE FINDINGS (planet table, house table, yogas, dasha strength, varga analysis, triggered rules, and optional Gochara context) and is explicitly prohibited from re-deriving positions, inventing remedies, or contradicting engine tone.
+- **Gemini cloud backend** — `google-genai` wrapper behind the same `generate()` interface as the local client. Free tier: 1,500 req/day, ~2 s/request vs 2–8 min locally. Set `backend: gemini` in `configs/models.yaml` and set `GEMINI_API_KEY`.
+- **Transit context in predictions** — pass `transit_datetime` to `POST /predictions` or `run_prediction_pipeline()` and the Gochara engine output is injected as a structured context block into the LLM synthesis prompt.
+- **LLM Debug tab** — ⚙ tab alongside Standard / Raman predictions; shows the full prompt sent to the LLM and the raw response, collapsible per scope.
 - **Graha Drishti** — classical aspect computation with strength fractions (full / 3/4 / 1/2) per graha
 - **Rashi Drishti (Jaimini)** — sign-to-sign aspects; moveable→fixed, fixed→moveable, dual→dual
 - **Full Drishti Matrix** — per-house view combining both drishti types with double-aspect detection
 - **Bhava Sandhi / Madhya** — per-planet cusp-proximity and strength-zone classification
-- **Scope-aware Varga Analysis** — D9 (marriage/dharma), D10 (career), D3 (siblings), D7 (children), D12 (parents): lagna lord placement, dignity stats, karaka positions, varga yogas
-- **Updated Web UI** — tabbed interface: Chart / Drishti Matrix / Vargas; dignity inline, sandhi warnings, Vargottama marker
+- **Scope-aware Varga Analysis** — D9/D10/D3/D7/D12: lagna lord placement, dignity stats, karaka positions, varga yogas
 
 ## Canonical pipeline
 
@@ -26,13 +31,17 @@ Birth Data
   → Feature Extractor        (strengths, lordships, graha+rashi drishti, yogas, sandhi, nakshatras,
                                varga analysis D3/D7/D9/D10/D12, dasha timing)
   → Rule Evaluator           (YAML micro-DSL, 4 rule scopes, conflict resolution)
+  → Gochara Engine           (transit analysis — BPHS/Phaladeepika/SC rules, Vedha, Sadhe Sati,
+                               special alerts, remedies with classical citations — no LLM)
   → Retrieval Layer          (FAISS + sentence-transformers, 3 054 chunks, all-MiniLM-L6-v2)
-  → Prompt Builder           (structured, evidence-linked prompt contract)
-  → Local LLM                (Ollama / LM Studio — qwen2.5:14b by default)
-  → Structured Report        (PredictionReport with evidence refs — personality / career / relationships)
+  → Prompt Builder           (synthesis-only: ENGINE FINDINGS + optional Gochara context;
+                               LLM prohibited from re-deriving positions or remedies)
+  → LLM — Local or Cloud     (Ollama / LM Studio / llama.cpp  OR  Gemini free tier)
+  → Structured Report        (PredictionReport — sections + llm_debug for inspection)
   → Timing Overlay           (Vimshottari dasha + transits, ForecastReport)
   → Evaluation & Hardening   (metrics, SQLite cache, reproducibility manifest)
-  → Web UI                   (FastAPI + single-file HTML frontend, served at http://localhost:8000)
+  → Web UI                   (FastAPI + single-file HTML — Chart / Drishti / Vargas /
+                               Raman-Analysis / Gochara / Standard / Raman / ⚙ Debug tabs)
 ```
 
 ## Quick start
@@ -158,9 +167,10 @@ Start the server with `vedic-ai serve`, then:
 |---|---|---|
 | GET | `/` | Web UI (HTML frontend) |
 | GET | `/health` | Liveness check |
-| GET | `/predictions/scopes` | Returns `["personality","career","relationships"]` |
-| POST | `/predictions` | Full prediction pipeline |
+| GET | `/predictions/scopes` | Returns `["personality","career","relationships","health"]` |
+| POST | `/predictions` | Full prediction pipeline (LLM synthesis) |
 | POST | `/charts/compute` | Compute chart only (no prediction) |
+| POST | `/transits/compute` | Gochara transit analysis (no LLM — instant) |
 | GET | `/docs` | Interactive Swagger UI |
 
 **`POST /predictions` body:**
@@ -171,10 +181,23 @@ Start the server with `vedic-ai serve`, then:
   "longitude": 79.08,
   "name": "Rahul",
   "scope": "all",
-  "dry_run": false
+  "dry_run": false,
+  "transit_datetime": "2026-05-04T12:00:00+05:30"
 }
 ```
-`scope` accepts `"all"` (default), `"personality"`, `"career"`, or `"relationships"`.
+`scope`: `"all"` (default), `"personality"`, `"career"`, `"relationships"`, or `"health"`.  
+`transit_datetime` (optional): when provided, the Gochara engine runs and its findings are injected as structured context into the LLM prompt. The LLM synthesizes natal + transit findings without re-deriving any positions.
+
+**`POST /transits/compute` body:**
+```json
+{
+  "birth_datetime": "1972-08-27T19:45:00+05:30",
+  "birth_latitude": 21.15,
+  "birth_longitude": 79.08,
+  "transit_datetime": "2026-05-04T12:00:00+05:30"
+}
+```
+Returns planet-by-planet Gochara results, Vedha status, Sadhe Sati phase, special alerts, remedies with classical citations — all rule-based, no LLM.
 
 **`POST /charts/compute` body:**
 ```json
@@ -228,8 +251,9 @@ To add your own texts:
 | 3c | Varga analysis | ✅ | `features/varga_analysis` — D3/D7/D9/D10/D12 scope-aware analysis |
 | 4 | Rule engine | ✅ | `core/rule_evaluator`, `data/corpus/rules/*.yaml` |
 | 5 | Corpus ingestion & retrieval | ✅ | `retrieval/` — FAISS, sentence-transformers, chunker |
-| 6 | Prompt contracts & LLM wrapper | ✅ | `llm/local_client`, `llm/prompt_builder`, `llm/output_parser` |
-| 7 | Prediction orchestrator | ✅ | `orchestration/pipeline`, `orchestration/prediction_service` |
+| 6 | Prompt contracts & LLM wrapper | ✅ | `llm/local_client`, `llm/cloud_client` (Gemini), `llm/prompt_builder` (synthesis-only), `llm/output_parser` |
+| 6a | Gochara transit engine | ✅ | `engines/gochara` — BPHS/Phaladeepika/SC rules, Vedha, Sadhe Sati, remedies with citations |
+| 7 | Prediction orchestrator | ✅ | `orchestration/pipeline` (Gochara context injection), `orchestration/prediction_service` |
 | 8 | Timing engine | ✅ | `features/dasha_features`, `features/transit_features` |
 | 9 | Evaluation framework | ✅ | `evaluation/dataset`, `evaluation/metrics`, `evaluation/runner` |
 | 10 | Fine-tuning data prep | ✅ | `evaluation/training_data`, `llm/fine_tune_prep` |
@@ -264,12 +288,13 @@ src/vedic_ai/
                         aspects (graha drishti), drishti (rashi drishti + matrix),
                         sandhi (bhava sandhi/madhya), varga_analysis (D3/D7/D9/D10/D12)
   retrieval/            corpus_loader, chunker, embedder, vector_store, retriever
-  llm/                  LocalLLMClient (Ollama/LM Studio), prompt_builder, output_parser
+  llm/                  LocalLLMClient (Ollama/LM Studio/llama.cpp), GeminiClient (cloud),
+                        prompt_builder (synthesis-only, Gochara context block), output_parser
   orchestration/        pipeline, prediction_service, evidence_builder, timing_service
   evaluation/           dataset, metrics, runner, training_data
   storage/              cache (SQLite), repository
   utils/                repro (reproducibility manifest)
-  api/                  FastAPI app, routes_chart, routes_prediction
+  api/                  FastAPI app, routes_chart, routes_prediction, routes_transit
   cli/                  main, commands_predict, commands_corpus, commands_serve
   static/               index.html — self-contained browser UI
 
@@ -291,7 +316,8 @@ tests/
 | Astrology engine | pyswisseph (Moshier ephemeris, Lahiri ayanamsa) |
 | Embeddings | sentence-transformers `all-MiniLM-L6-v2` (384-dim, CPU) |
 | Vector store | FAISS `IndexFlatIP` (cosine similarity) |
-| LLM serving | Ollama, LM Studio, or llama.cpp — selectable in UI or `configs/models.yaml` |
+| LLM — local | Ollama / LM Studio / llama.cpp — selectable in UI or `configs/models.yaml` |
+| LLM — cloud | Google Gemini via `google-genai` SDK (free tier 1,500 req/day) |
 | API | FastAPI + uvicorn |
 | Web UI | Vanilla HTML/CSS/JS (no npm, no CDN, fully offline) |
 | Cache / storage | SQLite |
@@ -299,11 +325,16 @@ tests/
 
 ## LLM configuration (`configs/models.yaml`)
 
-Three backends are supported. Set `backend` to whichever server you are running:
+Four backends supported. Set `backend` to whichever you are using:
 
 ```yaml
 llm:
-  backend: ollama         # ollama | lm_studio | llamacpp
+  backend: gemini         # ollama | lm_studio | llamacpp | gemini
+  gemini:
+    model: "gemini-flash-lite-latest"   # free tier: 1,500 req/day, ~2 s/request
+    max_tokens: 4096
+    timeout_seconds: 60
+    api_key: ""           # or set GEMINI_API_KEY env var
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
@@ -317,8 +348,16 @@ llm:
     model: "default"
     timeout_seconds: 600
   temperature: 0.2
-  max_tokens: 2048
+  max_tokens: 4096
 ```
+
+> `configs/models.yaml` is gitignored — safe to put the API key there.
+
+**Gemini (recommended — free tier):**
+1. Get a free key at https://aistudio.google.com/apikey
+2. Paste it into `configs/models.yaml` under `gemini.api_key`, or `export GEMINI_API_KEY=…`
+3. `pip install google-genai`
+4. Set `backend: gemini`
 
 **Ollama** — start server and pull model once:
 ```bash
@@ -326,16 +365,16 @@ sudo systemctl start ollama
 ollama pull qwen2.5:14b
 ```
 
-**LM Studio** — load a model in the LM Studio app, enable the local server on port 1234.
+**LM Studio** — load a GGUF model in the LM Studio app, enable the local server on port 1234.
 
 **llama.cpp** — build `llama-server` and point it at a GGUF file:
 ```bash
 llama-server --model /path/to/model.gguf --host 0.0.0.0 --port 8080 --ctx-size 4096
 ```
 
-The backend can also be switched **per-request** from the web UI — a "LLM Backend" section in the left panel lets you choose the backend, base URL, and model without restarting the server.
+The backend can also be switched **per-request** from the web UI without restarting the server.
 
-Expected throughput (CPU-only): ~3–5 tokens/sec. A 500-token report takes ~2 minutes.
+Expected throughput: Gemini ~2 s/scope · Local CPU ~2–8 min/scope.
 
 ## Design principles
 
