@@ -845,6 +845,173 @@
     }
     .fa-yoga-pos { background: rgba(52,211,153,0.15); color: var(--success); border: 1px solid rgba(52,211,153,0.3); }
     .fa-yoga-neg { background: rgba(248,113,113,0.15); color: var(--error);   border: 1px solid rgba(248,113,113,0.3); }
+
+    /* ── Transit / Gochara tab ── */
+    .tr-input-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tr-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      margin-bottom: 2px;
+    }
+    .tr-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Alert severity badges */
+    .tr-alert {
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
+    .tr-alert-alert   { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.4); color: var(--error); }
+    .tr-alert-warning { background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.4);  color: var(--accent); }
+    .tr-alert-info    { background: rgba(52,211,153,0.1);  border: 1px solid rgba(52,211,153,0.4);  color: var(--success); }
+    .tr-alert-name    { font-weight: 700; margin-bottom: 4px; font-size: 0.85rem; }
+    .tr-alert-body    { color: var(--text); font-size: 0.8rem; }
+
+    /* Gochara matrix */
+    .go-fav   { color: var(--success);  font-weight: 700; font-size: 0.78rem; }
+    .go-unf   { color: var(--error);    font-weight: 700; font-size: 0.78rem; }
+    .go-mix   { color: var(--accent);   font-weight: 700; font-size: 0.78rem; }
+    .go-neu   { color: var(--muted);    font-size: 0.78rem; }
+    .go-vedha { text-decoration: line-through; opacity: 0.6; }
+    .go-dasha-lord  { outline: 1px solid var(--accent);  border-radius: 3px; padding: 0 3px; }
+    .go-antar-lord  { outline: 1px solid var(--accent2); border-radius: 3px; padding: 0 3px; }
+
+    /* Dasha strip */
+    .tr-dasha-strip {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 10px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.84rem;
+    }
+    .tr-dasha-item { display: flex; flex-direction: column; gap: 2px; }
+    .tr-dasha-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .tr-dasha-value { font-weight: 700; color: var(--text); }
+    .tr-dasha-end   { font-size: 0.74rem; color: var(--muted); }
+
+    /* Observation list */
+    .tr-obs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .tr-obs-list li {
+      font-size: 0.84rem;
+      color: var(--text);
+      padding: 8px 12px 8px 28px;
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      line-height: 1.55;
+    }
+    .tr-obs-list li::before {
+      content: "›";
+      position: absolute;
+      left: 10px;
+      color: var(--accent2);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .tr-obs-list li.tr-obs-alert { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.05); }
+    .tr-obs-list li.tr-obs-alert::before { color: var(--error); }
+    .tr-obs-list li.tr-obs-good  { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.04); }
+    .tr-obs-list li.tr-obs-good::before  { color: var(--success); }
+
+    /* Transit score summary */
+    .tr-score-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .tr-score-chip {
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+    }
+    .tr-chip-fav  { background: rgba(52,211,153,0.12); color: var(--success); border-color: rgba(52,211,153,0.35); }
+    .tr-chip-unf  { background: rgba(248,113,113,0.12); color: var(--error);  border-color: rgba(248,113,113,0.35); }
+    .tr-chip-mix  { background: rgba(245,158,11,0.12);  color: var(--accent); border-color: rgba(245,158,11,0.35); }
+    .tr-tone-favorable   { color: var(--success);  font-weight: 700; }
+    .tr-tone-unfavorable { color: var(--error);    font-weight: 700; }
+    .tr-tone-mixed       { color: var(--accent);   font-weight: 700; }
+    .tr-tone-cautious    { color: var(--error);    font-weight: 700; }
+
+    /* Remedy cards */
+    .rem-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .rem-card-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; cursor: pointer; user-select: none;
+    }
+    .rem-priority-badge {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 3px; flex-shrink: 0;
+    }
+    .rem-priority-urgent    { background: rgba(248,113,113,0.2); color: var(--error); }
+    .rem-priority-important { background: rgba(245,158,11,0.2);  color: var(--accent); }
+    .rem-priority-helpful   { background: rgba(96,165,250,0.2);  color: var(--info); }
+    .rem-planet-name { font-weight: 700; font-size: 0.9rem; color: var(--text); min-width: 60px; }
+    .rem-situation   { font-size: 0.8rem; color: var(--muted); flex: 1; }
+    .rem-tog         { font-size: 0.68rem; color: var(--muted); margin-left: auto; transition: transform 0.15s; }
+    .rem-card.open .rem-tog { transform: rotate(90deg); }
+    .rem-card-body   { display: none; padding: 12px 14px; border-top: 1px solid var(--border); }
+    .rem-card.open .rem-card-body { display: flex; flex-direction: column; gap: 10px; }
+    .rem-section { display: flex; flex-direction: column; gap: 3px; }
+    .rem-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--accent2);
+    }
+    .rem-value { font-size: 0.83rem; color: var(--text); line-height: 1.5; }
+    .rem-gem   { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+    .rem-special-list {
+      list-style: none; display: flex; flex-direction: column; gap: 4px;
+      margin-top: 2px;
+    }
+    .rem-special-list li {
+      font-size: 0.8rem; color: var(--text); padding-left: 16px; position: relative;
+      line-height: 1.5;
+    }
+    .rem-special-list li::before { content:"›"; position:absolute; left:0; color:var(--accent2); font-weight:700; }
+    .rem-sources  { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .rem-citation { font-size: 0.7rem; color: var(--muted); margin-top: 2px; font-style: italic; }
+    .rem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 900px) { .rem-grid { grid-template-columns: 1fr; } }
+
+    .tr-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px; min-height: 200px; color: var(--muted); text-align: center; font-size: 0.9rem;
+    }
+    .tr-placeholder .tr-big-icon { font-size: 2.8rem; opacity: 0.3; }
+    .tr-spinner-wrap {
+      display: none; align-items: center; justify-content: center; gap: 10px;
+      padding: 20px; color: var(--muted); font-size: 0.88rem;
+    }
+    .tr-spinner-wrap.active { display: flex; }
   </style>
 </head>
 <body>
@@ -953,6 +1120,44 @@
 
     <hr class="divider" />
 
+    <div>
+      <div class="section-title" style="color:var(--accent2)">&#9654; Transit / Gochara</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div class="field" style="flex:1">
+            <label for="tr-dt">Transit Date &amp; Time</label>
+            <input type="datetime-local" id="tr-dt" />
+          </div>
+          <button class="btn btn-secondary" style="flex:0;padding:8px 10px;font-size:0.78rem;white-space:nowrap" onclick="setTransitNow()">Now</button>
+        </div>
+        <div class="field">
+          <label for="tr-tz">Timezone</label>
+          <select id="tr-tz">
+            <option value="+05:30" selected>IST +05:30</option>
+            <option value="+05:45">NPT +05:45</option>
+            <option value="+06:00">BST +06:00</option>
+            <option value="+05:00">PKT +05:00</option>
+            <option value="+07:00">ICT +07:00</option>
+            <option value="+08:00">CST +08:00</option>
+            <option value="+09:00">JST +09:00</option>
+            <option value="+03:00">MSK +03:00</option>
+            <option value="+01:00">CET +01:00</option>
+            <option value="+00:00">UTC +00:00</option>
+            <option value="-05:00">EST -05:00</option>
+            <option value="-06:00">CST -06:00</option>
+            <option value="-07:00">MST -07:00</option>
+            <option value="-08:00">PST -08:00</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn" style="background:var(--accent2);color:#fff" onclick="computeTransit()">&#9654; Compute Transit</button>
+        </div>
+        <div id="tr-error" style="display:none;color:var(--error);font-size:0.82rem;padding:6px 10px;border:1px solid rgba(248,113,113,0.3);border-radius:6px;background:rgba(248,113,113,0.07)"></div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
     <div class="quick-fill">
       <div class="section-title">Quick Fill — Example Births</div>
       <div class="quick-fill-btns">
@@ -986,6 +1191,9 @@
 </div>
 
 <script>
+  // ── Global natal chart state (for transit re-use) ──────────────────────────
+  let _lastBirthForm = null;
+
   // ── LLM backend defaults ───────────────────────────────────────────────────
   const BACKEND_DEFAULTS = {
     ollama:   { url: 'http://localhost:11434', model: 'qwen2.5:14b' },
@@ -1138,6 +1346,7 @@
 
     showSpinner('Computing chart…');
     document.getElementById('chart-section').innerHTML = '';
+    _lastBirthForm = form;   // save for transit re-use
 
     try {
       const resp = await fetch('/charts/compute', {
@@ -1535,6 +1744,7 @@
         <button class="tab-btn"        id="tab-vargas-btn"     onclick="switchTab('chart-tabs','ctab','tab-vargas')">&#9651; Vargas</button>
         <button class="tab-btn"        id="tab-yogas-btn"      onclick="switchTab('chart-tabs','ctab','tab-yogas')">&#9733; Yogas</button>
         <button class="tab-btn"        id="tab-flowchart-btn"  onclick="switchTab('chart-tabs','ctab','tab-flowchart')">&#9775; Raman-Analysis</button>
+        <button class="tab-btn"        id="tab-transit-btn"    onclick="switchTab('chart-tabs','ctab','tab-transit')">&#9654; Gochara</button>
       </div>
 
       <!-- Chart tab -->
@@ -1592,6 +1802,17 @@
       <!-- Yogas tab -->
       <div class="tab-panel ctab" id="tab-yogas-panel">
         ${yogasPanel}
+      </div>
+
+      <!-- Transit / Gochara tab -->
+      <div class="tab-panel ctab" id="tab-transit-panel">
+        <div id="transit-results">
+          <div class="tr-placeholder">
+            <span class="tr-big-icon">&#9654;</span>
+            <p>Enter a transit date on the left panel and click <strong>Compute Transit</strong>.</p>
+            <p style="font-size:0.78rem">Transit analysis uses the computed natal chart above.</p>
+          </div>
+        </div>
       </div>
 
       <!-- Raman-Analysis tab -->
@@ -2030,6 +2251,11 @@
     if (card) card.classList.toggle('open');
   }
 
+  function toggleRemCard(idx) {
+    const card = document.getElementById('rem-card-' + idx);
+    if (card) card.classList.toggle('open');
+  }
+
   function renderPrediction(data, containerId) {
     const target = containerId
       ? document.getElementById(containerId)
@@ -2103,8 +2329,370 @@
       .replace(/'/g,  '&#039;');
   }
 
+  // ── Transit helpers ─────────────────────────────────────────────────────────
+
+  function setTransitNow() {
+    const now = new Date();
+    // Format as YYYY-MM-DDTHH:MM
+    const pad = n => String(n).padStart(2,'0');
+    const dt = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    document.getElementById('tr-dt').value = dt;
+  }
+
+  function showTransitError(msg) {
+    const el = document.getElementById('tr-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function clearTransitError() {
+    const el = document.getElementById('tr-error');
+    if (el) el.style.display = 'none';
+  }
+
+  async function computeTransit() {
+    clearTransitError();
+
+    if (!_lastBirthForm) {
+      showTransitError('Please compute the natal chart first (click Compute Chart).');
+      return;
+    }
+
+    const trDt = document.getElementById('tr-dt').value;
+    const trTz = document.getElementById('tr-tz').value;
+    if (!trDt) {
+      showTransitError('Please enter a transit date and time.');
+      return;
+    }
+    const transitISO = trDt + ':00' + trTz;
+
+    // Switch to transit tab
+    switchTab('chart-tabs', 'ctab', 'tab-transit');
+    const resultsDiv = document.getElementById('transit-results');
+    resultsDiv.innerHTML = '<div class="tr-spinner-wrap active"><div class="spinner"></div><span>Computing Gochara…</span></div>';
+
+    try {
+      const payload = {
+        birth_datetime:   _lastBirthForm.birth_datetime,
+        birth_latitude:   _lastBirthForm.latitude,
+        birth_longitude:  _lastBirthForm.longitude,
+        birth_place_name: null,
+        name:             _lastBirthForm.name,
+        transit_datetime: transitISO,
+      };
+
+      const resp = await fetch('/transits/compute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        throw new Error(err.detail || resp.statusText);
+      }
+
+      const data = await resp.json();
+      renderTransit(data, transitISO);
+
+    } catch (err) {
+      resultsDiv.innerHTML = '';
+      showTransitError('Transit error: ' + err.message);
+    }
+  }
+
+  // ── Transit renderer ─────────────────────────────────────────────────────────
+
+  const _RESULT_CLS = {
+    favorable:   'go-fav',
+    unfavorable: 'go-unf',
+    mixed:       'go-mix',
+    neutral:     'go-neu',
+  };
+  const _RESULT_SYMBOL = {
+    favorable:   '✓',
+    unfavorable: '✗',
+    mixed:       '±',
+    neutral:     '—',
+  };
+
+  function renderTransit(data, transitISO) {
+    const resultsDiv = document.getElementById('transit-results');
+
+    // ── Dasha strip
+    const mahaEnd  = data.mahadasha_end   !== '—' ? ` until ${data.mahadasha_end}`  : '';
+    const antarEnd = data.antardasha_end  !== '—' ? ` until ${data.antardasha_end}` : '';
+    const dashaStrip = `
+      <div class="tr-dasha-strip">
+        <div class="tr-dasha-item">
+          <span class="tr-dasha-label">Janma Rashi (Moon)</span>
+          <span class="tr-dasha-value">${escapeHTML(data.natal_moon_sign)} · H${data.natal_moon_house}</span>
+        </div>
+        <div class="tr-dasha-item">
+          <span class="tr-dasha-label">Lagna</span>
+          <span class="tr-dasha-value">${escapeHTML(data.natal_lagna_sign)}</span>
+        </div>
+        <div class="tr-dasha-item">
+          <span class="tr-dasha-label">Mahadasha</span>
+          <span class="tr-dasha-value">${escapeHTML(data.current_mahadasha)}</span>
+          <span class="tr-dasha-end">${escapeHTML(mahaEnd)}</span>
+        </div>
+        <div class="tr-dasha-item">
+          <span class="tr-dasha-label">Antardasha</span>
+          <span class="tr-dasha-value">${escapeHTML(data.current_antardasha)}</span>
+          <span class="tr-dasha-end">${escapeHTML(antarEnd)}</span>
+        </div>
+        <div class="tr-dasha-item">
+          <span class="tr-dasha-label">Transit Date</span>
+          <span class="tr-dasha-value">${escapeHTML(transitISO.replace('T',' ').replace(/:\d\d[+-].*/,''))}</span>
+        </div>
+      </div>`;
+
+    // ── Score summary
+    const tone = data.overall_tone || 'mixed';
+    const scoreRow = `
+      <div class="tr-score-row">
+        <span class="tr-score-chip tr-chip-fav">✓ ${data.favorable_count} favorable</span>
+        <span class="tr-score-chip tr-chip-unf">✗ ${data.unfavorable_count} unfavorable</span>
+        <span class="tr-score-chip tr-chip-mix">± ${data.mixed_count} mixed</span>
+        <span style="font-size:0.82rem;color:var(--muted)">Overall tone:</span>
+        <span class="tr-tone-${escapeHTML(tone)}">${escapeHTML(tone.toUpperCase())}</span>
+      </div>`;
+
+    // ── Special alerts
+    let alertsHTML = '';
+    for (const alert of (data.special_alerts || [])) {
+      const cls = `tr-alert tr-alert-${escapeHTML(alert.severity)}`;
+      alertsHTML += `<div class="${cls}">
+        <div class="tr-alert-name">${alert.severity === 'alert' ? '🔴' : alert.severity === 'warning' ? '⚠️' : 'ℹ️'} ${escapeHTML(alert.name)}</div>
+        <div class="tr-alert-body">${escapeHTML(alert.description)}</div>
+      </div>`;
+    }
+
+    // ── Gochara matrix table
+    const ORDER = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+    let matrixRows = '';
+    for (const gname of ORDER) {
+      const r = (data.planet_results || []).find(x => x.graha === gname);
+      if (!r) continue;
+
+      const sym     = PLANET_SYMS[gname] || '';
+      const resCls  = _RESULT_CLS[r.result_key]  || 'go-neu';
+      const resSym  = _RESULT_SYMBOL[r.result_key] || '—';
+      const vedhaSpan = r.vedha_active
+        ? ` <span style="color:var(--muted);font-size:0.72rem" title="Vedha by ${r.vedha_planet}">⊘${escapeHTML(r.vedha_planet||'')}</span>` : '';
+      const retroSpan = r.is_retrograde ? ' <span class="retro" style="font-size:0.72rem">℞</span>' : '';
+      const dashaTag = r.is_dasha_lord
+        ? ' <span class="go-dasha-lord" title="Active Mahadasha lord">MD</span>' : '';
+      const antarTag = r.is_antardasha_lord
+        ? ' <span class="go-antar-lord" title="Active Antardasha lord">AD</span>' : '';
+
+      const effectCls = `${resCls}${r.vedha_active ? ' go-vedha' : ''}`;
+
+      matrixRows += `<tr title="${escapeHTML(r.detail)}">
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(gname)}${retroSpan}${dashaTag}${antarTag}</td>
+        <td style="color:var(--text)">${escapeHTML(r.transit_sign)}</td>
+        <td style="text-align:center;font-weight:700;color:var(--accent)">${r.transit_house_from_moon}</td>
+        <td style="text-align:center;color:var(--muted)">${r.transit_house_from_lagna}</td>
+        <td><span class="${effectCls}">${resSym} ${escapeHTML(r.short_effect)}</span>${vedhaSpan}</td>
+        <td style="color:var(--muted);font-size:0.76rem">${escapeHTML(r.natal_sign)} H${r.natal_house}</td>
+      </tr>`;
+    }
+
+    const matrixCard = `
+      <div class="result-card">
+        <div class="result-card-header">&#9654; Gochara Matrix
+          <span style="font-weight:400;font-size:0.75rem;color:var(--muted);margin-left:8px">
+            from Janma Rashi (${escapeHTML(data.natal_moon_sign)}) &nbsp;·&nbsp;
+            <span class="go-dasha-lord" style="font-size:0.7rem">MD</span> Mahadasha
+            &nbsp; <span class="go-antar-lord" style="font-size:0.7rem">AD</span> Antardasha
+            &nbsp; ℞ Retrograde &nbsp; ⊘ Vedha
+          </span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Planet</th>
+              <th>Transit Sign</th>
+              <th style="text-align:center" title="House from natal Moon">H/Moon</th>
+              <th style="text-align:center" title="House from Lagna">H/Lgn</th>
+              <th>Gochara Effect</th>
+              <th>Natal Position</th>
+            </tr>
+          </thead>
+          <tbody>${matrixRows}</tbody>
+        </table>
+      </div>`;
+
+    // ── Vedha detail card
+    const vedhaItems = (data.planet_results || []).filter(r => r.vedha_active);
+    let vedhaHTML = '';
+    if (vedhaItems.length) {
+      const rows = vedhaItems.map(r =>
+        `<tr>
+          <td>${escapeHTML(r.graha)}</td>
+          <td style="text-align:center;color:var(--accent)">${r.transit_house_from_moon}</td>
+          <td style="color:var(--muted)">${escapeHTML(r.short_effect)}</td>
+          <td style="color:var(--error)">${escapeHTML(r.vedha_planet||'')}</td>
+          <td style="font-size:0.78rem;color:var(--muted)">Favorable result obstructed/delayed</td>
+        </tr>`
+      ).join('');
+      vedhaHTML = `
+        <div class="result-card">
+          <div class="result-card-header">&#8856; Vedha (Obstruction) Analysis
+            <span style="font-weight:400;font-size:0.75rem;color:var(--muted);margin-left:8px">BPHS Ch.87 — another planet in Vedha position cancels favorable result</span>
+          </div>
+          <table>
+            <thead><tr><th>Planet</th><th style="text-align:center">House/Moon</th><th>Favorable Effect</th><th>Blocked by</th><th>Impact</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
+    // ── Observations
+    const obsItems = (data.observations || []).map(obs => {
+      const isAlert = obs.startsWith('[ALERT]');
+      const isGood  = obs.includes('FAVORABLE') || obs.includes('Golden Period') || obs.includes('BEST') || obs.includes('MOST AUSPICIOUS');
+      const cls = isAlert ? 'tr-obs-alert' : isGood ? 'tr-obs-good' : '';
+      return `<li class="${cls}">${escapeHTML(obs.replace('[ALERT] ',''))}</li>`;
+    }).join('');
+
+    const obsCard = `
+      <div class="result-card">
+        <div class="result-card-header">&#9654; Gochara Observations &amp; Findings
+          <span style="font-weight:400;font-size:0.75rem;color:var(--muted);margin-left:8px">
+            Rule-based · BPHS / Phaladeepika / BVRaman · No LLM
+          </span>
+        </div>
+        <div style="padding:14px 16px">
+          <ul class="tr-obs-list">${obsItems}</ul>
+        </div>
+      </div>`;
+
+    // ── Remedies card
+    const _PRIORITY_ORDER = { urgent: 0, important: 1, helpful: 2 };
+    const remedies = (data.remedies || []).sort((a, b) =>
+      (_PRIORITY_ORDER[a.priority] ?? 9) - (_PRIORITY_ORDER[b.priority] ?? 9));
+
+    let remediesHTML = '';
+    if (remedies.length) {
+      const remItems = remedies.map((r, idx) => {
+        const sym = r.planet !== 'All' ? (PLANET_SYMS[r.planet] || '') : '&#9653;';
+        const priCls = `rem-priority-${escapeHTML(r.priority)}`;
+        const priLabel = r.priority.toUpperCase();
+
+        const specialHTML = r.special_actions && r.special_actions.length
+          ? `<div class="rem-section">
+              <div class="rem-label">&#9654; Priority Actions</div>
+              <ul class="rem-special-list">
+                ${r.special_actions.map(s => `<li>${escapeHTML(s)}</li>`).join('')}
+              </ul>
+            </div>` : '';
+
+        const srcHTML = r.source_refs && r.source_refs.length
+          ? `<div class="rem-sources">Sources: ${r.source_refs.map(s => escapeHTML(s)).join(' · ')}</div>` : '';
+
+        return `
+          <div class="rem-card" id="rem-card-${idx}">
+            <div class="rem-card-header" onclick="toggleRemCard(${idx})">
+              <span class="rem-priority-badge ${priCls}">${priLabel}</span>
+              <span class="planet-sym">${sym}</span>
+              <span class="rem-planet-name">${escapeHTML(r.planet)}</span>
+              <span class="rem-situation">${escapeHTML(r.situation)}</span>
+              <span class="rem-tog">&#9658;</span>
+            </div>
+            <div class="rem-card-body">
+              ${specialHTML}
+              <div class="rem-grid">
+                <div class="rem-section">
+                  <div class="rem-label">&#9788; Beeja Mantra (108×, planet's day)</div>
+                  <div class="rem-value" style="font-style:italic;color:var(--accent)">${escapeHTML(r.mantra)}</div>
+                  ${r.mantra_source ? `<div class="rem-citation">&#128218; ${escapeHTML(r.mantra_source)}</div>` : ''}
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9654; Vedic Root Mantra</div>
+                  <div class="rem-value" style="font-style:italic;color:var(--muted)">${escapeHTML(r.vedic_mantra || '')}</div>
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9795; Stotra / Extended Mantra</div>
+                  <div class="rem-value">${escapeHTML(r.stotra)}</div>
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9679; Fasting</div>
+                  <div class="rem-value">${escapeHTML(r.fast_day)}</div>
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9651; Charity / Dana</div>
+                  <div class="rem-value">${escapeHTML(r.charity)}</div>
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9733; Deity &amp; Puja</div>
+                  <div class="rem-value">${escapeHTML(r.deity_puja)}</div>
+                </div>
+                <div class="rem-section">
+                  <div class="rem-label">&#9790; Behavioral / Lifestyle</div>
+                  <div class="rem-value">${escapeHTML(r.behavioral)}</div>
+                </div>
+              </div>
+              <div class="rem-section">
+                <div class="rem-label">&#9674; Gemstone (consult expert first)</div>
+                <div class="rem-gem">${escapeHTML(r.gemstone_note)}</div>
+              </div>
+              ${srcHTML}
+            </div>
+          </div>`;
+      }).join('');
+
+      remediesHTML = `
+        <div class="result-card">
+          <div class="result-card-header">&#9654; Remedies &amp; Upayas
+            <span style="font-weight:400;font-size:0.75rem;color:var(--muted);margin-left:8px">
+              BPHS Ch.88 · Lal Kitab · Mantrashastra · B.V. Raman — to mitigate unfavorable transits
+            </span>
+          </div>
+          <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:0.8rem;color:var(--muted);padding:4px 0 8px;border-bottom:1px solid var(--border)">
+              &#9650; <strong style="color:var(--error)">Urgent</strong> — address immediately &nbsp;·&nbsp;
+              <strong style="color:var(--accent)">Important</strong> — start within a week &nbsp;·&nbsp;
+              <strong style="color:var(--info)">Helpful</strong> — ongoing practice.<br>
+              Gemstone recommendations require expert consultation. Mantras are most effective
+              when recited with sincerity on the indicated day.
+            </div>
+            ${remItems}
+          </div>
+        </div>`;
+    }
+
+    // ── Classical source reference
+    const sourceRef = `
+      <div style="font-size:0.75rem;color:var(--muted);padding:6px 0;text-align:center;">
+        Sources: BPHS Ch.85–87 (Parashara) · Phaladeepika Ch.26 (Mantreswara) ·
+        Graha &amp; Bhava Balas (B.V. Raman) · Sarvartha Chintamani · Jaimini Sutras
+      </div>`;
+
+    resultsDiv.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:20px">
+        ${dashaStrip}
+        ${scoreRow}
+        ${alertsHTML ? `<div style="display:flex;flex-direction:column;gap:8px">${alertsHTML}</div>` : ''}
+        ${matrixCard}
+        ${vedhaHTML}
+        ${obsCard}
+        ${remediesHTML}
+        ${sourceRef}
+      </div>`;
+
+    // Auto-open urgent/important remedy cards (must run after innerHTML is set)
+    remedies.forEach((r, i) => {
+      if (r.priority !== 'helpful') {
+        const card = document.getElementById('rem-card-' + i);
+        if (card) card.classList.add('open');
+      }
+    });
+  }
+
   // Initialise on load
   initBackendSelector();
+  setTransitNow();
 </script>
 
 </body>
