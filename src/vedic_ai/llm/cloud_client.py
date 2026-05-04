@@ -25,7 +25,7 @@ class GeminiClient:
 
     def __init__(
         self,
-        model_name: str = "gemini-2.0-flash",
+        model_name: str = "gemini-flash-lite-latest",
         api_key: str | None = None,
         max_tokens: int = 4096,
         timeout: int = 60,
@@ -37,13 +37,28 @@ class GeminiClient:
             api_key
             or os.environ.get("GEMINI_API_KEY")
             or os.environ.get("GOOGLE_API_KEY")
+            or self._key_from_yaml()
         )
         if not self._api_key:
             raise EnvironmentError(
                 "Gemini API key not found. "
-                "Set GEMINI_API_KEY in your environment or .env file. "
+                "Set GEMINI_API_KEY in your environment, or add\n"
+                "  gemini:\n    api_key: AIza...\n"
+                "to configs/models.yaml (keep that file out of git).\n"
                 "Free key: https://aistudio.google.com/apikey"
             )
+
+    @staticmethod
+    def _key_from_yaml() -> str | None:
+        """Read api_key from configs/models.yaml gemini block if present."""
+        try:
+            from pathlib import Path
+            import yaml
+            cfg_path = Path(__file__).parents[3] / "configs" / "models.yaml"
+            cfg = yaml.safe_load(cfg_path.read_text()) or {}
+            return cfg.get("llm", {}).get("gemini", {}).get("api_key")
+        except Exception:
+            return None
 
     def generate(self, prompt: str, temperature: float = 0.2) -> str:
         """Send prompt to Gemini and return the response text."""

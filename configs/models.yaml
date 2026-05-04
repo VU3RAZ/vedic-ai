@@ -1,5 +1,5 @@
 llm:
-  backend: llamacpp  # ollama | lm_studio | llamacpp | gemini
+  backend: gemini  # ollama | lm_studio | llamacpp | gemini
   ollama:
     base_url: "http://localhost:11434"
     model: "qwen2.5:14b"
@@ -13,9 +13,9 @@ llm:
     model: "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_XL"
     timeout_seconds: 600
   gemini:
-    model: "gemini-2.0-flash"   # free tier: 1,500 req/day, 15 RPM
+    model: "gemini-flash-lite-latest"   # free tier — use this alias if 2.x models hit quota 0
     max_tokens: 4096
     timeout_seconds: 60
-    # API key: set GEMINI_API_KEY in environment (https://aistudio.google.com/apikey)
+    api_key: "AIzaSyCxjq3tvYsrX4Grsla8KCTALs-ma0RRAAI"   # paste key here OR set GEMINI_API_KEY env var — do not commit!
   temperature: 0.2
   max_tokens: 4096
