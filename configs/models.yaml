@@ -16,6 +16,6 @@ llm:
     model: "gemini-flash-lite-latest"   # free tier — use this alias if 2.x models hit quota 0
     max_tokens: 4096
     timeout_seconds: 60
-    api_key: "AIzaSyCxjq3tvYsrX4Grsla8KCTALs-ma0RRAAI"   # paste key here OR set GEMINI_API_KEY env var — do not commit!
+    api_key: "AIzaxxxxxxxxxxxx"   # paste key here OR set GEMINI_API_KEY env var — do not commit!
   temperature: 0.2
   max_tokens: 4096
