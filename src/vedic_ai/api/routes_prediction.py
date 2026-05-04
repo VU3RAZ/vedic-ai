@@ -182,17 +182,25 @@ def predict(request: PredictionRequest) -> dict:
     llm_client = None
     if not request.dry_run:
         try:
-            from vedic_ai.llm.local_client import LocalLLMClient
             cfg_llm = _models_config.get("llm", {})
             backend = request.llm_backend or cfg_llm.get("backend", "ollama")
             backend_cfg = cfg_llm.get(backend, {})
-            llm_client = LocalLLMClient(
-                model_name=request.llm_model or backend_cfg.get("model", "default"),
-                base_url=request.llm_base_url or backend_cfg.get("base_url", "http://localhost:11434"),
-                backend=backend,
-                timeout=backend_cfg.get("timeout_seconds", 600),
-                max_tokens=cfg_llm.get("max_tokens", 4096),
-            )
+            if backend == "gemini":
+                from vedic_ai.llm.cloud_client import GeminiClient
+                llm_client = GeminiClient(
+                    model_name=request.llm_model or backend_cfg.get("model", "gemini-2.0-flash"),
+                    max_tokens=cfg_llm.get("max_tokens", 4096),
+                    timeout=backend_cfg.get("timeout_seconds", 60),
+                )
+            else:
+                from vedic_ai.llm.local_client import LocalLLMClient
+                llm_client = LocalLLMClient(
+                    model_name=request.llm_model or backend_cfg.get("model", "default"),
+                    base_url=request.llm_base_url or backend_cfg.get("base_url", "http://localhost:11434"),
+                    backend=backend,
+                    timeout=backend_cfg.get("timeout_seconds", 600),
+                    max_tokens=cfg_llm.get("max_tokens", 4096),
+                )
         except Exception:
             pass
 
