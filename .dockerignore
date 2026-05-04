@@ -1,0 +1,52 @@
+# Virtual environment and compiled bytecode
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Git internals
+.git/
+.gitignore
+
+# Tests and docs (not needed at runtime)
+tests/
+docs/
+*.md
+vedic_ai.md
+
+# Local development artifacts
+session/
+cache/
+data/raw/
+data/processed/artifacts/
+data/processed/nagpur*/
+data/fixtures/
+data/golden/
+
+# Personal report outputs
+nagpur_*.json
+rahul_*.json
+*_report.json
+*_career.json
+*_personality.json
+*_relationships.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# CI / packaging
+.pytest_cache/
+.coverage
+htmlcov/
+*.tar.gz
+*.whl
+MANIFEST
+FIXES_AND_CONFIG.md
