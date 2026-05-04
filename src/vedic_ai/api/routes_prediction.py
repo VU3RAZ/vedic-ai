@@ -78,6 +78,11 @@ class PredictionRequest(BaseModel):
     scope: str = "all"
     dry_run: bool = False
     raman_method: bool = False   # Emphasise B.V. Raman-style house analysis in retrieval
+    # Optional transit datetime — when provided the Gochara engine runs and its
+    # pre-computed findings are injected as structured context into the LLM prompt.
+    # The LLM is instructed to synthesize natal + transit findings without re-deriving
+    # any positions or suggesting additional remedies.
+    transit_datetime: datetime | None = None
     # Optional per-request LLM overrides (override configs/models.yaml)
     llm_backend: str | None = None   # ollama | lmstudio | llamacpp
     llm_base_url: str | None = None
@@ -203,6 +208,7 @@ def predict(request: PredictionRequest) -> dict:
                 top_k=8,
                 dry_run=request.dry_run or llm_client is None,
                 raman_method=request.raman_method,
+                transit_datetime=request.transit_datetime,
             )
         else:
             # Run all scopes and merge sections into one report
@@ -216,6 +222,7 @@ def predict(request: PredictionRequest) -> dict:
                     top_k=8,
                     dry_run=request.dry_run or llm_client is None,
                     raman_method=request.raman_method,
+                    transit_datetime=request.transit_datetime,
                 )
                 if report is None:
                     report = r

@@ -42,6 +42,7 @@ def run_prediction_pipeline(
     retriever: Any | None = None,
     llm_client: Any | None = None,
     at_time: datetime | None = None,
+    transit_datetime: datetime | None = None,
     top_k: int = 5,
     dry_run: bool = False,
     raman_method: bool = False,
@@ -111,7 +112,21 @@ def run_prediction_pipeline(
     else:
         logger.info("No retriever provided; skipping passage retrieval")
 
-    # 5. LLM interpretation
+    # 5. Gochara (transit) context — pre-computed, injected as structured input
+    gochara_context: dict | None = None
+    if transit_datetime is not None:
+        try:
+            from vedic_ai.engines.gochara import compute_gochara
+            from vedic_ai.api.routes_transit import _serialize_report as _ser_gochara
+            transit_snapshot = engine.compute_transits(birth, transit_datetime)
+            gochara_report   = compute_gochara(bundle, transit_snapshot)
+            gochara_context  = _ser_gochara(gochara_report)
+            _persist_artifact("gochara.json", gochara_context, adir)
+            logger.info("Gochara context computed for transit_datetime=%s", transit_datetime)
+        except Exception as exc:
+            logger.warning("Gochara computation failed (continuing without transit context): %s", exc)
+
+    # 6. LLM interpretation (synthesis only — engine findings are the factual base)
     if dry_run or llm_client is None:
         interpretation: dict = {
             "summary": f"Dry-run interpretation for scope '{scope}'.",
@@ -124,15 +139,16 @@ def run_prediction_pipeline(
         interpretation = call_llm_for_interpretation(
             bundle, features, triggers, passages, scope, llm_client,
             raman_method=raman_method,
+            gochara_context=gochara_context,
         )
 
     _persist_artifact("interpretation.json", interpretation, adir)
 
-    # 6. Assemble evidence and section
+    # 7. Assemble evidence and section
     evidence = build_prediction_evidence(bundle, features, triggers, passages)
     section = generate_scope_report(scope, interpretation, evidence)
 
-    # 7. Build report
+    # 8. Build report
     report = PredictionReport(
         birth_name=birth.name,
         chart_bundle_id=str(bundle.computed_at.timestamp()),

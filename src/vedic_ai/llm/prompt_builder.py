@@ -1,4 +1,11 @@
-"""Build deterministic prompts for the local LLM interpretation call."""
+"""Build deterministic prompts for the local LLM interpretation call.
+
+The LLM's role is SYNTHESIS ONLY.
+All planetary positions, house lords, dasha periods, transit results, and
+remedies are pre-computed by the rule engine and gochara engine.  The LLM
+must not re-derive, recalculate, or invent any of these — it reads the
+ENGINE FINDINGS sections and weaves them into a coherent narrative.
+"""
 
 from __future__ import annotations
 
@@ -8,38 +15,80 @@ from vedic_ai.domain.chart import ChartBundle
 from vedic_ai.domain.corpus import RetrievedPassage
 from vedic_ai.domain.prediction import RuleTrigger
 
-# Section header tokens — fixed order for snapshot stability
-_SECTION_CHART_FACTS = "### CHART FACTS"
-_SECTION_DERIVED     = "### DERIVED FEATURES"
-_SECTION_FUNCTIONAL  = "### FUNCTIONAL PLANETARY NATURE (RAMAN)"
-_SECTION_DASHA_STR   = "### DASHA LORD STRENGTH"
-_SECTION_VARGA       = "### VARGA (DIVISIONAL) ANALYSIS"
-_SECTION_DASHA       = "### DASHA TIMING"
-_SECTION_RULES       = "### TRIGGERED RULES"
-_SECTION_PASSAGES    = "### SUPPORTING PASSAGES"
-_SECTION_TASK        = "### TASK"
+# ---------------------------------------------------------------------------
+# Section headers
+# ---------------------------------------------------------------------------
+_SECTION_CONTEXT    = "### NATIVE CONTEXT"
+_SECTION_FINDINGS   = "### ENGINE FINDINGS (pre-computed — treat as authoritative)"
+_SECTION_FUNCTIONAL = "### FUNCTIONAL PLANETARY NATURE"
+_SECTION_DASHA_STR  = "### DASHA LORD STRENGTH"
+_SECTION_VARGA      = "### VARGA (DIVISIONAL) ANALYSIS"
+_SECTION_DASHA      = "### DASHA TIMING"
+_SECTION_GOCHARA    = "### TRANSIT / GOCHARA CONTEXT (pre-computed — do not re-derive)"
+_SECTION_RULES      = "### TRIGGERED RULE FINDINGS (engine output)"
+_SECTION_PASSAGES   = "### SUPPORTING CLASSICAL PASSAGES"
+_SECTION_TASK       = "### YOUR TASK"
 
-_INSTRUCTION = (
-    "You are a Vedic astrology analyst. "
-    "Respond ONLY with a valid JSON object matching the output schema. "
-    "Do not include unsupported claims. "
-    "Every statement must be grounded in the chart facts, triggered rules, "
-    "or supporting passages provided. "
-    "Be specific: name the planets, houses, signs, and divisional chart positions "
-    "that support each point. Reference dasha periods when relevant."
-)
+# ---------------------------------------------------------------------------
+# System instructions
+# ---------------------------------------------------------------------------
+_INSTRUCTION = """\
+You are a Vedic astrology synthesis writer.
 
-_INSTRUCTION_RAMAN = (
-    "You are a Vedic astrology analyst trained in the B.V. Raman school. "
-    "Respond ONLY with a valid JSON object matching the output schema. "
-    "Use B.V. Raman's house-by-house analytical method: examine the house lord's "
-    "placement, the occupants of the house, and aspects received. "
-    "Reference divisional charts (Navamsa for relationships, Dasamsa for career, "
-    "Shashthamsha for health) to confirm natal indications. "
-    "Every statement must be grounded in the provided chart data, rules, and passages."
-)
+ROLE: Narrative synthesis — NOT calculation.
+The sections below contain pre-computed findings from a deterministic rule
+engine and (if present) a Gochara transit engine.  Your job is to weave these
+findings into a clear, coherent interpretation for the requested scope.
 
-# Scope → primary divisional charts to emphasise
+STRICT PROHIBITIONS — you must NEVER:
+  • Re-derive or re-calculate planetary positions, longitudes, or house placements.
+  • Re-derive dasha periods, their lords, or their dates.
+  • Suggest remedies, mantras, gemstones, or upayas — these are provided by the
+    engine when relevant; do not invent new ones.
+  • Introduce any planetary placement, yoga, or dasha not already listed in the
+    ENGINE FINDINGS or TRIGGERED RULE FINDINGS sections.
+  • Contradict the engine-computed tone (e.g. if a planet is listed as
+    "unfavorable", do not reframe it as beneficial).
+
+WHAT YOU SHOULD DO:
+  • Read the ENGINE FINDINGS, TRIGGERED RULES, and GOCHARA CONTEXT sections.
+  • Identify the 2-4 most significant factors for the requested scope.
+  • Synthesize how they interact — especially where dasha timing, natal yogas,
+    and current transits converge or conflict.
+  • Ground every sentence in a specific finding from the sections below.
+  • Reference classical passages only to add context or depth, not to introduce
+    new interpretations.
+
+Respond ONLY with a valid JSON object — no markdown fences, no commentary."""
+
+_INSTRUCTION_RAMAN = """\
+You are a Vedic astrology synthesis writer trained in the B.V. Raman school.
+
+ROLE: Narrative synthesis — NOT calculation.
+The sections below contain pre-computed findings from a deterministic rule
+engine and (if present) a Gochara transit engine.  Your job is to weave these
+findings into a coherent interpretation using B.V. Raman's method:
+examine the relevant house, its lord's placement, occupants, aspects, and
+divisional chart confirmation.
+
+STRICT PROHIBITIONS — you must NEVER:
+  • Re-derive or re-calculate any planetary position, longitude, or house number.
+  • Re-derive dasha periods, their lords, or their dates.
+  • Suggest remedies, mantras, gemstones, or upayas — the engine provides these.
+  • Introduce any yoga or placement not listed in the ENGINE FINDINGS sections.
+  • Contradict the engine-computed tone for any planet or transit.
+
+WHAT YOU SHOULD DO:
+  • Use the ENGINE FINDINGS as your factual base.
+  • Apply Raman's analytical lens: house lord strength, mutual aspects, varga
+    confirmation, and dasha timing.
+  • For the requested scope cite the relevant house, its lord, divisional chart
+    position, and active dasha — all drawn from the pre-computed sections.
+  • Synthesize how natal strengths interact with the current dasha and transits.
+
+Respond ONLY with a valid JSON object — no markdown fences, no commentary."""
+
+# Scope → priority divisional charts
 _SCOPE_VARGAS: dict[str, list[str]] = {
     "personality":   ["D9", "D1"],
     "career":        ["D10", "D9"],
@@ -48,36 +97,46 @@ _SCOPE_VARGAS: dict[str, list[str]] = {
 }
 
 
-def _chart_facts_section(bundle: ChartBundle) -> str:
+# ---------------------------------------------------------------------------
+# Section builders
+# ---------------------------------------------------------------------------
+
+def _context_section(bundle: ChartBundle, features: dict) -> str:
+    """Brief native context — lagna, Moon sign, Sun sign only."""
     d1 = bundle.d1
-    lines = [f"Ascendant longitude: {d1.ascendant_longitude:.4f}"]
-    for name in sorted(d1.planets.keys()):
-        p = d1.planets[name]
-        lines.append(f"{name}: sign={p.rasi.rasi.value}, house={p.house}, lon={p.longitude:.4f}")
-    for num in sorted(d1.houses.keys()):
-        h = d1.houses[num]
-        lines.append(f"House {num}: sign={h.rasi.value}, lon={h.cusp_longitude:.4f}")
+    lagna_info = features.get("lagna", {})
+    planets = features.get("planets", {})
+    moon = planets.get("Moon", {})
+    sun  = planets.get("Sun", {})
+    lines = [
+        f"Lagna (Ascendant): {lagna_info.get('rasi', '?')}  "
+        f"lord={lagna_info.get('lord','?')} in H{lagna_info.get('lord_house','?')}",
+        f"Moon: {moon.get('rasi','?')} H{moon.get('house','?')}  "
+        f"nakshatra={moon.get('nakshatra','?')}",
+        f"Sun:  {sun.get('rasi','?')} H{sun.get('house','?')}",
+    ]
     return "\n".join(lines)
 
 
-def _derived_features_section(features: dict, scope: str) -> str:
+def _findings_section(features: dict, scope: str) -> str:
+    """Pre-computed planet and house summary — engine output only."""
     lines: list[str] = []
 
     planets = features.get("planets", {})
     if planets:
-        lines.append("Planets (sign, house, dignity, sandhi):")
+        lines.append("Planets (engine-computed):")
         for name in sorted(planets.keys()):
             p = planets[name]
             retro = " (R)" if p.get("is_retrograde") else ""
             flags = "".join([
-                " EXALTED"     if p.get("is_exalted") else "",
-                " DEBILITATED" if p.get("is_debilitated") else "",
-                " OWN-SIGN"    if p.get("is_own_sign") else "",
-                " VARGOTTAMA"  if p.get("is_vargottama") else "",
-                " COMBUST"     if p.get("is_combust") and not p.get("combust_exempt") else "",
-                " COMBUST(exempt)" if p.get("is_combust") and p.get("combust_exempt") else "",
-                " YOGAKARAKA"  if p.get("is_yogakaraka") else "",
-                " MARAKA"      if p.get("is_maraka") else "",
+                " EXALTED"           if p.get("is_exalted") else "",
+                " DEBILITATED"       if p.get("is_debilitated") else "",
+                " OWN-SIGN"          if p.get("is_own_sign") else "",
+                " VARGOTTAMA"        if p.get("is_vargottama") else "",
+                " COMBUST"           if p.get("is_combust") and not p.get("combust_exempt") else "",
+                " COMBUST(exempt)"   if p.get("is_combust") and p.get("combust_exempt") else "",
+                " YOGAKARAKA"        if p.get("is_yogakaraka") else "",
+                " MARAKA"            if p.get("is_maraka") else "",
             ])
             sandhi = ""
             if p.get("is_sandhi"):
@@ -87,17 +146,16 @@ def _derived_features_section(features: dict, scope: str) -> str:
             lines.append(
                 f"  {name}: {p.get('rasi','?')} H{p.get('house','?')}"
                 f"{retro}{flags}{sandhi}  nak={p.get('nakshatra','?')}"
-                f"  fn={p.get('functional_role','?')}  strength={p.get('total_strength','?')}"
+                f"  role={p.get('functional_role','?')}  strength={p.get('total_strength','?')}"
             )
 
     houses = features.get("houses", {})
     if houses:
-        lines.append("Houses (lord, occupants, aspects, karakas):")
+        lines.append("Houses (engine-computed):")
         for h in range(1, 13):
             hd = houses.get(h, {})
             occ = ",".join(hd.get("occupants", [])) or "empty"
             asp = ",".join(hd.get("aspects_received_from", [])) or "none"
-            karakas = hd.get("karakas", [])
             karaka_cond = hd.get("karaka_conditions", [])
             kara_str = ""
             if karaka_cond:
@@ -112,7 +170,6 @@ def _derived_features_section(features: dict, scope: str) -> str:
                 f"  occ=[{occ}]  asp=[{asp}]{kara_str}"
             )
 
-    # Drishti matrix for key houses by scope
     drishti = features.get("drishti", {})
     matrix = drishti.get("matrix", [])
     if matrix:
@@ -122,7 +179,7 @@ def _derived_features_section(features: dict, scope: str) -> str:
             "relationships": [7, 5, 11],
             "health":        [1, 6, 8],
         }.get(scope, [1, 7, 10])
-        lines.append(f"Drishti on key houses ({scope}):")
+        lines.append(f"Drishti on {scope}-relevant houses:")
         for row in matrix:
             if row["house"] in key_houses:
                 lines.append(
@@ -135,7 +192,7 @@ def _derived_features_section(features: dict, scope: str) -> str:
 
     yogas = features.get("yogas", {})
     if yogas:
-        lines.append("Yogas:")
+        lines.append("Yogas (engine-detected):")
         lines.append(f"  Gajakesari={yogas.get('gajakesari',False)}"
                      f"  Kemadruma={yogas.get('kemadruma',False)}")
         for y in yogas.get("raja_yogas", []):
@@ -151,30 +208,21 @@ def _derived_features_section(features: dict, scope: str) -> str:
         for y in yogas.get("kartari_yogas", []):
             lines.append(f"  {y.get('name')}: {y.get('detail','')}")
 
-    lagna = features.get("lagna", {})
-    if lagna:
-        lines.append(
-            f"Lagna: {lagna.get('rasi','?')}  lord={lagna.get('lord','?')}"
-            f" in H{lagna.get('lord_house','?')}  dignity={lagna.get('lord_dignity','?')}"
-            f"  nak={lagna.get('nakshatra','?')}"
-        )
-
-    return "\n".join(lines) if lines else json.dumps(features, sort_keys=True, ensure_ascii=False)
+    return "\n".join(lines) if lines else "(no engine findings available)"
 
 
 def _functional_nature_section(features: dict) -> str:
-    """Summarise functional planetary nature and yogakarakas for this lagna."""
     fn = features.get("functional_nature", {})
     if not fn:
-        return "(functional nature not available)"
+        return "(not available)"
 
     lines: list[str] = []
     lagna = fn.get("lagna_rasi", "?")
     yks   = fn.get("yogakarakas", [])
     mks   = fn.get("maraka_lords", [])
     lines.append(f"Lagna: {lagna}")
-    lines.append(f"Yogakarakas (owns kendra+trikona): {', '.join(yks) if yks else 'none'}")
-    lines.append(f"Maraka lords (H2/H7 lords): {', '.join(mks) if mks else 'none'}")
+    lines.append(f"Yogakarakas: {', '.join(yks) if yks else 'none'}")
+    lines.append(f"Maraka lords: {', '.join(mks) if mks else 'none'}")
 
     _ROLE_ORDER = ["yogakaraka", "benefic", "neutral", "malefic"]
     by_role: dict[str, list[str]] = {}
@@ -191,10 +239,9 @@ def _functional_nature_section(features: dict) -> str:
 
 
 def _dasha_strength_section(features: dict) -> str:
-    """7-point Raman dasha lord strength assessment."""
     ds = features.get("dasha_strength", {})
     if not ds:
-        return "(dasha strength not available)"
+        return "(not available)"
 
     lines: list[str] = []
     for key in ("mahadasha", "antardasha"):
@@ -204,15 +251,14 @@ def _dasha_strength_section(features: dict) -> str:
         label = "Mahadasha" if key == "mahadasha" else "Antardasha"
         lord  = rec.get("lord", "?")
         lines.append(f"{label} Lord: {lord}")
-        lines.append(f"  1. Houses owned: H{', H'.join(str(h) for h in rec.get('houses_owned', []))}")
-        lines.append(f"  2. Placement: H{rec.get('placement_house','?')}")
-        lines.append(f"  3. Sign strength: {rec.get('sign_strength','?')}")
+        lines.append(f"  Houses owned: H{', H'.join(str(h) for h in rec.get('houses_owned', []))}")
+        lines.append(f"  Placement: H{rec.get('placement_house','?')}")
+        lines.append(f"  Sign strength: {rec.get('sign_strength','?')}")
         asp = rec.get("aspects_received", []) or []
-        lines.append(f"  4. Aspects received from: {', '.join(asp) or 'none'}")
+        lines.append(f"  Aspects from: {', '.join(asp) or 'none'}")
         conj = rec.get("conjunctions", []) or []
-        lines.append(f"  5. Conjunctions: {', '.join(conj) or 'none'}")
-        lines.append(f"  6. Vargottama: {rec.get('is_vargottama', False)}")
-        lines.append(f"  7. Retrograde: {rec.get('is_retrograde', False)}")
+        lines.append(f"  Conjunctions: {', '.join(conj) or 'none'}")
+        lines.append(f"  Vargottama: {rec.get('is_vargottama', False)}  Retrograde: {rec.get('is_retrograde', False)}")
         lines.append(f"  Role: {rec.get('functional_role','?')}  Score: {rec.get('assessment_score','?')}")
         for note in rec.get("notes", []):
             lines.append(f"  → {note}")
@@ -220,10 +266,9 @@ def _dasha_strength_section(features: dict) -> str:
 
 
 def _varga_section(features: dict, scope: str) -> str:
-    """Summarise scope-relevant divisional charts with specific planet positions."""
     varga_analysis = features.get("varga_analysis", {})
     if not varga_analysis:
-        return "(varga analysis not available)"
+        return "(not available)"
 
     priority = _SCOPE_VARGAS.get(scope, ["D9", "D10"])
     lines: list[str] = []
@@ -232,8 +277,8 @@ def _varga_section(features: dict, scope: str) -> str:
         v = varga_analysis.get(div)
         if not v:
             continue
-        stats = v.get("dignity_stats", {})
-        yogas = v.get("yogas", [])
+        stats   = v.get("dignity_stats", {})
+        yogas   = v.get("yogas", [])
         karakas = v.get("karaka_analysis", [])
         lines.append(
             f"{div} {v.get('name','')} [{v.get('domain','')}]:"
@@ -249,11 +294,8 @@ def _varga_section(features: dict, scope: str) -> str:
             )
             lines.append(f"  Karakas: {ktext}")
         if yogas:
-            ytext = "; ".join(
-                _fmt_yoga(y) for y in yogas[:4]
-            )
+            ytext = "; ".join(_fmt_yoga(y) for y in yogas[:4])
             lines.append(f"  Yogas: {ytext}")
-        # Key planet positions in this varga
         planets = v.get("planets", [])
         notable = [
             f"{p['graha']} H{p['house']} {p.get('dignity','')}"
@@ -263,7 +305,6 @@ def _varga_section(features: dict, scope: str) -> str:
         if notable:
             lines.append(f"  Notable: {'; '.join(notable[:6])}")
 
-    # Also show all other available vargas briefly
     other = sorted(set(varga_analysis.keys()) - set(priority))
     if other:
         brief = []
@@ -278,32 +319,29 @@ def _varga_section(features: dict, scope: str) -> str:
 
 def _fmt_yoga(y: dict) -> str:
     t = y.get("type", "")
-    if t == "lagna_lord_kendra":   return f"LL kendra H{y.get('house')}"
-    if t == "lagna_lord_trikona":  return f"LL trikona H{y.get('house')}"
-    if t == "lagna_lord_strong":   return f"LL {y.get('dignity')}"
-    if t == "lagna_lord_dusthana": return f"LL dusthana H{y.get('house')}"
-    if t == "sign_exchange":       return f"{y.get('graha_a')}↔{y.get('graha_b')}"
-    if t == "d9_7th_lord_strong":  return f"D9 7L {y.get('dignity')}"
+    if t == "lagna_lord_kendra":           return f"LL kendra H{y.get('house')}"
+    if t == "lagna_lord_trikona":          return f"LL trikona H{y.get('house')}"
+    if t == "lagna_lord_strong":           return f"LL {y.get('dignity')}"
+    if t == "lagna_lord_dusthana":         return f"LL dusthana H{y.get('house')}"
+    if t == "sign_exchange":               return f"{y.get('graha_a')}↔{y.get('graha_b')}"
+    if t == "d9_7th_lord_strong":          return f"D9 7L {y.get('dignity')}"
     if t == "d10_career_planet_prominent": return f"D10 {y.get('graha')} H{y.get('house')}"
     return t.replace("_", " ")[:30]
 
 
 def _dasha_section(features: dict, bundle: ChartBundle) -> str:
-    """Include current/upcoming dasha periods for timing context."""
     if not bundle.dashas:
-        return "(dasha data not available)"
+        return "(not available)"
 
     from datetime import datetime, timezone
     today = datetime.now(timezone.utc).date()
-    today_str = today.isoformat()
 
-    lines = [f"Vimshottari Dashas (reference date: {today_str}):"]
-    # Show Maha dasha sequence (level 1)
+    lines = [f"Vimshottari Dashas (reference date: {today.isoformat()}):"]
     shown = 0
     current_maha = None
     for d in bundle.dashas:
-        start = d.start_date if hasattr(d.start_date, 'isoformat') else d.start_date
-        end   = d.end_date   if hasattr(d.end_date,   'isoformat') else d.end_date
+        start = d.start_date
+        end   = d.end_date
         is_current = start <= today <= end
         marker = " ← CURRENT" if is_current else ""
         graha_name = d.graha.value if hasattr(d.graha, 'value') else str(d.graha)
@@ -314,16 +352,70 @@ def _dasha_section(features: dict, bundle: ChartBundle) -> str:
         if shown >= 5:
             break
 
-    # Show Antar dasha within current Maha
     if current_maha and getattr(current_maha, 'sub_periods', None):
         maha_name = current_maha.graha.value if hasattr(current_maha.graha, 'value') else str(current_maha.graha)
         for sub in current_maha.sub_periods[:5]:
-            start = sub.start_date
-            end   = sub.end_date
-            is_active = start <= today <= end
+            is_active = sub.start_date <= today <= sub.end_date
             marker = " ← ACTIVE" if is_active else ""
             sub_name = sub.graha.value if hasattr(sub.graha, 'value') else str(sub.graha)
-            lines.append(f"    {maha_name}/{sub_name}: {start} → {end}{marker}")
+            lines.append(f"    {maha_name}/{sub_name}: {sub.start_date} → {sub.end_date}{marker}")
+
+    return "\n".join(lines)
+
+
+def _gochara_section(gochara: dict) -> str:
+    """Format pre-computed Gochara engine output as a structured context block.
+
+    The LLM must treat all values here as authoritative and must not recalculate
+    any transit position or suggest additional remedies.
+    """
+    lines = [
+        f"Transit date: {gochara.get('transit_datetime', '?')}",
+        f"Natal Moon sign: {gochara.get('natal_moon_sign', '?')}  "
+        f"(H{gochara.get('natal_moon_house','?')})",
+        f"Active dasha: {gochara.get('current_mahadasha','?')} Maha / "
+        f"{gochara.get('current_antardasha','?')} Antar  "
+        f"(ends {gochara.get('mahadasha_end','?')})",
+        f"Overall transit tone: {gochara.get('overall_tone','?')}  "
+        f"[fav={gochara.get('favorable_count',0)}  "
+        f"unfav={gochara.get('unfavorable_count',0)}  "
+        f"mixed={gochara.get('mixed_count',0)}]",
+    ]
+
+    sadhe = gochara.get("sadhe_sati", {})
+    if sadhe.get("active"):
+        lines.append(
+            f"Sadhe Sati/Ashtama: ACTIVE — phase={sadhe.get('phase','?')}  "
+            f"Saturn H{sadhe.get('saturn_house_from_moon','?')} from Moon  "
+            f"({sadhe.get('description','')})"
+        )
+
+    alerts = gochara.get("special_alerts", [])
+    if alerts:
+        lines.append("Special alerts (engine-flagged):")
+        for a in alerts:
+            lines.append(f"  [{a.get('severity','?').upper()}] {a.get('name','?')}: {a.get('description','')}")
+
+    results = gochara.get("planet_results", [])
+    if results:
+        lines.append("Planet-by-planet Gochara (engine output):")
+        for r in results:
+            vedha = f"  VEDHA by {r.get('vedha_planet','?')}" if r.get("vedha_active") else ""
+            dasha = ""
+            if r.get("is_dasha_lord"):     dasha = " [MAHADASHA LORD]"
+            elif r.get("is_antardasha_lord"): dasha = " [ANTARDASHA LORD]"
+            retro = " (R)" if r.get("is_retrograde") else ""
+            lines.append(
+                f"  {r.get('graha','?')}{retro}: H{r.get('transit_house_from_moon','?')} from Moon"
+                f" ({r.get('transit_sign','?')}) → {r.get('result_key','?').upper()}"
+                f" — {r.get('short_effect','')}{vedha}{dasha}"
+            )
+
+    obs = gochara.get("observations", [])
+    if obs:
+        lines.append("Engine observations:")
+        for o in obs:
+            lines.append(f"  • {o}")
 
     return "\n".join(lines)
 
@@ -335,12 +427,11 @@ def _rules_section(triggers: list[RuleTrigger]) -> str:
             f"[{t.rule_id}] {t.rule_name} (scope={t.scope}, weight={t.weight:.2f}): "
             f"{t.explanation}"
         )
-    return "\n".join(lines) if lines else "(none)"
+    return "\n".join(lines) if lines else "(none triggered)"
 
 
 def _passages_section(passages: list[RetrievedPassage]) -> str:
     lines = []
-    # Sort by relevance score descending so the LLM sees the strongest evidence first
     for p in sorted(passages, key=lambda x: x.score, reverse=True):
         lines.append(
             f"[{p.chunk_id}] (source={p.source}, relevance={p.score:.3f})\n{p.text}"
@@ -348,28 +439,39 @@ def _passages_section(passages: list[RetrievedPassage]) -> str:
     return "\n\n".join(lines) if lines else "(none)"
 
 
-def _task_section(scope: str, output_schema: dict, raman_method: bool) -> str:
+def _task_section(scope: str, raman_method: bool, has_gochara: bool) -> str:
     method_note = (
-        " Use B.V. Raman's method: analyse the relevant house, its lord's placement, "
-        "occupants, aspects, and confirm via the appropriate divisional chart."
+        "Use B.V. Raman's method: examine the relevant house, its lord, occupants, "
+        "aspects, and divisional chart confirmation — all drawn from the ENGINE FINDINGS above."
         if raman_method else
-        " Be specific: cite planet names, house numbers, sign names, divisional charts "
-        "and dasha periods that substantiate each point."
+        "Cite specific planets, house numbers, yogas, and dasha periods from the ENGINE FINDINGS above."
+    )
+    gochara_note = (
+        "\nWhere a TRANSIT / GOCHARA CONTEXT section is present, integrate the "
+        "transit tone into the narrative — note which natal significators are under "
+        "transit stress or support, and how this intersects with the active dasha. "
+        "Do NOT suggest remedies; those are in the engine output."
+        if has_gochara else ""
     )
     return (
-        f"Generate a {scope} interpretation.{method_note}\n\n"
+        f"Synthesize a {scope} interpretation from the ENGINE FINDINGS and TRIGGERED RULES above.\n"
+        f"{method_note}{gochara_note}\n\n"
         f"Respond with ONLY this JSON object — no markdown fences, no explanation, no extra keys:\n"
         f'{{\n'
-        f'  "summary": "2-3 sentence overall {scope} reading grounded in the chart",\n'
+        f'  "summary": "2-3 sentence overall {scope} synthesis grounded in engine findings",\n'
         f'  "details": [\n'
-        f'    "Plain English sentence citing a specific planet, house, sign, or yoga.",\n'
-        f'    "Another plain English sentence. Up to 5 items. Each item is a STRING, not an object."\n'
+        f'    "Sentence citing a specific engine finding (planet / house / yoga / dasha).",\n'
+        f'    "Another sentence. Up to 5 items. Each item must be a STRING, not an object."\n'
         f'  ],\n'
-        f'  "rule_refs": ["rule_id_1", "rule_id_2"],\n'
+        f'  "rule_refs": ["rule_id_1"],\n'
         f'  "passage_refs": ["chunk_id_1"]\n'
         f'}}'
     )
 
+
+# ---------------------------------------------------------------------------
+# Public entry point
+# ---------------------------------------------------------------------------
 
 def build_interpretation_prompt(
     bundle: ChartBundle,
@@ -380,21 +482,26 @@ def build_interpretation_prompt(
     output_schema: dict,
     *,
     raman_method: bool = False,
+    gochara_context: dict | None = None,
 ) -> str:
-    """Construct the final prompt sent to the local model.
+    """Construct the synthesis-only prompt sent to the local LLM.
 
-    Section order: CHART FACTS → DERIVED FEATURES → VARGA ANALYSIS →
-    DASHA TIMING → TRIGGERED RULES → SUPPORTING PASSAGES → TASK.
+    Section order:
+      NATIVE CONTEXT → ENGINE FINDINGS → FUNCTIONAL NATURE → DASHA STRENGTH →
+      VARGA ANALYSIS → DASHA TIMING → [GOCHARA CONTEXT] →
+      TRIGGERED RULE FINDINGS → CLASSICAL PASSAGES → TASK
     """
     instruction = _INSTRUCTION_RAMAN if raman_method else _INSTRUCTION
+    has_gochara = gochara_context is not None
+
     parts = [
         instruction,
         "",
-        _SECTION_CHART_FACTS,
-        _chart_facts_section(bundle),
+        _SECTION_CONTEXT,
+        _context_section(bundle, features),
         "",
-        _SECTION_DERIVED,
-        _derived_features_section(features, scope),
+        _SECTION_FINDINGS,
+        _findings_section(features, scope),
         "",
         _SECTION_FUNCTIONAL,
         _functional_nature_section(features),
@@ -408,6 +515,16 @@ def build_interpretation_prompt(
         _SECTION_DASHA,
         _dasha_section(features, bundle),
         "",
+    ]
+
+    if has_gochara:
+        parts += [
+            _SECTION_GOCHARA,
+            _gochara_section(gochara_context),
+            "",
+        ]
+
+    parts += [
         _SECTION_RULES,
         _rules_section(triggers),
         "",
@@ -415,6 +532,6 @@ def build_interpretation_prompt(
         _passages_section(passages),
         "",
         _SECTION_TASK,
-        _task_section(scope, output_schema, raman_method),
+        _task_section(scope, raman_method, has_gochara),
     ]
     return "\n".join(parts)

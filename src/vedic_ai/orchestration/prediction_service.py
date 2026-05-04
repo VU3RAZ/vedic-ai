@@ -75,13 +75,15 @@ def call_llm_for_interpretation(
     llm_client: object,
     *,
     raman_method: bool = False,
+    gochara_context: dict | None = None,
 ) -> dict:
-    """Build the prompt, call the LLM, parse and validate the response.
+    """Build the synthesis prompt, call the LLM, parse and validate the response.
 
-    llm_client must implement the LLMClient protocol (generate method).
+    llm_client must implement generate(prompt) -> str.
+    gochara_context: pre-computed GocharaReport dict from the gochara engine;
+        when provided it is injected as a structured context block and the LLM
+        is instructed not to re-derive positions or suggest additional remedies.
     Returns a dict with at minimum 'summary' and 'details' keys.
-    On parse failure, falls back to repair_llm_output.
-    On repeated failure, returns a minimal fallback dict.
     """
     prompt = build_interpretation_prompt(
         bundle=bundle,
@@ -91,6 +93,7 @@ def call_llm_for_interpretation(
         scope=scope,
         output_schema=_OUTPUT_SCHEMA,
         raman_method=raman_method,
+        gochara_context=gochara_context,
     )
     logger.debug("Sending prompt to LLM (%d chars)", len(prompt))
 
