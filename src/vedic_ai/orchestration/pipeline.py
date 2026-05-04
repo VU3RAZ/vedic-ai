@@ -98,17 +98,16 @@ def run_prediction_pipeline(
         adir,
     )
 
-    # 4. Retrieve supporting passages
+    # 4. Retrieve supporting passages — multi-query for better coverage
     passages = []
     if retriever is not None:
-        base_query = " ".join(t.explanation for t in triggers) or scope
-        # When Raman method is active, anchor retrieval toward Raman house analysis
+        from vedic_ai.retrieval.query_expander import expand_queries
+        queries = expand_queries(triggers, scope, features, max_queries=5)
         if raman_method:
-            query = f"Raman house signification {scope} {base_query}"
-        else:
-            query = base_query
-        passages = retriever.retrieve(query, top_k=top_k)
-        logger.info("Passages retrieved: %d", len(passages))
+            queries = [f"Raman house signification {scope} {q}" for q in queries]
+        logger.debug("Multi-query retrieval with %d queries", len(queries))
+        passages = retriever.retrieve_multi(queries, top_k=top_k)
+        logger.info("Passages retrieved: %d (multi-query)", len(passages))
     else:
         logger.info("No retriever provided; skipping passage retrieval")
 

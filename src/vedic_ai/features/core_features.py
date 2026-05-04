@@ -469,4 +469,11 @@ def extract_core_features(bundle: ChartBundle) -> dict:
     except Exception:
         result["flowchart"] = {"modules": []}
 
+    # House influence: occupant + drishti effect analysis per house
+    try:
+        from vedic_ai.features.house_influence import compute_house_influence
+        result["house_influence"] = compute_house_influence(bundle, result)
+    except Exception:
+        result["house_influence"] = []
+
     return result

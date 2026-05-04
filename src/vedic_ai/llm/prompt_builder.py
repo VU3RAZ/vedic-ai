@@ -340,9 +340,10 @@ def _rules_section(triggers: list[RuleTrigger]) -> str:
 
 def _passages_section(passages: list[RetrievedPassage]) -> str:
     lines = []
-    for p in sorted(passages, key=lambda x: x.chunk_id):
+    # Sort by relevance score descending so the LLM sees the strongest evidence first
+    for p in sorted(passages, key=lambda x: x.score, reverse=True):
         lines.append(
-            f"[{p.chunk_id}] (source={p.source}, score={p.score:.4f})\n{p.text}"
+            f"[{p.chunk_id}] (source={p.source}, relevance={p.score:.3f})\n{p.text}"
         )
     return "\n\n".join(lines) if lines else "(none)"
 

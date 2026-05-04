@@ -529,3 +529,318 @@
   source_refs:
     - "BPHS 23.6"
   conflict_policy: merge
+
+# --- Extended Relationship Rules (R033–R047) ---
+
+- rule_id: R033
+  name: Rahu in 7th House — Unconventional Partner and Obsessive Attraction
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Rahu placed in the 7th house of marriage and partnerships intensifies
+    desire for union while attracting unusual, foreign, or non-traditional
+    partners. The native may feel a near-obsessive pull toward relationships
+    that deviate from family or cultural norms. BPHS and Phaladeepika both
+    note that Rahu in the 7th can bring a foreign-born spouse or a partner
+    from a very different background. Relationship intensity is high but
+    stability may require conscious effort due to Rahu's inherently restless
+    and amplifying nature.
+  source_refs:
+    - "BPHS 23.17"
+    - "Phaladeepika 13.8"
+  conflict_policy: merge
+
+- rule_id: R034
+  name: Ketu in 7th House — Spiritual Karmic Relationship
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Ketu in the 7th house indicates that partnerships carry a strong karmic
+    or past-life quality. The native may feel inexplicably drawn to certain
+    partners as if fulfilling an old soul contract. Classical texts associate
+    Ketu here with spiritual disinterest in conventional marriage, or with a
+    partner who is spiritually advanced, reclusive, or deeply unconventional.
+    Renunciation of worldly partnership expectations may eventually emerge as
+    the native's karmic lesson.
+  source_refs:
+    - "BPHS 23.18"
+    - "Saravali 28.7"
+  conflict_policy: merge
+
+- rule_id: R035
+  name: 7th Lord Exalted — Excellent Spouse and Harmonious Marriage
+  scope: relationships
+  weight: 0.8
+  conditions:
+    - feature: houses.7.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The lord of the 7th house of marriage is exalted — one of the most favourable
+    indicators for partnership in classical Jyotish. BPHS regards an exalted 7th
+    lord as promising an accomplished, refined, and supportive spouse. The marriage
+    is likely to be harmonious, enduring, and mutually elevating. The partner
+    often possesses exceptional qualities that enhance the native's own life
+    trajectory.
+  source_refs:
+    - "BPHS 23.3"
+    - "Brihat Jataka 14.2"
+  conflict_policy: override
+
+- rule_id: R036
+  name: 7th Lord Debilitated — Spouse Struggles and Marital Friction
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: houses.7.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The 7th house lord is debilitated, weakening its capacity to support
+    harmonious partnership. This placement can indicate a spouse who struggles
+    with self-confidence, health, or direction, or who brings friction rather
+    than harmony into the marriage. BPHS advises that neechabhanga (debilitation
+    cancellation) can significantly mitigate these effects. The native benefits
+    from consciously choosing partners with complementary strengths and practicing
+    patience and acceptance in relationships.
+  source_refs:
+    - "BPHS 23.4"
+    - "Phaladeepika 9.7"
+  conflict_policy: merge
+
+- rule_id: R037
+  name: 7th Lord Combust — Ego Conflicts in Marriage
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Venus.is_combust
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th lord (or Venus, natural karaka for marriage) is combust the Sun,
+    indicating that ego, authority, or the native's intense solar drive overshadows
+    partnership harmony. The spouse's vitality, confidence, or wellbeing may be
+    subdued. BPHS associates combustion with the temporary suppression of a
+    planet's significations; in the relational domain this manifests as ego
+    conflicts, difficulty in compromise, or the spouse being dominated by the
+    native's strong solar presence.
+  source_refs:
+    - "BPHS 3.16"
+    - "Saravali 9.12"
+  conflict_policy: merge
+
+- rule_id: R038
+  name: 7th Lord Retrograde — Delayed or Revisited Relationship Patterns
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Venus.is_retrograde
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th lord (or Venus as natural marriage karaka) is retrograde, indicating
+    that partnership matters move at an unusual pace — often with delays, returns
+    to past relationships, or a need to revisit and renegotiate relationship
+    patterns. Classical Jyotish associates retrograde planets with internalized,
+    non-linear energy; the native may experience significant relationships from
+    a previous period re-entering their life, or may need to unlearn ingrained
+    partnership habits before forming a truly fulfilling bond.
+  source_refs:
+    - "BPHS 3.17"
+    - "Phaladeepika 5.10"
+  conflict_policy: merge
+
+- rule_id: R039
+  name: Venus Exalted — Beautiful and Refined Spouse, Harmonious Relationships
+  scope: relationships
+  weight: 0.8
+  conditions:
+    - feature: planets.Venus.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is exalted in Pisces, the highest expression of romantic and aesthetic
+    grace. In classical Jyotish this is among the strongest indicators for a
+    beautiful, artistically gifted, and spiritually refined spouse. BPHS notes
+    exalted Venus as conferring Malavya yoga (Pancha Mahapurusha) when in a kendra,
+    bringing elegance, sensory refinement, and harmonious relationships. The native's
+    romantic and marital life is distinguished by beauty, mutual devotion, and
+    aesthetic compatibility.
+  source_refs:
+    - "BPHS 36.2"
+    - "Jataka Parijata 8.16"
+  conflict_policy: override
+
+- rule_id: R040
+  name: Venus Debilitated — Relationship Challenges and Over-Indulgence
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Venus.is_debilitated
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus debilitated in Virgo weakens its natural capacity for love, beauty,
+    and romantic harmony. The native may be overly critical or analytical in
+    relationships, struggle to express affection openly, or be drawn into
+    unhealthy patterns of over-indulgence and subsequent dissatisfaction. BPHS
+    associates debilitated Venus with difficult romantic experiences that serve
+    as lessons in true versus superficial connection. Neechabhanga can substantially
+    improve these outcomes.
+  source_refs:
+    - "BPHS 3.14"
+    - "Saravali 9.6"
+  conflict_policy: merge
+
+- rule_id: R041
+  name: Venus Combust — Relationship Struggles and Hidden Romance
+  scope: relationships
+  weight: 0.5
+  conditions:
+    - feature: planets.Venus.is_combust
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus within approximately 10 degrees of the Sun is considered combust —
+    its romantic and relational qualities are overshadowed by solar ego. This
+    placement in classical Jyotish is associated with hidden or secret romantic
+    affairs, suppressed love, and ego-driven relationship friction. The native
+    may struggle to subordinate personal desires to the needs of a partnership.
+    Open communication and conscious humility are the most effective remedies
+    for this combust influence.
+  source_refs:
+    - "BPHS 3.16"
+    - "Phaladeepika 5.8"
+  conflict_policy: merge
+
+- rule_id: R042
+  name: Moon in 7th House — Emotional and Nurturing Spouse
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Moon placed in the 7th house indicates an emotionally sensitive, nurturing,
+    and deeply caring partner. The spouse is strongly feeling-oriented and values
+    emotional connection above all else. BPHS notes that Moon in the 7th house
+    can make partnership changeable — the native or spouse may be inconsistent
+    in mood — but also deeply devoted when the emotional bond is secure. The
+    marriage thrives on mutual emotional support and domestic warmth.
+  source_refs:
+    - "BPHS 23.4"
+    - "Brihat Jataka 13.4"
+  conflict_policy: merge
+
+- rule_id: R043
+  name: Jupiter in 5th House — Blessings for Children and Romantic Relationships
+  scope: relationships
+  weight: 0.7
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 5
+  explanation_template: >-
+    Jupiter in the 5th house of romance, children, and creative intelligence
+    is one of the most auspicious placements for progeny and romantic fulfilment.
+    BPHS regards Jupiter in Putra bhava as conferring blessings for children —
+    often talented, wise, or spiritually inclined offspring. Romantic relationships
+    are characterised by generosity, warmth, and philosophical compatibility.
+    The native often experiences deep joy through both romantic unions and the
+    gift of children.
+  source_refs:
+    - "BPHS 22.10"
+    - "Jataka Parijata 9.10"
+  conflict_policy: merge
+
+- rule_id: R044
+  name: 5th Lord in 7th House — Romance Leading to Marriage
+  scope: relationships
+  weight: 0.65
+  conditions:
+    - feature: houses.5.lord_house
+      op: eq
+      value: 7
+  explanation_template: >-
+    The 5th lord (romance, love, intellect) placed in the 7th house of marriage
+    creates a natural bridge between romantic attraction and formal partnership.
+    BPHS regards this combination as highly favourable for a love marriage or
+    a creatively collaborative partnership. The native is likely to meet their
+    spouse through romantic or creative pursuits, and the marriage retains a
+    playful, emotionally rich quality throughout its duration.
+  source_refs:
+    - "BPHS 23.24"
+    - "Phaladeepika 10.14"
+  conflict_policy: merge
+
+- rule_id: R045
+  name: 11th Lord in 7th House — Gains Through Spouse and Social Circle
+  scope: relationships
+  weight: 0.6
+  conditions:
+    - feature: houses.11.lord_house
+      op: eq
+      value: 7
+  explanation_template: >-
+    The lord of the 11th house (gains, income, social networks) placed in the 7th
+    house creates a connection between partnerships and material or social gains.
+    BPHS notes this as a Dhana yoga variant where marriage brings financial benefit,
+    expanded social networks, and the fulfilment of desires. The spouse is likely
+    to be well-connected, socially active, and instrumental in advancing the
+    native's ambitions and income.
+  source_refs:
+    - "BPHS 23.30"
+    - "Saravali 24.11"
+  conflict_policy: merge
+
+- rule_id: R046
+  name: Saturn in 5th House — Delayed Romance and Few Children
+  scope: relationships
+  weight: 0.55
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 5
+  explanation_template: >-
+    Saturn in the 5th house of romance and children brings a serious, disciplined
+    approach to love and a potential delay or limitation regarding progeny. BPHS
+    notes that Saturn here can restrict or postpone romantic happiness in youth,
+    though mature and enduring love relationships often develop in later years.
+    Children may come late or be few in number, but are often serious and
+    accomplished. Speculative activities and romantic impulsiveness are tempered
+    by Saturn's sobering influence.
+  source_refs:
+    - "BPHS 22.13"
+    - "Phaladeepika 10.13"
+  conflict_policy: merge
+
+- rule_id: R047
+  name: 7th Lord Vargottama — Consistent Reliable Partner and Strong Marriage
+  scope: relationships
+  weight: 0.65
+  conditions:
+    - feature: planets.Venus.is_vargottama
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th lord (or Venus as natural significator of marriage) is vargottama —
+    occupying the same sign in both the Rashi (D1) and Navamsha (D9) charts.
+    This amplifies all positive relationship significations and indicates a
+    spouse who is reliable, consistent, and deeply compatible with the native's
+    own soul-nature. Classical Jyotish regards vargottama planets as having
+    strengthened, unwavering significations; in the relational domain this
+    translates to a marriage that deepens and stabilises over time rather than
+    fraying under life's pressures.
+  source_refs:
+    - "BPHS 11.4"
+    - "Jataka Parijata 2.21"
+  conflict_policy: merge

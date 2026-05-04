@@ -200,7 +200,7 @@ def predict(request: PredictionRequest) -> dict:
                 scope=scopes[0],
                 llm_client=llm_client,
                 retriever=_retriever,
-                top_k=5,
+                top_k=8,
                 dry_run=request.dry_run or llm_client is None,
                 raman_method=request.raman_method,
             )
@@ -213,7 +213,7 @@ def predict(request: PredictionRequest) -> dict:
                     scope=s,
                     llm_client=llm_client,
                     retriever=_retriever,
-                    top_k=5,
+                    top_k=8,
                     dry_run=request.dry_run or llm_client is None,
                     raman_method=request.raman_method,
                 )

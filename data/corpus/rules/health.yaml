@@ -503,3 +503,325 @@
   source_refs:
     - "BPHS 15.2"
   conflict_policy: merge
+
+# --- Extended Health Rules (H031–H045) ---
+
+- rule_id: H031
+  name: Rahu in Lagna — Unusual Ailments and Nervous System Issues
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Rahu in the Lagna is associated in classical Jyotish with unusual, difficult-
+    to-diagnose ailments that may confound conventional medicine. BPHS links Rahu
+    with vata aggravation, nervous system disturbances, and skin-related disorders.
+    The native may experience psychosomatic conditions amplified by Rahu's inherently
+    shadowy nature. Neurological sensitivity, anxiety disorders, and conditions
+    connected with environmental toxins or foreign substances are indicated.
+    Alternative and integrative treatment modalities often prove more effective
+    than purely allopathic approaches.
+  source_refs:
+    - "BPHS 16.8"
+    - "Saravali 28.1"
+  conflict_policy: merge
+
+- rule_id: H032
+  name: Ketu in Lagna — Mysterious Ailments and Past-Life Health Karma
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Ketu in the Lagna brings health challenges that have a karmic, psychosomatic,
+    or spiritually rooted quality. Classical texts associate Ketu with mysterious
+    ailments whose origins are difficult to trace to purely physical causes —
+    including neurological conditions, immune irregularities, and ailments linked
+    to past-life karma (sanchita karma). The native may experience sudden or
+    inexplicable health disturbances. Spiritual practices, energy healing, and
+    attention to the mind-body connection are particularly beneficial.
+  source_refs:
+    - "BPHS 15.9"
+    - "Phaladeepika 14.9"
+  conflict_policy: merge
+
+- rule_id: H033
+  name: Sun in 6th House — Vitality Tested by Disease but Overcome
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Sun placed in the 6th house (Rog bhava, the house of disease) creates a
+    tension between solar vitality and the disease-prone nature of this house.
+    BPHS notes that Sun in the 6th house bestows the capacity to fight and overcome
+    illness through sheer willpower and vitality. The native may work in health-
+    related or service professions, and physical challenges often arise in
+    connection with professional overexertion. Febrile conditions, pitta-related
+    disorders, and eye-related issues may require attention.
+  source_refs:
+    - "BPHS 16.1"
+    - "Brihat Jataka 15.6"
+  conflict_policy: merge
+
+- rule_id: H034
+  name: Moon in 6th House — Emotional Health Issues and Digestive Sensitivity
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Moon in the 6th house of disease and service creates a strong connection
+    between emotional states and physical health. BPHS notes that Moon here
+    produces digestive sensitivity, kapha-related disorders, and health challenges
+    that are exacerbated by emotional stress. The native is prone to psychosomatic
+    conditions; anxiety, worry, and emotional suppression can directly manifest
+    as gastrointestinal, lymphatic, or hormonal ailments. Emotional self-care
+    and stress management are essential health practices.
+  source_refs:
+    - "BPHS 16.4"
+    - "Phaladeepika 14.4"
+  conflict_policy: merge
+
+- rule_id: H035
+  name: Mars in 8th House — Accidents, Surgeries, and Inflammatory Conditions
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Mars in the 8th house (Ayu bhava — house of longevity) is one of the classical
+    indicators for surgical intervention, traumatic accidents, and chronic
+    inflammatory conditions. BPHS regards Mars as a planet of cutting, fire,
+    and aggression; in the 8th house these qualities express through bodily
+    crises — injuries, operations, and blood or inflammatory disorders. The native
+    must exercise care with physical safety and proactively monitor inflammatory
+    markers and chronic pain. Spiritual disciplines can help temper Mars's raw
+    energy in this placement.
+  source_refs:
+    - "BPHS 16.7"
+    - "Saravali 18.8"
+  conflict_policy: merge
+
+- rule_id: H036
+  name: Saturn in 6th House — Chronic Conditions with Disciplined Recovery
+  scope: health
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Saturn in the 6th house of disease is a complex placement: on one hand it
+    indicates susceptibility to chronic, long-standing conditions — particularly
+    vata disorders, joint issues, nerve-related ailments, and degenerative
+    processes. On the other hand, Saturn here also gives the discipline and
+    endurance to manage these conditions methodically over time. BPHS notes that
+    Saturn in the 6th can ultimately defeat enemies and illness through sustained
+    effort; the native who adopts disciplined health regimens often outlasts the
+    health challenges that afflict them.
+  source_refs:
+    - "BPHS 16.6"
+    - "Jataka Parijata 10.13"
+  conflict_policy: merge
+
+- rule_id: H037
+  name: Saturn in 8th House — Longevity with Chronic Health Management
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Saturn in the 8th house of longevity (Ayu bhava) is traditionally associated
+    with long life — Saturn slows things down, and in the house of lifespan this
+    can indicate unusual longevity. However, this placement also brings chronic,
+    progressive health challenges that require consistent management. BPHS notes
+    that Saturn here produces conditions related to bones, nerves, and degenerative
+    processes. The native often lives a long life but must give sustained attention
+    to chronic disease management and lifestyle discipline.
+  source_refs:
+    - "BPHS 17.6"
+    - "Brihat Jataka 16.8"
+  conflict_policy: merge
+
+- rule_id: H038
+  name: 6th Lord in 8th House — Disease Transformation and Health Crises as Turning Points
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 8
+  explanation_template: >-
+    The 6th lord (disease, Rog bhava) placed in the 8th house (transformation,
+    chronic illness, longevity) creates a potent connection between disease and
+    life-altering transformation. BPHS identifies this as a combination that can
+    turn a health crisis into a pivotal turning point in the native's life — often
+    catalysing profound spiritual, psychological, or lifestyle changes. Conditions
+    that begin acutely can become chronic without vigilant treatment; however,
+    surviving and overcoming such health crises often results in exceptional inner
+    strength and wisdom.
+  source_refs:
+    - "BPHS 16.18"
+    - "Saravali 22.8"
+  conflict_policy: merge
+
+- rule_id: H039
+  name: 8th Lord in 6th House — Persistent Health Challenges but Survival
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: houses.8.lord_house
+      op: eq
+      value: 6
+  explanation_template: >-
+    The 8th lord (longevity, hidden chronic issues) placed in the 6th house of
+    disease creates a configuration where the native faces recurring health
+    challenges that test their endurance. BPHS regards this as a vipareet raja
+    yoga variant when both are dusthana lords — paradoxically, the native often
+    survives and overcomes conditions that might fell others. The health challenges
+    are persistent but not necessarily fatal; the native's fighting spirit and
+    capacity for recovery are their greatest health assets.
+  source_refs:
+    - "BPHS 17.6"
+    - "Phaladeepika 13.18"
+  conflict_policy: merge
+
+- rule_id: H040
+  name: Lagna Lord Exalted — Exceptional Health and Vitality
+  scope: health
+  weight: 0.8
+  conditions:
+    - feature: houses.1.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The Lagna lord is exalted, conferring exceptional physical health, robust
+    immunity, and above-average vitality. BPHS considers an exalted Lagna lord
+    one of the most powerful indicators of a strong physical constitution and
+    good longevity. The native possesses a resilient body that recovers quickly
+    from illness, maintains high energy levels, and can sustain intense physical
+    or mental exertion. This is one of the premier indicators of constitutional
+    strength in a Jyotish health assessment.
+  source_refs:
+    - "BPHS 15.1"
+    - "Brihat Jataka 11.2"
+  conflict_policy: override
+
+- rule_id: H041
+  name: Jupiter in Lagna — Good Health, Bodily Wisdom, and Disease Protection
+  scope: health
+  weight: 0.7
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Jupiter in the Lagna acts as a powerful protective factor for health and
+    longevity. BPHS and Brihat Jataka both identify Jupiter in the 1st house
+    as conferring a well-proportioned, generally healthy constitution with
+    natural resistance to serious disease. The planet's expansive, benevolent
+    energy supports the immune system and overall bodily wisdom. The native is
+    often blessed with the capacity to intuitively maintain health through sound
+    lifestyle choices and a positive, optimistic outlook.
+  source_refs:
+    - "BPHS 15.10"
+    - "Brihat Jataka 7.4"
+  conflict_policy: merge
+
+- rule_id: H042
+  name: Mars Exalted — Strong Physical Constitution and Athletic Endurance
+  scope: health
+  weight: 0.7
+  conditions:
+    - feature: planets.Mars.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Mars is exalted in Capricorn, indicating an exceptionally strong physical
+    constitution, high energy levels, and notable athletic endurance. Classical
+    Jyotish regards exalted Mars as conferring Ruchaka yoga (Pancha Mahapurusha)
+    when in a kendra — bringing physical superiority, muscular strength, and the
+    capacity to sustain intense physical effort. BPHS notes this gives a body that
+    recovers quickly from injury or illness and is capable of remarkable feats of
+    physical courage and endurance.
+  source_refs:
+    - "BPHS 36.1"
+    - "Phaladeepika 6.13"
+  conflict_policy: merge
+
+- rule_id: H043
+  name: 12th Lord in 6th House — Hidden Health Drain and Sleep Disorders
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: houses.12.lord_house
+      op: eq
+      value: 6
+  explanation_template: >-
+    The 12th lord (isolation, losses, sleep, foreign lands) placed in the 6th
+    house of disease creates a connection between hidden vitality drain and
+    manifest illness. BPHS associates this combination with sleep disorders,
+    immune depletion through unconscious energy loss, and conditions that arise
+    from lifestyle factors that are difficult to identify or acknowledge. The
+    native benefits from prioritising sleep hygiene, identifying hidden sources
+    of chronic stress, and adopting restorative health practices.
+  source_refs:
+    - "BPHS 18.6"
+    - "Saravali 23.6"
+  conflict_policy: merge
+
+- rule_id: H044
+  name: 6th Lord in 12th House — Hospitalisation Possible and Hidden Ailments
+  scope: health
+  weight: 0.55
+  conditions:
+    - feature: houses.6.lord_house
+      op: eq
+      value: 12
+  explanation_template: >-
+    The 6th lord (disease, Rog bhava) placed in the 12th house of hospitals,
+    isolation, and foreign lands creates a pathway from acute illness toward
+    institutionalised care or prolonged convalescence. BPHS notes this combination
+    can indicate hospitalisation or extended bed rest during certain dasha periods.
+    Hidden ailments — conditions that develop slowly and without obvious symptoms —
+    are also suggested. Regular health screening, attention to sleep and immunity,
+    and proactive medical consultation are essential for the native's wellbeing.
+  source_refs:
+    - "BPHS 16.24"
+    - "Jataka Parijata 11.12"
+  conflict_policy: merge
+
+- rule_id: H045
+  name: Moon Combust — Emotional Instability and Mental Health Challenges
+  scope: health
+  weight: 0.6
+  conditions:
+    - feature: planets.Moon.is_combust
+      op: eq
+      value: true
+  explanation_template: >-
+    Moon combust the Sun — placed within approximately 12 degrees of the solar
+    orb — has its natural emotional and mental qualities overshadowed by the Sun's
+    intense light. BPHS identifies this as a significant indicator of emotional
+    instability, anxiety, and mental health challenges. The native's inner world
+    may be overwhelmed by external demands or ego-driven pressures; mood fluctuations,
+    difficulty processing emotions, and susceptibility to psychological stress are
+    common. The mind-body connection is particularly sensitive, and emotional support,
+    counselling, and grounding practices are strongly recommended.
+  source_refs:
+    - "BPHS 3.16"
+    - "Phaladeepika 5.4"
+  conflict_policy: merge

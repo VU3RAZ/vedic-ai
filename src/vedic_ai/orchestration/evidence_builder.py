@@ -43,6 +43,7 @@ def build_prediction_evidence(
             PredictionEvidence(
                 passage=passage.text,
                 source=passage.source,
+                score=passage.score,
                 chart_facts=chart_facts,
             )
         )

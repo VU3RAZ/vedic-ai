@@ -395,13 +395,84 @@
       font-size: 0.82rem;
       padding: 10px 14px;
     }
+    .evidence-item.evidence-rule  { border-left: 3px solid var(--accent-dim); }
+    .evidence-item.evidence-passage { border-left: 3px solid #6a8f6a; }
     .evidence-item .ev-source {
+      display: flex; align-items: center; gap: 6px;
       color: var(--accent-dim);
       font-size: 0.75rem;
       margin-bottom: 4px;
       font-weight: 600;
     }
+    .ev-type-badge {
+      display: inline-block; padding: 1px 6px; border-radius: 3px;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .ev-type-badge.rule    { background: #3a3a5c; color: #a0a0e0; }
+    .ev-type-badge.passage { background: #1e3a1e; color: #80c080; }
+    .ev-score { color: var(--muted); font-weight: 400; font-size: 0.72rem; }
+    .ev-weight { color: var(--muted); font-weight: 400; }
     .evidence-item .ev-text { color: var(--muted); line-height: 1.5; }
+
+    /* House Influence Analysis */
+    .hi-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .hi-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+    .hi-card-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; cursor: pointer; user-select: none;
+      border-bottom: 1px solid transparent;
+    }
+    .hi-card.open .hi-card-header { border-bottom-color: var(--border); }
+    .hi-house-num {
+      font-size: 1rem; font-weight: 700; color: var(--accent);
+      min-width: 28px; text-align: center;
+    }
+    .hi-bhava  { font-size: 0.78rem; color: var(--muted); }
+    .hi-topic  { font-size: 0.80rem; color: var(--text); flex: 1; }
+    .hi-net-badge {
+      padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700;
+    }
+    .hi-net-favorable { background: #1a3a1a; color: #80c080; }
+    .hi-net-ok        { background: #1a2a3a; color: #80a0c0; }
+    .hi-net-mixed     { background: #3a3010; color: #c0a040; }
+    .hi-net-concern   { background: #3a1010; color: #c06060; }
+    .hi-card-body { display: none; padding: 10px 14px; }
+    .hi-card.open .hi-card-body { display: block; }
+    .hi-section-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      color: var(--muted); text-transform: uppercase; margin: 8px 0 4px;
+    }
+    .hi-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.81rem;
+    }
+    .hi-item:last-child { border-bottom: none; }
+    .hi-planet-name { font-weight: 600; min-width: 64px; color: var(--text); }
+    .hi-asp-type {
+      font-size: 0.68rem; padding: 1px 5px; border-radius: 3px;
+      background: rgba(255,255,255,0.07); color: var(--muted);
+      min-width: 44px; text-align: center; flex-shrink: 0; margin-top: 1px;
+    }
+    .hi-effect { color: var(--muted); flex: 1; line-height: 1.5; }
+    .hi-special-note {
+      margin-top: 4px; padding: 5px 9px; border-radius: 4px;
+      font-size: 0.78rem; line-height: 1.5;
+      background: rgba(255,200,50,0.06); border-left: 3px solid var(--warning, #f59e0b);
+      color: var(--text);
+    }
+    .hi-rating-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    }
+    .hi-dot-favorable { background: #80c080; }
+    .hi-dot-ok        { background: #80a0c0; }
+    .hi-dot-mixed     { background: #c0a040; }
+    .hi-dot-concern   { background: #c06060; }
+    .hi-empty { color: var(--muted); font-size: 0.82rem; font-style: italic; padding: 6px 0; }
 
     /* Yogas */
     .yoga-cards { display: flex; flex-direction: column; gap: 10px; }
@@ -919,7 +990,7 @@
   const BACKEND_DEFAULTS = {
     ollama:   { url: 'http://localhost:11434', model: 'qwen2.5:14b' },
     lmstudio: { url: 'http://localhost:1234',  model: 'local-model' },
-    llamacpp: { url: 'http://localhost:8080',  model: 'default' },
+    llamacpp: { url: 'http://localhost:8080',  model: 'unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_XL' },
   };
 
   function onBackendChange() {
@@ -1097,8 +1168,9 @@
     const houses     = d1.houses  || {};
     const dashas     = data.dashas || [];
     const features   = data.derived_features || {};
-    const drishti    = features.drishti || {};
-    const vargas     = features.varga_analysis || {};
+    const drishti        = features.drishti || {};
+    const houseInfluence = features.house_influence || [];
+    const vargas         = features.varga_analysis || {};
     const sandhi     = features.sandhi || {};
 
     // Lagna sign from house 1
@@ -1505,6 +1577,7 @@
             <thead><tr><th>H</th><th>Sign</th><th>Occupants</th><th>Aspected by</th><th style="text-align:center">Strength</th></tr></thead>
             <tbody>${drishtiRows || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No drishti data.</td></tr>'}</tbody>
           </table>
+          ${renderHouseInfluence(houseInfluence)}
         </div>
       </div>
 
@@ -1858,6 +1931,105 @@
     return raw;
   }
 
+  // ── Evidence item renderer ───────────────────────────────────────────────────
+  const SOURCE_LABELS = {
+    'NAKSHATRA_GUIDE':      'Nakshatra Interpretations',
+    'YOGA_COMPENDIUM':      'Yoga Compendium',
+    'DASHA_TIMING':         'Dasha Timing Guide',
+    'ASPECTS_EXCHANGES':    'Aspects & Exchanges',
+    'BPHS':                 'Brihat Parashara Hora Shastra',
+    'BPHS_SANTHANAM_VOL1':  'BPHS Vol.1 (Santhanam)',
+    'BPHS_SANTHANAM_VOL2':  'BPHS Vol.2 (Santhanam)',
+    'RAMAN_HTJH_VOL1':      'How to Judge a Horoscope Vol.1',
+    'RAMAN_HTJH_VOL2':      'How to Judge a Horoscope Vol.2',
+    'JAIMINI_SUTRAS':       'Jaimini Sutras',
+  };
+
+  function renderEvidenceItem(ev) {
+    if (ev.trigger) {
+      const t = ev.trigger;
+      const weight = typeof t.weight === 'number' ? ` <span class="ev-weight">(weight ${t.weight.toFixed(2)})</span>` : '';
+      return `<div class="evidence-item evidence-rule">
+        <div class="ev-source">
+          <span class="ev-type-badge rule">Rule</span>
+          ${escapeHTML(t.rule_name || t.rule_id || 'Rule')}${weight}
+        </div>
+        <div class="ev-text">${escapeHTML(t.explanation || '')}</div>
+      </div>`;
+    }
+    if (ev.passage || ev.text) {
+      const raw   = (ev.source || '').toUpperCase();
+      const label = SOURCE_LABELS[raw] || ev.source || 'Classical Source';
+      const score = (typeof ev.score === 'number')
+        ? ` <span class="ev-score">${Math.round(ev.score * 100)}% match</span>` : '';
+      const body  = ev.passage || ev.text || '';
+      return `<div class="evidence-item evidence-passage">
+        <div class="ev-source">
+          <span class="ev-type-badge passage">Source</span>
+          ${escapeHTML(label)}${score}
+        </div>
+        <div class="ev-text">${escapeHTML(body.substring(0, 320))}${body.length > 320 ? '…' : ''}</div>
+      </div>`;
+    }
+    return '';
+  }
+
+  // ── House influence analysis renderer ───────────────────────────────────────
+  const HI_NET_CLS = { favorable:'hi-net-favorable', ok:'hi-net-ok', mixed:'hi-net-mixed', concern:'hi-net-concern' };
+  const HI_DOT_CLS = { favorable:'hi-dot-favorable', ok:'hi-dot-ok', mixed:'hi-dot-mixed', concern:'hi-dot-concern' };
+
+  function renderHouseItem(item, kind) {
+    const aspBadge = (kind === 'aspect')
+      ? `<span class="hi-asp-type">${escapeHTML(item.aspect_type || 'graha')}</span>` : '';
+    const dotCls = HI_DOT_CLS[item.rating] || 'hi-dot-mixed';
+    const special = (item.special_note)
+      ? `<div class="hi-special-note">&#9888; <strong>${escapeHTML(item.special_rule)}</strong> — ${escapeHTML(item.special_note)}</div>` : '';
+    return `<div class="hi-item">
+      <div class="hi-rating-dot ${dotCls}"></div>
+      <div class="hi-planet-name">${escapeHTML(item.planet)}</div>
+      ${aspBadge}
+      <div class="hi-effect">${escapeHTML(item.effect)}${special}</div>
+    </div>`;
+  }
+
+  function renderHouseInfluence(houseInfluence) {
+    if (!houseInfluence || !houseInfluence.length) return '';
+    let html = '<div class="result-card-header" style="margin-top:16px">&#127968; House Influence — Occupants &amp; Drishti Effects</div>';
+    html += '<div class="hi-grid">';
+    houseInfluence.forEach((h, idx) => {
+      const netCls = HI_NET_CLS[h.net_rating] || 'hi-net-mixed';
+      const hasData = (h.occupants.length + h.aspects.length) > 0;
+      html += `<div class="hi-card" id="hi-card-${idx}">
+        <div class="hi-card-header" onclick="toggleHiCard(${idx})">
+          <span class="hi-house-num">H${h.house}</span>
+          <span class="hi-bhava">${escapeHTML(h.rasi)} &middot; ${escapeHTML(h.bhava_name)}</span>
+          <span class="hi-topic">${escapeHTML(h.significance)}</span>
+          <span class="hi-net-badge ${netCls}">${(h.net_rating||'').toUpperCase()}</span>
+        </div>
+        <div class="hi-card-body">`;
+      if (!hasData) {
+        html += `<div class="hi-empty">No planets occupy or aspect this house — it is uninfluenced by graha or rashi drishti.</div>`;
+      } else {
+        if (h.occupants.length) {
+          html += `<div class="hi-section-label">&#9679; Occupants (${h.occupants.length})</div>`;
+          html += h.occupants.map(it => renderHouseItem(it, 'occupant')).join('');
+        }
+        if (h.aspects.length) {
+          html += `<div class="hi-section-label">&#8627; Aspecting planets (${h.aspects.length})</div>`;
+          html += h.aspects.map(it => renderHouseItem(it, 'aspect')).join('');
+        }
+      }
+      html += `</div></div>`;
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function toggleHiCard(idx) {
+    const card = document.getElementById('hi-card-' + idx);
+    if (card) card.classList.toggle('open');
+  }
+
   function renderPrediction(data, containerId) {
     const target = containerId
       ? document.getElementById(containerId)
@@ -1883,15 +2055,16 @@
       const evId     = idPrefix + '-ev-' + idx;
       let evHTML = '';
       if (evCount > 0) {
-        const items = evidence.map(ev =>
-          `<div class="evidence-item">
-            <div class="ev-source">${escapeHTML(ev.source || ev.chunk_id || 'Unknown source')}</div>
-            <div class="ev-text">${escapeHTML((ev.text || ev.passage || '').substring(0, 300))}${(ev.text || ev.passage || '').length > 300 ? '…' : ''}</div>
-          </div>`
-        ).join('');
+        const passageCount = evidence.filter(e => e.passage).length;
+        const ruleCount    = evidence.filter(e => e.trigger).length;
+        const items = evidence.map(ev => renderEvidenceItem(ev)).join('');
+        const label = [
+          passageCount ? `${passageCount} corpus passage${passageCount !== 1 ? 's' : ''}` : '',
+          ruleCount    ? `${ruleCount} rule trigger${ruleCount !== 1 ? 's' : ''}` : '',
+        ].filter(Boolean).join(' · ');
         evHTML = `
           <button class="evidence-toggle" onclick="toggleEvidence('${evId}', this)">
-            &#128218; ${evCount} evidence passage${evCount !== 1 ? 's' : ''} &#9660;
+            &#128218; ${label} &#9660;
           </button>
           <div class="evidence-panel" id="${evId}">${items}</div>`;
       }

@@ -63,6 +63,28 @@ class Retriever:
 
         return passages[:top_k]
 
+    def retrieve_multi(
+        self,
+        queries: list[str],
+        top_k: int = 5,
+        filters: dict | None = None,
+    ) -> list[RetrievedPassage]:
+        """Run multiple queries and return the top-k unique passages by best score.
+
+        Each chunk_id is kept only once — whichever query produced the highest
+        cosine similarity wins. Results are sorted by score descending so the
+        LLM sees the most relevant passages first.
+        """
+        per_query_k = min(top_k * 3, len(self._handle.chunk_ids))
+        best: dict[str, RetrievedPassage] = {}
+
+        for query in queries:
+            for p in self.retrieve(query, top_k=per_query_k, filters=filters):
+                if p.chunk_id not in best or p.score > best[p.chunk_id].score:
+                    best[p.chunk_id] = p
+
+        return sorted(best.values(), key=lambda p: p.score, reverse=True)[:top_k]
+
 
 def create_retriever(
     chunks: list[CorpusChunk],

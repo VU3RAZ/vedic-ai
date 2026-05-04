@@ -79,7 +79,14 @@ class LocalLLMClient:
         choices = resp.json().get("choices", [])
         if not choices:
             return ""
-        return choices[0].get("message", {}).get("content", "")
+        msg = choices[0].get("message", {})
+        content = msg.get("content", "")
+        if not content:
+            # Reasoning models (e.g. Gemma4) put thinking in reasoning_content and
+            # the actual answer in content. If content is empty the token budget was
+            # exhausted during reasoning — fall back so the parser can still try.
+            content = msg.get("reasoning_content", "")
+        return content
 
     def _generate_openai_compat(self, prompt: str, temperature: float) -> str:
         """POST to /v1/completions — used for LM Studio (raw completion, no chat template)."""

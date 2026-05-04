@@ -22,6 +22,7 @@ class PredictionEvidence(BaseModel):
     trigger: RuleTrigger | None = None
     passage: str | None = None
     source: str | None = None
+    score: float | None = None
     chart_facts: list[str] = Field(default_factory=list)
 
 

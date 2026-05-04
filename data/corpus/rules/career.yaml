@@ -443,3 +443,311 @@
   source_refs:
     - "BPHS 24.5"
   conflict_policy: defer
+
+# --- Extended Career Rules (C028–C042) ---
+
+- rule_id: C028
+  name: Rahu in 10th House — Unconventional Career with Rapid Rise
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: planets.Rahu.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Rahu in the 10th house (Karma bhava) drives intense, almost obsessive ambition
+    for professional success. The career often involves foreign connections,
+    cutting-edge technology, media, or fields that break with tradition. BPHS and
+    Phaladeepika both associate Rahu in the 10th with a rapid, meteoric rise that
+    may also involve sudden reversals if ethical shortcuts are taken. The native
+    is capable of achieving prominence in unconventional or emerging fields.
+  source_refs:
+    - "BPHS 24.17"
+    - "Phaladeepika 12.14"
+  conflict_policy: merge
+
+- rule_id: C029
+  name: Ketu in 10th House — Spiritual Career and Past Skills Applied
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Ketu placed in the 10th house brings a detachment from conventional career
+    ambitions and often channels past-life skills into the present vocation.
+    The native may excel in research, spirituality, technical specialisations,
+    or behind-the-scenes roles. Classical texts indicate that Ketu in Karma bhava
+    can yield sudden career changes or an unexpected pull toward renunciation
+    of worldly status in favour of meaningful or service-oriented work.
+  source_refs:
+    - "BPHS 24.18"
+    - "Saravali 29.18"
+  conflict_policy: merge
+
+- rule_id: C030
+  name: 10th Lord Exalted — Exceptional Career Success and Recognition
+  scope: career
+  weight: 0.85
+  conditions:
+    - feature: houses.10.lord_dignity
+      op: eq
+      value: exalted
+  explanation_template: >-
+    The 10th house lord is exalted, one of the strongest indicators of exceptional
+    career achievement in classical Jyotish. BPHS regards an exalted Karma lord
+    as conferring high professional status, widespread recognition, and the natural
+    capacity to reach the peak of one's chosen field. Dharmic action and sustained
+    effort are rewarded abundantly. Fame and honour often accompany the native's
+    professional accomplishments.
+  source_refs:
+    - "BPHS 24.3"
+    - "Brihat Jataka 12.5"
+  conflict_policy: override
+
+- rule_id: C031
+  name: 10th Lord Debilitated — Career Struggles Requiring Perseverance
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.10.lord_dignity
+      op: eq
+      value: debilitated
+  explanation_template: >-
+    The 10th house lord is debilitated, indicating persistent obstacles,
+    underrecognition, or delays in the native's professional life. BPHS advises
+    that a debilitated Karma lord requires the native to work considerably harder
+    than peers to gain equivalent recognition. However, the difficulties themselves
+    forge resilience and practical wisdom; neechabhanga (debilitation cancellation)
+    can dramatically reverse these outcomes if present.
+  source_refs:
+    - "BPHS 24.4"
+    - "Phaladeepika 5.11"
+  conflict_policy: defer
+
+- rule_id: C032
+  name: 10th Lord Retrograde — Career Delays with Eventual Success
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.10.lord_is_retrograde
+      op: eq
+      value: true
+  explanation_template: >-
+    A retrograde 10th house lord signals a career trajectory that moves at an
+    unconventional pace — often with delays, reversals, or periods of reassessment
+    before eventual breakthrough. Classical Jyotish associates retrograde planets
+    with internalized or subverted energy; the native may revisit career choices
+    multiple times before finding the path that truly resonates. Persistence through
+    setbacks is the defining virtue of this placement.
+  source_refs:
+    - "BPHS 3.17"
+    - "Saravali 12.9"
+  conflict_policy: defer
+
+- rule_id: C033
+  name: 10th Lord Combust — Career Suppressed by Authority or Ego Conflicts
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.10.lord_is_combust
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th lord is combust the Sun, meaning it falls too close to the solar
+    orb and is temporarily weakened. In career terms, this often manifests as
+    suppression by authority figures, conflicts with superiors, or the native's
+    own ego creating professional friction. BPHS notes that combustion reduces
+    the planet's natural significations; career progress requires the native to
+    consciously balance assertion with diplomatic sensitivity.
+  source_refs:
+    - "BPHS 3.16"
+    - "Phaladeepika 5.8"
+  conflict_policy: merge
+
+- rule_id: C034
+  name: 10th Lord in 12th House — Foreign Career or Spiritual Profession
+  scope: career
+  weight: 0.5
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 12
+  explanation_template: >-
+    The 10th house lord placed in the 12th house of foreign lands, spirituality,
+    and losses creates a career that may be conducted abroad, in isolation,
+    or in a spiritually oriented field such as healthcare, research, or
+    contemplative professions. BPHS notes this can also indicate behind-the-scenes
+    work, hospital administration, or positions that require sacrifice. Financial
+    rewards from career may be modest; fulfilment comes through meaning and service.
+  source_refs:
+    - "BPHS 24.31"
+    - "Jataka Parijata 10.22"
+  conflict_policy: merge
+
+- rule_id: C035
+  name: 10th Lord in 8th House — Research, Occult, or Crisis Management Career
+  scope: career
+  weight: 0.55
+  conditions:
+    - feature: houses.10.lord_house
+      op: eq
+      value: 8
+  explanation_template: >-
+    The 10th lord in the 8th house channels professional energy toward hidden,
+    investigative, or transformative fields. The native may excel in research,
+    forensics, psychology, occult sciences, mining, surgery, or crisis management.
+    Classical texts note that the 8th house governs hidden wealth and occult
+    knowledge; career breakthroughs often arise from exploring what others avoid
+    or cannot understand. Sudden career transformations are common.
+  source_refs:
+    - "BPHS 24.27"
+    - "Saravali 24.8"
+  conflict_policy: merge
+
+- rule_id: C036
+  name: 2nd Lord in 10th House — Career Brings Wealth and Public Speaking
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: houses.2.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The lord of the 2nd house (wealth, speech, family) placed in the 10th house
+    creates a powerful link between professional activity and financial accumulation.
+    BPHS regards this as a favourable placement for earned income through career.
+    The native often excels in fields requiring public speaking, oratory, or the
+    use of voice — teaching, broadcasting, law, or financial advising. Wealth
+    accrues steadily through professional reputation.
+  source_refs:
+    - "BPHS 24.21"
+    - "Phaladeepika 7.9"
+  conflict_policy: merge
+
+- rule_id: C037
+  name: 5th Lord in 10th House — Creative, Speculative, or Government Career
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: houses.5.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The 5th lord (intelligence, creativity, children, speculation) placed in the
+    10th house of career indicates a professional path shaped by creative vision,
+    intellectual brilliance, or government service. BPHS notes this combination
+    produces advisors, ministers, educators, and creative professionals. Speculative
+    intelligence applied to professional domains — including finance, strategy,
+    and the arts — yields exceptional career results.
+  source_refs:
+    - "BPHS 24.24"
+    - "Brihat Jataka 13.6"
+  conflict_policy: merge
+
+- rule_id: C038
+  name: 9th Lord in 10th House — Dharmic Career with Fortune and Philosophy
+  scope: career
+  weight: 0.7
+  conditions:
+    - feature: houses.9.lord_house
+      op: eq
+      value: 10
+  explanation_template: >-
+    The 9th lord (dharma, fortune, higher wisdom) placed in the 10th house is
+    one of the most auspicious career indicators in classical Jyotish. BPHS calls
+    this a powerful raja yoga combination linking luck and vocation. The native
+    achieves professional success through dharmic means — law, philosophy, religion,
+    higher education, or international affairs. Fortune actively supports the career;
+    ethical conduct and principled action are hallmarks of the native's professional
+    identity.
+  source_refs:
+    - "BPHS 24.28"
+    - "Phaladeepika 11.10"
+  conflict_policy: override
+
+- rule_id: C039
+  name: Saturn Exalted in Career Houses — Disciplined Methodical Success
+  scope: career
+  weight: 0.7
+  conditions:
+    - feature: planets.Saturn.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Saturn is exalted in Libra, indicating exceptional capacity for disciplined,
+    methodical effort that yields long-lasting professional success. Exalted Saturn
+    in career-relevant positions (10th, 7th, or aspecting the 10th) rewards
+    sustained hard work with recognition that endures far beyond what flash-in-the-pan
+    success produces. BPHS regards exalted Saturn as one of the premier indicators
+    of Pancha Mahapurusha yoga (Sasa yoga), conferring authority, endurance, and
+    mastery of one's chosen field.
+  source_refs:
+    - "BPHS 36.3"
+    - "Phaladeepika 6.15"
+  conflict_policy: merge
+
+- rule_id: C040
+  name: Jupiter in 2nd House — Wealth Accumulation and Financial Wisdom
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 2
+  explanation_template: >-
+    Jupiter occupying the 2nd house of wealth and speech is a classic Dhana yoga
+    indicator. BPHS associates Jupiter in the 2nd with inherited or earned wealth,
+    eloquent speech, and wisdom in financial management. The native often builds
+    wealth through teaching, advisory roles, financial services, or professions
+    requiring Jupiter's natural significations — law, philosophy, counselling,
+    or banking. Family wealth and institutional support also feature prominently.
+  source_refs:
+    - "BPHS 21.10"
+    - "Jataka Parijata 7.14"
+  conflict_policy: merge
+
+- rule_id: C041
+  name: Yogakaraka in 10th House — Exceptional Career Results
+  scope: career
+  weight: 0.85
+  conditions:
+    - feature: planets.Saturn.is_yogakaraka
+      op: eq
+      value: true
+    - feature: planets.Saturn.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    A Yogakaraka planet — one that rules both a trikona (1st, 5th, or 9th) and
+    a kendra (1st, 4th, 7th, or 10th) — occupies the 10th house of career.
+    This is among the most powerful single indicators of professional achievement
+    in Jyotish. BPHS regards Yogakaraka as a planet that delivers both dharma
+    and artha simultaneously; placed in Karma bhava, it produces exceptional
+    career results, lasting recognition, and the capacity for genuine leadership
+    in one's domain.
+  source_refs:
+    - "BPHS 34.1"
+    - "Brihat Jataka 14.7"
+  conflict_policy: override
+
+- rule_id: C042
+  name: Venus in 10th House — Career in Arts, Entertainment, or Diplomacy
+  scope: career
+  weight: 0.65
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Venus placed in the 10th house of profession indicates a career in the arts,
+    entertainment, fashion, beauty, diplomacy, or luxury industries. BPHS notes
+    that Venus in Karma bhava produces aesthetic professionals — musicians, actors,
+    designers, diplomats, and hospitality experts — who attract public appreciation
+    through charm and creative skill. The native's career benefits from cultivating
+    refined taste, interpersonal warmth, and public-facing social skills.
+  source_refs:
+    - "BPHS 24.11"
+    - "Phaladeepika 12.11"
+  conflict_policy: merge
