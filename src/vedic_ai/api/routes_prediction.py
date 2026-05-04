@@ -236,6 +236,7 @@ def predict(request: PredictionRequest) -> dict:
                     report = r
                 else:
                     report.sections.extend(r.sections)
+                    report.llm_debug.extend(r.llm_debug)
     except EngineError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     except Exception as exc:

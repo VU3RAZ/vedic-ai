@@ -1012,6 +1012,34 @@
       padding: 20px; color: var(--muted); font-size: 0.88rem;
     }
     .tr-spinner-wrap.active { display: flex; }
+
+    /* ── LLM Debug tab ── */
+    .dbg-block {
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+      background: var(--bg);
+    }
+    .dbg-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; cursor: pointer; user-select: none;
+      background: var(--panel);
+    }
+    .dbg-header:hover { background: var(--hover, rgba(255,255,255,0.04)); }
+    .dbg-scope { font-weight: 700; font-size: 0.88rem; color: var(--accent); min-width: 90px; }
+    .dbg-meta  { font-size: 0.75rem; color: var(--muted); flex: 1; }
+    .dbg-tog   { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
+    .dbg-body  { display: none; padding: 14px; }
+    .dbg-section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--accent2); margin-bottom: 6px;
+    }
+    .dbg-pre {
+      background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px 14px; font-size: 0.75rem; line-height: 1.55;
+      white-space: pre-wrap; word-break: break-word;
+      color: #c9d1d9; max-height: 420px; overflow-y: auto;
+      font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    }
+    .dbg-pre-response { color: #7ee787; max-height: 220px; }
   </style>
 </head>
 <body>
@@ -2106,9 +2134,16 @@
           onclick="switchTab('pred-tabs','ptab','pred-standard')">&#9788; Standard</button>
         <button class="tab-btn" id="pred-raman-btn"
           onclick="switchTab('pred-tabs','ptab','pred-raman')">&#9775; Raman</button>
+        <button class="tab-btn" id="pred-debug-btn"
+          onclick="switchTab('pred-tabs','ptab','pred-debug')">&#9881; Debug</button>
       </div>
       <div class="tab-panel ptab active" id="pred-standard-panel"></div>
       <div class="tab-panel ptab"        id="pred-raman-panel"></div>
+      <div class="tab-panel ptab"        id="pred-debug-panel">
+        <div style="color:var(--muted);padding:16px;font-size:0.85rem;">
+          Run a prediction first — LLM prompt and raw response will appear here.
+        </div>
+      </div>
     `;
   }
 
@@ -2139,6 +2174,7 @@
       const data = await resp.json();
       hideSpinner();
       renderPrediction(data, panelId);
+      renderDebug(data, label);
     } catch (err) {
       showError('Prediction error: ' + err.message);
     }
@@ -2414,6 +2450,62 @@
     mixed:       '±',
     neutral:     '—',
   };
+
+  function renderDebug(data, label) {
+    const panel = document.getElementById('pred-debug-panel');
+    if (!panel) return;
+
+    const debugList = data.llm_debug || [];
+    if (!debugList.length) {
+      // dry-run or no LLM called — show rule triggers as the "prompt"
+      panel.innerHTML = `<div style="color:var(--muted);padding:12px;font-size:0.85rem;">
+        No LLM call was made (dry-run or no client). Rule triggers are logged to
+        <code>data/processed/artifacts/triggers.json</code>.
+      </div>`;
+      return;
+    }
+
+    const model = escapeHTML(data.model_name || '?');
+    let html = `<div style="font-size:0.78rem;color:var(--muted);padding:4px 0 10px;">
+      Model: <strong style="color:var(--accent)">${model}</strong> &nbsp;·&nbsp;
+      ${debugList.length} scope(s) &nbsp;·&nbsp;
+      <em>${escapeHTML(label)}</em> run
+    </div>`;
+
+    debugList.forEach((entry, i) => {
+      const scopeLabel = (entry.scope || 'unknown').replace(/^\w/, c => c.toUpperCase());
+      const promptLines = escapeHTML(entry.prompt || '').replace(/### /g, '<span style="color:var(--accent2);font-weight:700;">### </span>');
+      const rawOut = escapeHTML(entry.llm_raw || '(empty)');
+      const promptLen = (entry.prompt || '').length;
+      const rawLen    = (entry.llm_raw || '').length;
+
+      html += `
+        <div class="dbg-block">
+          <div class="dbg-header" onclick="toggleDbgBlock(${i})">
+            <span class="dbg-scope">${scopeLabel}</span>
+            <span class="dbg-meta">prompt ${promptLen} chars &nbsp;·&nbsp; response ${rawLen} chars</span>
+            <span class="dbg-tog" id="dbg-tog-${i}">&#9658;</span>
+          </div>
+          <div class="dbg-body" id="dbg-body-${i}">
+            <div class="dbg-section-label">&#9654; PROMPT SENT TO LLM</div>
+            <pre class="dbg-pre">${promptLines}</pre>
+            <div class="dbg-section-label" style="margin-top:12px;">&#9664; RAW LLM RESPONSE</div>
+            <pre class="dbg-pre dbg-pre-response">${rawOut}</pre>
+          </div>
+        </div>`;
+    });
+
+    panel.innerHTML = html;
+  }
+
+  function toggleDbgBlock(i) {
+    const body = document.getElementById('dbg-body-' + i);
+    const tog  = document.getElementById('dbg-tog-'  + i);
+    if (!body) return;
+    const open = body.style.display !== 'none' && body.style.display !== '';
+    body.style.display = open ? 'none' : 'block';
+    if (tog) tog.innerHTML = open ? '&#9658;' : '&#9660;';
+  }
 
   function renderTransit(data, transitISO) {
     const resultsDiv = document.getElementById('transit-results');

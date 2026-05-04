@@ -33,6 +33,12 @@ class PredictionSection(BaseModel):
     evidence: list[PredictionEvidence] = Field(default_factory=list)
 
 
+class LLMDebugInfo(BaseModel):
+    scope: str
+    prompt: str
+    llm_raw: str
+
+
 class PredictionReport(BaseModel):
     birth_name: str | None = None
     chart_bundle_id: str | None = None
@@ -40,6 +46,7 @@ class PredictionReport(BaseModel):
     sections: list[PredictionSection] = Field(default_factory=list)
     model_name: str
     schema_version: str = SCHEMA_VERSION
+    llm_debug: list[LLMDebugInfo] = Field(default_factory=list)
 
 
 class ForecastWindow(BaseModel):

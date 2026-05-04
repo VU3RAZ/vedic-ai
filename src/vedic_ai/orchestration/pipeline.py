@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from vedic_ai.domain.birth import BirthData
-from vedic_ai.domain.prediction import PredictionReport
+from vedic_ai.domain.prediction import PredictionReport, LLMDebugInfo
 from vedic_ai.engines.swisseph_adapter import SwissEphAdapter
 from vedic_ai.engines.base import AstrologyEngine, compute_core_chart
 from vedic_ai.features.core_features import extract_core_features
@@ -127,6 +127,8 @@ def run_prediction_pipeline(
             logger.warning("Gochara computation failed (continuing without transit context): %s", exc)
 
     # 6. LLM interpretation (synthesis only — engine findings are the factual base)
+    debug_prompt = ""
+    debug_raw    = ""
     if dry_run or llm_client is None:
         interpretation: dict = {
             "summary": f"Dry-run interpretation for scope '{scope}'.",
@@ -136,7 +138,7 @@ def run_prediction_pipeline(
         }
         logger.info("Dry-run mode: LLM call skipped")
     else:
-        interpretation = call_llm_for_interpretation(
+        interpretation, debug_prompt, debug_raw = call_llm_for_interpretation(
             bundle, features, triggers, passages, scope, llm_client,
             raman_method=raman_method,
             gochara_context=gochara_context,
@@ -155,6 +157,7 @@ def run_prediction_pipeline(
         generated_at=datetime.now(timezone.utc),
         sections=[section],
         model_name=getattr(llm_client, "model_name", "dry-run"),
+        llm_debug=[LLMDebugInfo(scope=scope, prompt=debug_prompt, llm_raw=debug_raw)],
     )
     logger.info("PredictionReport assembled: %d section(s)", len(report.sections))
     _persist_artifact("report.json", report.model_dump(mode="json"), adir)
