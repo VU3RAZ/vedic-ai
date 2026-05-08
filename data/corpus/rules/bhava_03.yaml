@@ -1,0 +1,115 @@
+# Bhava 3 (Sahaja / Parakrama Bhava) rules — Courage, Siblings, Communication,
+# Short Journeys, Skills
+# Primary significators: Mars (courage, siblings), Mercury (communication, skills),
+# 3rd lord placement
+
+- rule_id: B03_001
+  name: Mars in 3rd House — Exceptional Courage and Initiative
+  scope: bhava_3
+  weight: 0.75
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 3
+  explanation_template: >-
+    Mars in the 3rd house (Parakrama bhava) is one of the finest placements for
+    this planet — it is in its natural house of courage and initiative. BPHS
+    regards Mars here as conferring exceptional bravery, physical strength, and
+    the drive to take decisive action. The native is enterprising, self-motivated,
+    and competitive; success in sports, the military, or entrepreneurial ventures
+    is strongly supported. Sibling relationships tend to be dynamic and occasionally
+    contentious.
+  source_refs:
+    - "BPHS 17.3"
+  conflict_policy: merge
+
+- rule_id: B03_002
+  name: Mercury in 3rd House — Skilled Communicator and Writer
+  scope: bhava_3
+  weight: 0.70
+  conditions:
+    - feature: planets.Mercury.house
+      op: eq
+      value: 3
+  explanation_template: >-
+    Mercury placed in the 3rd house of communication, writing, and skills is
+    a highly favourable position for the planet of intellect and expression.
+    The native is articulate, quick-witted, and naturally skilled in writing,
+    journalism, commerce, or any craft requiring mental dexterity. BPHS notes
+    that Mercury in the 3rd bestows talent with the hands and mind simultaneously,
+    making the native adept at both practical skills and verbal communication.
+  source_refs:
+    - "BPHS 17.4"
+  conflict_policy: merge
+
+- rule_id: B03_003
+  name: 3rd Lord in Kendra — Courage and Skills Well-Directed
+  scope: bhava_3
+  weight: 0.60
+  conditions:
+    - feature: houses.3.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 3rd house lord placed in an angular house (kendra) gives directional
+    strength to the native's courage, communication skills, and sibling
+    relationships. The native channels initiative and effort productively into
+    career or family contexts, and practical skills are recognised and rewarded
+    in the native's environment.
+  source_refs:
+    - "BPHS 9.1"
+  conflict_policy: merge
+
+- rule_id: B03_004
+  name: 3rd Lord in Trikona — Fortunate Expression of Skills
+  scope: bhava_3
+  weight: 0.60
+  conditions:
+    - feature: houses.3.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 3rd house occupies a trine (trikona: 1st, 5th, or 9th),
+    linking the native's communication skills and courageous spirit to dharma
+    and fortune. Writing, speaking, or skilled work becomes a vehicle for
+    meaningful achievement; siblings may also be sources of support and fortune.
+  source_refs:
+    - "BPHS 9.2"
+  conflict_policy: merge
+
+- rule_id: B03_005
+  name: Mars Exalted — Extraordinary Physical Courage
+  scope: bhava_3
+  weight: 0.80
+  conditions:
+    - feature: planets.Mars.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Mars is exalted in Capricorn, reflecting the highest expression of martial
+    energy — disciplined, goal-oriented courage combined with sustained physical
+    and mental stamina. An exalted Mars linked to 3rd house themes produces a
+    native of remarkable initiative and competitive strength. BPHS associates
+    exalted Mars with Ruchaka yoga (Pancha Mahapurusha), conferring physical
+    excellence and the capacity for strategic leadership.
+  source_refs:
+    - "BPHS 36.2"
+  conflict_policy: override
+
+- rule_id: B03_006
+  name: 3rd Lord in Dusthana — Challenges in Communication or Sibling Relations
+  scope: bhava_3
+  weight: 0.50
+  conditions:
+    - feature: houses.3.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 3rd house lord placed in a dusthana (6th, 8th, or 12th) introduces
+    difficulties related to siblings, communication, or the expression of
+    courage. Short journeys may be fraught with obstacles; written or verbal
+    communication can lead to misunderstandings. Conscious effort to clarify
+    intentions and nurture sibling bonds helps mitigate these tendencies.
+  source_refs:
+    - "BPHS 9.5"
+  conflict_policy: defer

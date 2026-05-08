@@ -1,0 +1,120 @@
+# Bhava 12 (Vyaya / Moksha Bhava) rules — Losses, Expenditure, Liberation, Foreign Lands,
+# Spiritual Emancipation, Isolated Institutions
+# Primary significators: Saturn (liberation through karma and discipline, renunciation),
+# Ketu (moksha, detachment from worldly illusion), 12th lord placement
+
+- rule_id: B12_001
+  name: Ketu in 12th House — Moksha and Spiritual Liberation
+  scope: bhava_12
+  weight: 0.75
+  conditions:
+    - feature: planets.Ketu.house
+      op: eq
+      value: 12
+  explanation_template: >-
+    Ketu placed in the 12th house (Moksha bhava) is its natural home — a classical
+    indicator of spiritual liberation, deep detachment from material illusion, and
+    past-life karmic resolution. BPHS and classical texts regard Ketu in the 12th
+    as a powerful indicator of the native's orientation toward moksha. The native
+    is drawn to meditation, inner renunciation, and experiences of the transcendent;
+    foreign sojourns, ashram stays, or periods of contemplative withdrawal feature
+    prominently in the life.
+  source_refs:
+    - "BPHS 26.9"
+  conflict_policy: merge
+
+- rule_id: B12_002
+  name: Saturn in 12th House — Karmic Discipline and Structured Renunciation
+  scope: bhava_12
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 12
+  explanation_template: >-
+    Saturn placed in the 12th house of liberation and losses indicates a life
+    characterised by sustained karmic obligations, prolonged periods of isolation
+    or foreign residence, and service in institutional settings such as hospitals,
+    prisons, or monasteries. BPHS notes that Saturn here demands sacrifice and
+    inner discipline; the native's spiritual practice, when undertaken sincerely,
+    produces profound inner rewards. Long-term foreign settlement is a common
+    manifestation of this placement.
+  source_refs:
+    - "BPHS 26.13"
+  conflict_policy: merge
+
+- rule_id: B12_003
+  name: 12th Lord in Kendra — Expenditure and Loss Structurally Present
+  scope: bhava_12
+  weight: 0.60
+  conditions:
+    - feature: houses.12.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 12th house lord placed in an angular house (kendra) brings matters of
+    expenditure, foreign connections, and institutional involvement into a prominent
+    structural role in the native's life. Losses may be connected to career,
+    home, or partnerships. The native is generally equipped to deal with these
+    outflows because the angular placement also provides resources and visibility
+    for addressing 12th house themes constructively.
+  source_refs:
+    - "BPHS 26.1"
+  conflict_policy: merge
+
+- rule_id: B12_004
+  name: 12th Lord in Trikona — Expenditure Through Spiritually Meaningful Channels
+  scope: bhava_12
+  weight: 0.65
+  conditions:
+    - feature: houses.12.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 12th house occupying a trine (trikona: 1st, 5th, or 9th)
+    channels losses and withdrawal into spiritually meaningful or dharmic activity.
+    The native may voluntarily renounce material comfort in pursuit of higher
+    ideals, creative solitude, or profound philosophical enquiry. Expenditure
+    toward charitable or sacred purposes yields karmic merit.
+  source_refs:
+    - "BPHS 26.2"
+  conflict_policy: merge
+
+- rule_id: B12_005
+  name: Jupiter in 12th House — Spiritual Wealth and Wisdom Through Renunciation
+  scope: bhava_12
+  weight: 0.70
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 12
+  explanation_template: >-
+    Jupiter in the 12th house (Vyaya bhava) is a spiritually auspicious placement —
+    the native finds true wealth through renunciation, spiritual institutions, or
+    teaching in foreign and isolated settings. BPHS notes that Jupiter in the 12th
+    channels Jupiterian abundance toward moksha and inner wisdom rather than
+    material accumulation. Expenditure tends toward noble or dharmic purposes;
+    liberation is a strong and active life theme that grows more pronounced with age.
+  source_refs:
+    - "BPHS 26.10"
+  conflict_policy: merge
+
+- rule_id: B12_006
+  name: 12th Lord in Dusthana — Magnified Losses and Hidden Obligations
+  scope: bhava_12
+  weight: 0.55
+  conditions:
+    - feature: houses.12.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 12th lord placed in another dusthana (6th or 8th) can intensify hidden
+    losses, uncontrolled expenditure, secret adversaries, or persistent health
+    vulnerabilities. The Viparita Raja Yoga potential exists here — dusthana lords
+    may ultimately destroy each other's negative effects — but the native must
+    exercise caution with large financial outflows and remain vigilant about
+    hidden or institutional obligations before the yoga matures into fortune.
+  source_refs:
+    - "BPHS 26.3"
+    - "Phaladeepika 7.18"
+  conflict_policy: defer

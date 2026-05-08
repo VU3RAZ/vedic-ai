@@ -1,0 +1,118 @@
+# Bhava 11 (Labha / Aya Bhava) rules — Gains, Income, Social Network, Elder Siblings,
+# Aspirations, Fulfilment of Desires
+# Primary significators: Jupiter (gains through wisdom and dharma), 11th lord placement,
+# fulfilment of desires
+
+- rule_id: B11_001
+  name: Jupiter in 11th House — Abundant Gains and Fulfilled Aspirations
+  scope: bhava_11
+  weight: 0.80
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 11
+  explanation_template: >-
+    Jupiter placed in the 11th house (Labha bhava) is one of the finest indicators
+    of financial gains, social abundance, and the fulfilment of heartfelt desires.
+    BPHS regards Jupiter in the 11th as conferring wealth through wise investments,
+    teaching, or advisory roles; the native's social network is broad, supportive,
+    and often distinguished. Elder siblings and respected mentors play positive
+    roles; aspirations are realised through dharmic means rather than shortcuts.
+  source_refs:
+    - "BPHS 25.5"
+  conflict_policy: merge
+
+- rule_id: B11_002
+  name: 11th Lord in Kendra — Social and Financial Gains Well-Structured
+  scope: bhava_11
+  weight: 0.65
+  conditions:
+    - feature: houses.11.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 11th house lord placed in an angular house (kendra) gives directional
+    strength to the native's gains, income streams, and social ambitions. The
+    native's desires are consistently supported by circumstances; financial gains
+    from career, partnerships, and networking tend to arrive in structured and
+    repeatable ways rather than sporadically.
+  source_refs:
+    - "BPHS 25.1"
+  conflict_policy: merge
+
+- rule_id: B11_003
+  name: 11th Lord in Trikona — Gains Through Fortunate and Dharmic Channels
+  scope: bhava_11
+  weight: 0.65
+  conditions:
+    - feature: houses.11.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 11th house placed in a trine (trikona: 1st, 5th, or 9th)
+    links the domain of gains and desires to dharmic fortune. Income arrives
+    through righteous means; the fulfilment of aspirations is supported by good
+    karma and principled conduct. Social recognition tends to come naturally
+    and is well-deserved. Elder siblings or extended family may be sources of
+    fortune and wisdom.
+  source_refs:
+    - "BPHS 25.2"
+  conflict_policy: merge
+
+- rule_id: B11_004
+  name: Jupiter Exalted — Exceptional Financial Gains and Social Blessings
+  scope: bhava_11
+  weight: 0.85
+  conditions:
+    - feature: planets.Jupiter.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter exalted in Cancer expresses the fullest potential for abundance,
+    wisdom-based prosperity, and the generous realisation of aspirations. In
+    the context of Bhava 11 significations, an exalted Jupiter indicates
+    exceptional gains, a distinguished social circle, and the capacity to
+    attract opportunities that align with the native's highest values. Hamsa
+    yoga potential is activated; generosity to others further amplifies returns.
+  source_refs:
+    - "BPHS 36.1"
+  conflict_policy: override
+
+- rule_id: B11_005
+  name: Gajakesari Yoga — Gains Through Wisdom and Public Renown
+  scope: bhava_11
+  weight: 0.70
+  conditions:
+    - feature: yogas.gajakesari
+      op: eq
+      value: true
+  explanation_template: >-
+    Gajakesari Yoga (Jupiter and Moon in mutual angular relationship) amplifies
+    the 11th house domain of gains and social standing. This celebrated yoga
+    endows the native with a reputation for wisdom and emotional intelligence;
+    the social network attracted through this renown consistently produces
+    financial and professional opportunities. BPHS regards Gajakesari as a
+    broadly auspicious yoga that elevates the significations of all houses
+    it touches.
+  source_refs:
+    - "BPHS 36.7"
+  conflict_policy: merge
+
+- rule_id: B11_006
+  name: 11th Lord in Dusthana — Irregular or Challenged Income Patterns
+  scope: bhava_11
+  weight: 0.50
+  conditions:
+    - feature: houses.11.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 11th house lord placed in a dusthana (6th, 8th, or 12th) introduces
+    irregularity, obstacles, or unexpected losses in the native's income and
+    aspirations. Gains may arrive through unconventional or hidden channels;
+    social networks may be unreliable or subject to disruption. Elder sibling
+    relationships may be strained. The native benefits from building multiple
+    income streams and maintaining realistic expectations about social alliances.
+  source_refs:
+    - "BPHS 25.3"
+  conflict_policy: defer

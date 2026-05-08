@@ -1,0 +1,112 @@
+# Bhava 2 (Dhana / Kutumba Bhava) rules — Wealth, Speech, Family, Accumulated Assets
+# Primary significators: Jupiter (wealth, wisdom), Venus (accumulation, luxury),
+# 2nd lord placement
+
+- rule_id: B02_001
+  name: Jupiter in 2nd House — Wealth and Eloquent Speech
+  scope: bhava_2
+  weight: 0.75
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 2
+  explanation_template: >-
+    Jupiter placed in the 2nd house (Dhana bhava) is a classic Dhana yoga indicator.
+    BPHS associates Jupiter in the 2nd with inherited or earned wealth, eloquent
+    and wise speech, and a prosperous family environment. The native often builds
+    wealth through teaching, advisory roles, financial services, or any field
+    requiring Jupiter's natural significations — law, philosophy, counselling,
+    or banking. Family values and institutional knowledge are key assets.
+  source_refs:
+    - "BPHS 16.5"
+  conflict_policy: merge
+
+- rule_id: B02_002
+  name: Venus in 2nd House — Luxury Accumulation and Harmonious Family
+  scope: bhava_2
+  weight: 0.70
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 2
+  explanation_template: >-
+    Venus in the 2nd house of wealth and family bestows material comfort, a taste
+    for luxury, and a harmonious family life. Classical texts regard this placement
+    as a reliable indicator of financial accumulation, especially through creative
+    or beauty-related industries. The native's speech is pleasant and persuasive;
+    artistic talent often contributes to material success.
+  source_refs:
+    - "BPHS 16.9"
+  conflict_policy: merge
+
+- rule_id: B02_003
+  name: 2nd Lord in Kendra — Strong Wealth Foundation
+  scope: bhava_2
+  weight: 0.65
+  conditions:
+    - feature: houses.2.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 2nd house lord placed in an angular house (kendra) provides a solid
+    structural foundation for wealth accumulation. Angular placement energises
+    the 2nd house's significations — the native builds financial security steadily,
+    is supported by family resources, and possesses the practical ability to convert
+    effort into tangible assets.
+  source_refs:
+    - "BPHS 8.1"
+  conflict_policy: merge
+
+- rule_id: B02_004
+  name: 2nd Lord in Trikona — Fortunate Wealth and Family Blessings
+  scope: bhava_2
+  weight: 0.65
+  conditions:
+    - feature: houses.2.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 2nd house is placed in a trine (trikona), conferring fortune
+    and dharmic support upon the native's financial life. Wealth arrives through
+    meritorious channels — inheritance, righteous effort, or the grace of good
+    karma. The family environment is supportive and culturally enriched.
+  source_refs:
+    - "BPHS 8.2"
+  conflict_policy: merge
+
+- rule_id: B02_005
+  name: Jupiter Exalted — Exceptional Wealth and Wisdom
+  scope: bhava_2
+  weight: 0.80
+  conditions:
+    - feature: planets.Jupiter.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter is exalted in Cancer, expressing the maximum benefic potential for
+    wealth, wisdom, and family prosperity. An exalted Jupiter linked to Dhana
+    bhava indicators produces exceptional financial abundance and the wisdom to
+    preserve and multiply it. BPHS regards exalted Jupiter as conferring Hamsa
+    yoga potential — the native radiates nobility, generosity, and philosophical
+    depth.
+  source_refs:
+    - "BPHS 36.1"
+  conflict_policy: override
+
+- rule_id: B02_006
+  name: 2nd Lord in Dusthana — Wealth Challenges and Family Strain
+  scope: bhava_2
+  weight: 0.50
+  conditions:
+    - feature: houses.2.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 2nd house lord placed in a dusthana (6th, 8th, or 12th) creates challenges
+    in wealth accumulation, family harmony, or speech. Financial losses, disputes
+    over family assets, or debts may recur. The native benefits from careful
+    financial planning, avoidance of speculative risks, and attention to family
+    communication patterns.
+  source_refs:
+    - "BPHS 8.5"
+  conflict_policy: defer

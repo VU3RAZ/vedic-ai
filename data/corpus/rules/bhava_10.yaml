@@ -1,0 +1,117 @@
+# Bhava 10 (Karma / Rajya Bhava) rules — Career, Status, Public Life, Authority,
+# Action in the World
+# Primary significators: Sun (career authority, recognition, status),
+# Saturn (disciplined effort, sustained achievement), 10th lord placement
+
+- rule_id: B10_001
+  name: Sun in 10th House — Career Prominence and Public Authority
+  scope: bhava_10
+  weight: 0.80
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Sun placed in the 10th house (Karma bhava) confers exceptional prominence,
+    natural authority, and strong career recognition. BPHS regards the Sun in
+    the 10th as one of the premier career indicators — the native rises to
+    positions of leadership, governmental authority, or public esteem through
+    dharmic effort and innate executive ability. The capacity to inspire others
+    and direct institutional resources is outstanding.
+  source_refs:
+    - "BPHS 24.5"
+  conflict_policy: merge
+
+- rule_id: B10_002
+  name: Saturn in 10th House — Disciplined Career Built Through Sustained Effort
+  scope: bhava_10
+  weight: 0.70
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 10
+  explanation_template: >-
+    Saturn in the 10th house (Karma bhava) denotes a career built methodically
+    through discipline, patience, and sustained effort over time. BPHS notes
+    that Saturn here produces professionals who earn their position through
+    genuine merit rather than luck; success often comes later in life but endures
+    long after peers have faded. Service-oriented professions, administration,
+    law, and technical fields are strongly supported.
+  source_refs:
+    - "BPHS 24.13"
+  conflict_policy: merge
+
+- rule_id: B10_003
+  name: 10th Lord in Kendra — Solid Career Foundation and Worldly Achievement
+  scope: bhava_10
+  weight: 0.65
+  conditions:
+    - feature: houses.10.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th house lord placed in an angular house (kendra) provides a powerful
+    structural foundation for career achievement and public standing. The native's
+    professional ambitions are well-supported by circumstances, and the drive to
+    succeed finds consistent channels for expression. This is one of the standard
+    indicators of a productive, socially visible career life.
+  source_refs:
+    - "BPHS 24.1"
+  conflict_policy: merge
+
+- rule_id: B10_004
+  name: 10th Lord in Trikona — Career Blessed by Fortune and Dharma
+  scope: bhava_10
+  weight: 0.65
+  conditions:
+    - feature: houses.10.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 10th house placed in a trine (trikona: 1st, 5th, or 9th)
+    links the domain of career and public action to dharma and fortune. The native's
+    professional path is naturally aligned with ethical principles; luck actively
+    supports career endeavours. BPHS regards this as a Dharma-Karma Adhipati
+    configuration when the 9th and 10th lords are connected.
+  source_refs:
+    - "BPHS 24.2"
+  conflict_policy: merge
+
+- rule_id: B10_005
+  name: Sun Exalted — Exceptional Career Achievement and Recognition
+  scope: bhava_10
+  weight: 0.85
+  conditions:
+    - feature: planets.Sun.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    The Sun exalted in Aries reflects the highest solar expression — outstanding
+    leadership ability, powerful executive energy, and the natural magnetism of
+    authority. In the context of Bhava 10 significations, an exalted Sun strongly
+    supports a prominent, highly recognised career. BPHS regards the exalted Sun
+    as conferring a commanding personality that naturally gravitates toward the
+    highest positions of influence in its chosen field.
+  source_refs:
+    - "BPHS 3.12"
+  conflict_policy: override
+
+- rule_id: B10_006
+  name: 10th Lord in Dusthana — Career Obstacles Requiring Perseverance
+  scope: bhava_10
+  weight: 0.50
+  conditions:
+    - feature: houses.10.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 10th house lord placed in a dusthana (6th, 8th, or 12th) introduces
+    significant obstacles, delays, or unconventional trajectories in the native's
+    career. The 12th house placement may indicate a vocation conducted abroad or
+    in relative obscurity; the 8th may bring sudden career reversals; the 6th
+    may channel career energy into service or conflict resolution. Persistent
+    effort combined with pragmatic realism are the keys to eventual professional
+    recognition.
+  source_refs:
+    - "BPHS 24.4"
+  conflict_policy: defer

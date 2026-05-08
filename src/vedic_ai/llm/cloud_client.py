@@ -19,7 +19,7 @@ import os
 class GeminiClient:
     """Wraps Google GenAI SDK for Gemini models.
 
-    Free tier (as of 2025): gemini-2.0-flash — 1,500 req/day, 15 RPM, no charge.
+    Free tier (as of 2025): gemini-flash-lite-latest — 1,500 req/day, 30 RPM, no charge.
     API key: GEMINI_API_KEY env var (or GOOGLE_API_KEY — both are checked).
     """
 

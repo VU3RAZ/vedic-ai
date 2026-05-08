@@ -1,0 +1,116 @@
+# Bhava 7 (Kalatra / Yuvati Bhava) rules — Spouse, Partnerships, Business Alliances,
+# Foreign Travel, Desires
+# Primary significators: Venus (spouse, partnerships, desire), 7th lord placement
+
+- rule_id: B07_001
+  name: Venus in 7th House — Loving Spouse and Harmonious Partnerships
+  scope: bhava_7
+  weight: 0.80
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Venus placed in the 7th house (Kalatra bhava) is one of the finest indicators
+    of a loving, beautiful, and harmonious marriage partner. BPHS regards Venus
+    in the 7th as bestowing an attractive, cultured, and affectionate spouse;
+    business partnerships are also smooth and mutually profitable. The native is
+    naturally skilled in relationships and diplomacy; social charm attracts
+    beneficial alliances throughout life.
+  source_refs:
+    - "BPHS 21.9"
+  conflict_policy: merge
+
+- rule_id: B07_002
+  name: 7th Lord in Kendra — Stable Partnerships and Reliable Alliances
+  scope: bhava_7
+  weight: 0.65
+  conditions:
+    - feature: houses.7.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th house lord placed in an angular house (kendra) gives structural
+    stability to the native's marriage and partnerships. The native is capable
+    of forming lasting, productive alliances — both in personal relationships
+    and business contexts. The spouse is likely to be a person of substance,
+    capable of contributing meaningfully to the native's life goals.
+  source_refs:
+    - "BPHS 13.1"
+  conflict_policy: merge
+
+- rule_id: B07_003
+  name: 7th Lord in Trikona — Fortunate and Dharmic Partnerships
+  scope: bhava_7
+  weight: 0.65
+  conditions:
+    - feature: houses.7.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 7th house occupies a trine (trikona: 1st, 5th, or 9th),
+    linking the domain of partnerships to dharma and fortune. The native's marriage
+    or key partnerships are supported by good karma; relationships tend to be
+    uplifting, purposeful, and mutually enriching. The spouse may be connected
+    to spiritual or philosophical traditions.
+  source_refs:
+    - "BPHS 13.2"
+  conflict_policy: merge
+
+- rule_id: B07_004
+  name: Venus Exalted — Ideal Romantic and Partnership Blessings
+  scope: bhava_7
+  weight: 0.85
+  conditions:
+    - feature: planets.Venus.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Venus is exalted in Pisces, expressing the highest romantic and relational
+    idealism — a partner who is spiritually elevated, deeply compassionate, and
+    genuinely loving. An exalted Venus linked to 7th house themes produces
+    exceptional partnership blessings. BPHS associates exalted Venus with Malavya
+    yoga (Pancha Mahapurusha), conferring beauty, refinement, and lasting
+    domestic happiness. Business partnerships are also conducted with integrity
+    and mutual benefit.
+  source_refs:
+    - "BPHS 36.4"
+  conflict_policy: override
+
+- rule_id: B07_005
+  name: Jupiter in 7th House — Wise and Noble Spouse
+  scope: bhava_7
+  weight: 0.70
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 7
+  explanation_template: >-
+    Jupiter in the 7th house (Kalatra bhava) indicates a wise, principled, and
+    morally elevated spouse. Classical texts regard Jupiter in the 7th as one
+    of the most favourable indicators for a supportive, dharmic partner who
+    contributes positively to the native's spiritual and material life. Business
+    partnerships benefit from Jupiter's counsel and ethical orientation. The
+    Gajakesari yoga potential is enhanced when the Moon also aspects this position.
+  source_refs:
+    - "BPHS 21.5"
+  conflict_policy: merge
+
+- rule_id: B07_006
+  name: 7th Lord in Dusthana — Partnership Challenges and Marital Strain
+  scope: bhava_7
+  weight: 0.50
+  conditions:
+    - feature: houses.7.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 7th house lord placed in a dusthana (6th, 8th, or 12th) introduces
+    challenges in marriage, business partnerships, or foreign dealings. Relationship
+    conflicts, delays in marriage, or difficulties with partners may be experienced.
+    The 8th house placement specifically may indicate a spouse from a different
+    background or life-altering partnership experiences. Conscious communication
+    and realistic expectations are essential relationship practices for this native.
+  source_refs:
+    - "BPHS 13.5"
+  conflict_policy: defer

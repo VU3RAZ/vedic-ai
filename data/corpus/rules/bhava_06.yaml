@@ -1,0 +1,118 @@
+# Bhava 6 (Ari / Roga Bhava) rules — Enemies, Litigation, Disease, Service,
+# Debts, Obstacles Overcome
+# Primary significators: Mars (conflict with enemies, litigation),
+# Saturn (service, chronic conditions, debt), 6th lord placement
+
+- rule_id: B06_001
+  name: Mars in 6th House — Victory Over Enemies and Competitive Strength
+  scope: bhava_6
+  weight: 0.70
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Mars in the 6th house (Ari bhava) is a classic indicator of victory over
+    enemies, competitors, and litigation. BPHS regards this as one of the better
+    placements for Mars because the planet's combative energy is directed toward
+    defeating adversaries and overcoming obstacles. The native tends to triumph
+    in disputes, competitions, and adversarial situations; physical stamina for
+    health challenges is also strong. Service roles involving discipline or
+    conflict resolution suit this native well.
+  source_refs:
+    - "BPHS 20.3"
+  conflict_policy: merge
+
+- rule_id: B06_002
+  name: Saturn in 6th House — Disciplined Service and Debt Resolution
+  scope: bhava_6
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 6
+  explanation_template: >-
+    Saturn placed in the 6th house of service, disease, and debts is generally
+    a favourable configuration in classical Jyotish. The native possesses
+    exceptional endurance for sustained work and service; debts are managed
+    systematically and eliminated over time. BPHS notes that Saturn in the 6th
+    reduces the power of enemies through sheer persistence and strategic discipline.
+    Chronic health conditions may arise but are managed through rigorous lifestyle
+    practices.
+  source_refs:
+    - "BPHS 20.7"
+  conflict_policy: merge
+
+- rule_id: B06_003
+  name: 6th Lord in Kendra — Active Engagement with Challenges
+  scope: bhava_6
+  weight: 0.55
+  conditions:
+    - feature: houses.6.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 6th house lord placed in an angular house (kendra) brings issues of
+    health, enemies, or service into a prominent structural role in the native's
+    life. The native is generally able to confront adversarial situations and
+    health challenges head-on. While obstacles are present, the angular placement
+    gives the native the resources and visibility to address them effectively.
+  source_refs:
+    - "BPHS 12.1"
+  conflict_policy: merge
+
+- rule_id: B06_004
+  name: 6th Lord in Trikona — Service as a Path of Dharma
+  scope: bhava_6
+  weight: 0.55
+  conditions:
+    - feature: houses.6.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 6th house placed in a trine indicates that service, healing,
+    and the resolution of conflicts become meaningful paths of dharmic action for
+    the native. The native may find a calling in healthcare, social work, legal
+    advocacy, or any field where overcoming adversity for others produces
+    spiritual growth and outer fortune.
+  source_refs:
+    - "BPHS 12.2"
+  conflict_policy: merge
+
+- rule_id: B06_005
+  name: Mars Exalted — Outstanding Capacity to Defeat Adversaries
+  scope: bhava_6
+  weight: 0.80
+  conditions:
+    - feature: planets.Mars.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    An exalted Mars in Capricorn represents the highest martial energy — strategic,
+    disciplined, and relentlessly goal-directed. In the context of Bhava 6
+    significations, exalted Mars indicates an exceptional ability to overcome
+    enemies, win litigation, and defeat competition through superior strategy
+    and stamina. BPHS links exalted Mars to Ruchaka yoga, conferring physical
+    excellence and the qualities of a born commander.
+  source_refs:
+    - "BPHS 36.2"
+  conflict_policy: override
+
+- rule_id: B06_006
+  name: 6th Lord in Dusthana — Entrenched Health or Conflict Issues
+  scope: bhava_6
+  weight: 0.50
+  conditions:
+    - feature: houses.6.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 6th lord placed in another dusthana (8th or 12th) creates Viparita Raja
+    Yoga potential — a paradoxical configuration where difficulties destroy
+    themselves, often producing unexpected reversals of fortune. However, chronic
+    health challenges, entrenched debts, or persistent conflicts with adversaries
+    may persist until a decisive turning point. Patience and karmic awareness
+    are essential for navigating this configuration productively.
+  source_refs:
+    - "BPHS 12.5"
+  conflict_policy: defer

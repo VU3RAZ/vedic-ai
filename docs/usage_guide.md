@@ -211,11 +211,26 @@ vedic-ai serve --host 0.0.0.0 --port 8080   # accessible on your LAN
 
 Open the printed URL in any browser. The interface provides:
 
-- **Birth Data form** — name, date/time, timezone selector (14 presets), lat/lon, scope, dry-run toggle
-- **LLM Backend selector** — choose Ollama / LM Studio / llama.cpp, with editable base URL and model name; overrides `configs/models.yaml` per-request without a server restart
+- **Birth Data form** — name, date/time, timezone selector (14 presets), lat/lon, scope selector (traditional + 12 Bhava), dry-run toggle
+- **Scope selector** — two option groups:
+  - *Traditional scopes* — All, Personality, Career, Relationships, Health
+  - *12 Bhava Analysis* — All 12 Bhavas, or any individual Bhava (H1 Lagna → H12 Vyaya)
+- **LLM Backend selector** — choose Ollama / LM Studio / llama.cpp / ✨ Gemini; Gemini selection swaps the Base URL field for an API Key field; overrides `configs/models.yaml` per-request
 - **Quick Fill chips** — one-click example charts (Nagpur 1972, Delhi 1985, Mumbai 2000)
 - **Compute Chart** button — shows the natal chart table (planet, sign, degree, house, retrograde), house table (sign, lord, occupants), and Vimshottari dasha table
-- **Generate Prediction** button — runs the full pipeline and shows one prediction card per scope, each with summary, details, and a collapsible evidence accordion (rule triggers + BPHS passages)
+- **Standard / Raman prediction buttons** — run the full pipeline; results appear in the matching tab
+
+**Prediction tabs (appear after first prediction run):**
+
+| Tab | Contents |
+|---|---|
+| ⊙ Standard | Traditional-scope prediction cards (one per scope) |
+| ☵ Raman | Raman-method prediction cards |
+| ▌ 12 Bhavas | Responsive bhava card grid — H1 to H12, each with activation badge and transit badges |
+| ✨ Gemini | Results from the Gemini cloud backend |
+| ⚙ Debug | Full LLM prompt + raw response, collapsible per scope |
+
+**Chart analysis tabs (after Compute Chart):** Chart · Drishti · Vargas · Yogas · Raman-Analysis · Gochara
 
 The web UI talks to the same FastAPI backend as the REST API below.
 
@@ -238,7 +253,7 @@ vedic-ai predict <birth_datetime> <latitude> <longitude> [options]
 **Options:**
 | Flag | Default | Purpose |
 |---|---|---|
-| `--scope` / `-s` | *(all three)* | `personality`, `career`, or `relationships`. Omit to run all. |
+| `--scope` / `-s` | *(all four)* | `personality`, `career`, `relationships`, `health`, `bhava_all`, or `bhava_1`…`bhava_12`. Omit to run all four traditional scopes. |
 | `--name` / `-n` | — | Native's name (included in report) |
 | `--dry-run` | off | Skip LLM; return evidence-only report (fast) |
 | `--no-rag` | off | Disable FAISS retrieval (faster, less grounded) |
@@ -418,8 +433,14 @@ The API is now available at `http://localhost:8000`. Interactive docs at `http:/
   "transit_datetime": "2026-05-04T12:00:00+05:30"
 }
 ```
-`scope` accepts `"all"` (runs all scopes and merges sections), `"personality"`, `"career"`, `"relationships"`, or `"health"`.  
-`transit_datetime` (optional) — triggers the Gochara engine; its findings are injected as structured context into the LLM prompt. The LLM synthesizes natal + transit without re-deriving positions.
+`scope` accepts:
+- `"all"` — all 4 traditional scopes
+- `"personality"` / `"career"` / `"relationships"` / `"health"` — single traditional scope
+- `"bhava_all"` — all 12 bhava scopes (returns 12 sections, one per bhava)
+- `"bhava_1"` … `"bhava_12"` — single bhava
+
+`transit_datetime` (optional) — triggers the Gochara engine; its findings are injected as structured context into every scope's LLM prompt, including bhava scopes.  
+`llm_api_key` (optional) — Gemini API key, used when `llm_backend` is `"gemini"`; overrides the env var and `configs/models.yaml`.
 
 The response includes an `llm_debug` array with one entry per scope — each has `scope`, `prompt` (full text sent), and `llm_raw` (exact model response). This powers the ⚙ Debug tab in the web UI.
 

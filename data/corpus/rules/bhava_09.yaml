@@ -1,0 +1,118 @@
+# Bhava 9 (Dharma / Bhagya Bhava) rules — Dharma, Higher Wisdom, Luck, Father,
+# Guru, Long Journeys, Higher Education
+# Primary significators: Jupiter (dharma, higher wisdom, blessings), Sun (father,
+# authority, divine grace), 9th lord placement
+
+- rule_id: B09_001
+  name: Jupiter in 9th House — Dharmic Fortune and Spiritual Wisdom
+  scope: bhava_9
+  weight: 0.85
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 9
+  explanation_template: >-
+    Jupiter in the 9th house (Dharma bhava) is regarded as one of the most
+    auspicious placements in classical Jyotish. BPHS describes Jupiter in the
+    9th as conferring deep dharmic wisdom, abundant fortune, and a profoundly
+    spiritual nature. The native is naturally philosophical, drawn to higher
+    education, and blessed with the guidance of wise teachers. Long journeys
+    abroad and study of sacred texts enrich the life further. The relationship
+    with the father or guru tends to be deeply formative.
+  source_refs:
+    - "BPHS 23.5"
+  conflict_policy: override
+
+- rule_id: B09_002
+  name: Sun in 9th House — Paternal Blessings and Elevated Dharma
+  scope: bhava_9
+  weight: 0.75
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 9
+  explanation_template: >-
+    Sun placed in the 9th house illuminates the domain of dharma, fortune, and
+    the father. BPHS regards the Sun in the 9th as conferring a noble father
+    figure, strong ethical principles, and the capacity to rise through righteous
+    effort. The native is naturally drawn to positions of authority that serve
+    a higher purpose — law, government, philosophy, or religious leadership.
+    Long-distance travel broadens the native's worldview and opportunities.
+  source_refs:
+    - "BPHS 23.1"
+  conflict_policy: merge
+
+- rule_id: B09_003
+  name: 9th Lord in Kendra — Fortune Structurally Embedded in Life
+  scope: bhava_9
+  weight: 0.70
+  conditions:
+    - feature: houses.9.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 9th house lord placed in an angular house (kendra) creates a powerful
+    Dharma-Karma Adhipati Yoga potential — linking fortune, dharma, and worldly
+    achievement into a cohesive structural force. The native's luck and ethical
+    principles are expressed through active engagement with career, home, and
+    relationships. Fortune does not merely wait to be claimed; it is cultivated
+    through conscious dharmic action.
+  source_refs:
+    - "BPHS 15.1"
+  conflict_policy: merge
+
+- rule_id: B09_004
+  name: 9th Lord in Trikona — Exceptional Spiritual Fortune
+  scope: bhava_9
+  weight: 0.70
+  conditions:
+    - feature: houses.9.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 9th house placed in a trine (trikona) is one of the most
+    powerful combinations for dharmic fortune and spiritual blessings. When the
+    9th lord is in the 9th itself, the yoga is especially potent; in the 1st
+    or 5th, it links the native's personality or intelligence to profound fortune.
+    BPHS regards such combinations as indicators of blessed, purposeful lives.
+  source_refs:
+    - "BPHS 15.2"
+  conflict_policy: merge
+
+- rule_id: B09_005
+  name: Jupiter Exalted — Supreme Dharmic Grace and Abundance
+  scope: bhava_9
+  weight: 0.90
+  conditions:
+    - feature: planets.Jupiter.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter exalted in Cancer is the highest expression of Jupiterian wisdom,
+    compassion, and spiritual abundance. In the context of Bhava 9 significations,
+    exalted Jupiter confers supreme dharmic grace — the native is innately connected
+    to higher wisdom, blessed by gurus and divine providence, and capable of
+    transmitting profound philosophical or spiritual teachings. BPHS regards this
+    as the pinnacle of Hamsa yoga, one of the Pancha Mahapurusha yogas.
+  source_refs:
+    - "BPHS 36.1"
+  conflict_policy: override
+
+- rule_id: B09_006
+  name: 9th Lord in Dusthana — Challenges to Fortune and Paternal Relations
+  scope: bhava_9
+  weight: 0.50
+  conditions:
+    - feature: houses.9.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 9th house lord placed in a dusthana (6th, 8th, or 12th) creates obstacles
+    to fortune, strains in the relationship with the father or guru, and a more
+    arduous dharmic path. Higher education may be disrupted; long journeys can
+    bring losses rather than gains. The native is called to develop internal
+    wisdom and self-reliance rather than depend on external fortune or paternal
+    support. Spiritual disciplines undertaken sincerely can restore dharmic flow.
+  source_refs:
+    - "BPHS 15.5"
+  conflict_policy: defer

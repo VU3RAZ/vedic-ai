@@ -63,7 +63,15 @@ The `normalizer` is the boundary: all engine-specific representations end there.
 | `strength.py`           | `planets.<Graha>.is_exalted`, `.dignity`, `.shadbala` |
 | `lordships.py`          | `houses.<n>.lord`, `.lord_dignity`, `.lord_in_kendra`, etc. |
 | `aspects.py`            | `planets.<Graha>.aspects_to_houses`, `houses.<n>.aspected_by` |
+| `drishti.py`            | Graha drishti matrix + Rashi drishti (Jaimini sign aspects) |
+| `sandhi.py`             | Per-planet cusp-proximity (Bhava Sandhi / Madhya classification) |
+| `varga_analysis.py`     | D3/D7/D9/D10/D12 scope-aware: lagna lord, dignity stats, varga yogas |
+| `bhava_analysis.py`     | Per-bhava dasha activation score + Gochara transit pressure; `build_bhava_context_block()` |
+| `jaimini_features.py`   | Chara Karakas, Arudha Padas, Karakamsha, Upapada |
+| `house_influence.py`    | Occupant + drishti effect per house (net rating, special rules) |
+| `raman_flowchart.py`    | B.V. Raman HTJH 8-module rule-based flowchart (no LLM) |
 | `nakshatra_features.py` | `nakshatra_ascendant.*`, per-planet nakshatra metadata |
+| `functional_nature.py`  | Yogakaraka / maraka / benefic / malefic roles per lagna |
 | `base.py`               | House-type constants (`KENDRA_HOUSES`, `TRIKONA_HOUSES`, `DUSTHANA_HOUSES`) |
 
 The feature dict uses **capitalized graha names** (`"Sun"`, not `"sun"`) matching `Graha.value`, and **integer keys** for the `houses` sub-dict. Rule paths like `planets.Sun.house` and `houses.7.lord_dignity` navigate this structure.
@@ -108,15 +116,25 @@ Within a scope:
 
 `score_rule_triggers()` returns the mean weight of triggered rules per scope (naturally bounded in [0, 1]).
 
-### `data/corpus/rules/` — Seed rule corpus
+### `data/corpus/rules/` — Rule corpus
 
-| File                | Rules | Scopes |
-|---------------------|-------|--------|
+**Traditional scopes (4 files):**
+
+| File                | Rules | Scope |
+|---------------------|-------|-------|
 | `personality.yaml`  | 11    | personality |
 | `career.yaml`       | 10    | career |
 | `relationships.yaml`| 7     | relationships |
+| `health.yaml`       | 15    | health |
+| `timing.yaml`       | 10    | timing |
 
-**Total: 28 rules** covering the MVP gate minimum of 20.
+**12-Bhava scopes (12 files, 6 rules each):**
+
+| Files | Rules each | Scopes |
+|---|---|---|
+| `bhava_01.yaml` … `bhava_12.yaml` | 6 | `bhava_1` … `bhava_12` |
+
+**Total: 125 rules** across 16 scopes. Each bhava file contains: planet-in-bhava rules for the primary signifier, lord-in-kendra, lord-in-trikona, lord-in-dusthana, exalted signifier (override policy), and yoga rule.
 
 ## Data flow detail (Phases 0–4)
 

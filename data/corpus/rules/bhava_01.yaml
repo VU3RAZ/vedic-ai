@@ -1,0 +1,112 @@
+# Bhava 1 (Lagna / Ascendant) rules — Self, Vitality, Physical Body, Personality
+# Primary significators: Sun (vitality, soul), Lagna lord strength, overall constitution
+
+- rule_id: B01_001
+  name: Sun in 1st House — Radiant Personality and Strong Vitality
+  scope: bhava_1
+  weight: 0.75
+  conditions:
+    - feature: planets.Sun.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Sun placed in the Lagna (1st house) confers a radiant, commanding personality
+    with strong vitality and natural leadership. The native projects authority and
+    self-confidence; physical constitution is generally robust. BPHS regards the
+    Sun in the Lagna as bestowing dignity, prominence, and a strong sense of
+    individual identity. Government service, leadership roles, and public life
+    are natural callings.
+  source_refs:
+    - "BPHS 15.1"
+  conflict_policy: merge
+
+- rule_id: B01_002
+  name: 1st Lord in Kendra — Strong and Stable Self-Expression
+  scope: bhava_1
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The Lagna lord is placed in an angular house (kendra: 1st, 4th, 7th, or
+    10th), greatly strengthening the native's personality, physical health, and
+    overall life force. Angular placement of the Lagna lord is one of the premier
+    indicators of a well-supported and stable self; the native is able to project
+    their identity into the world with confidence and consistency.
+  source_refs:
+    - "BPHS 7.1"
+  conflict_policy: merge
+
+- rule_id: B01_003
+  name: 1st Lord in Trikona — Fortunate and Dharmic Self
+  scope: bhava_1
+  weight: 0.65
+  conditions:
+    - feature: houses.1.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The Lagna lord occupies a trine (trikona: 1st, 5th, or 9th house), indicating
+    that the native's personality and life path are supported by dharma and fortune.
+    Trikona placement brings the blessings of Lakshmi (prosperity) upon the Lagna,
+    making the native naturally fortunate, purposeful, and spiritually inclined
+    in their self-expression.
+  source_refs:
+    - "BPHS 7.2"
+  conflict_policy: merge
+
+- rule_id: B01_004
+  name: Sun Exalted — Exceptional Vitality and Inner Strength
+  scope: bhava_1
+  weight: 0.80
+  conditions:
+    - feature: planets.Sun.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    The Sun is exalted in Aries, reflecting the highest expression of solar energy —
+    exceptional vitality, commanding presence, and deep inner strength. Classical
+    texts including BPHS associate an exalted Sun with leadership, governmental
+    authority, and the capacity to inspire others. The native's physical constitution
+    and willpower are markedly above average; self-realisation comes naturally.
+  source_refs:
+    - "BPHS 3.12"
+  conflict_policy: override
+
+- rule_id: B01_005
+  name: 1st Lord in Dusthana — Challenges to Health and Self-Confidence
+  scope: bhava_1
+  weight: 0.55
+  conditions:
+    - feature: houses.1.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The Lagna lord is placed in a dusthana house (6th, 8th, or 12th), weakening
+    the native's physical constitution, self-confidence, or overall life-force.
+    Health challenges, obstacles to self-expression, or periods of isolation may
+    characterise the native's experience. Conscious remediation and lifestyle
+    discipline help offset this influence substantially over time.
+  source_refs:
+    - "BPHS 7.5"
+  conflict_policy: defer
+
+- rule_id: B01_006
+  name: Jupiter in 1st House — Wisdom, Grace, and Auspicious Personality
+  scope: bhava_1
+  weight: 0.70
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 1
+  explanation_template: >-
+    Jupiter in the Lagna endows the native with wisdom, grace, optimism, and a
+    naturally auspicious presence. BPHS regards Jupiter in the 1st house as one
+    of the finest placements for overall well-being — the native tends toward
+    good health, moral character, and the ability to attract guidance and blessings
+    throughout life. Careers in teaching, law, counselling, or spirituality are
+    strongly indicated.
+  source_refs:
+    - "BPHS 15.5"
+  conflict_policy: merge

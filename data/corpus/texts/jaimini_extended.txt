@@ -1,0 +1,465 @@
+---
+source: JAIMINI_EXTENDED
+chapter: 1
+language: en
+---
+
+JAIMINI EXTENDED PRINCIPLES — ARUDHA PADAS, UPAPADA IN DEPTH, NARAYANA DASA, SPECIAL LAGNAS, LONGEVITY, AND YOGAS
+
+This text extends the foundational Jaimini Sutras with advanced doctrines drawn from Jaimini's Upadesa Sutras, commentaries by Raghava Bhatta, Nrisimha Suri, and modern interpretive works by Sanjay Rath and P.V.R. Narasimha Rao. Topics covered here are complementary to and non-overlapping with the base Jaimini Sutras document. The student is advised to master Chara Karakas, basic Rasi Aspects, Argala, Chara Dasa, and basic Upapada before proceeding.
+
+---
+
+PART 1 — ARUDHA LAGNA AND THE TWELVE ARUDHA PADAS
+
+THE CONCEPT OF ARUDHA
+
+Arudha (Sanskrit: mounted, perceived) refers to the material reflection or image cast by a house. Every house in the horoscope has two levels of reality: the inner or essential reality (the house itself and its lord) and the outer or perceived reality (the Arudha Pada of that house). The inner reality governs what the native actually IS; the Arudha governs what others PERCEIVE the native to be. This distinction is fundamental to Jaimini: the lagna describes the soul and its actual nature, while the Arudha Lagna (AL, also called Pada Lagna) describes the native's image, reputation, social standing, and the material world that adheres to that image.
+
+The Maya (illusion) and the reality are thus separated in Jaimini's framework. The gap between the lagna and the Arudha Lagna reveals the degree of maya — how far the outer persona diverges from the inner reality. When the Arudha Lagna is strong, the native commands material resources and public respect regardless of inner character. When the lagna is strong but Arudha is weak, the native has inner depth but little outer recognition. The ideal is a chart where both are strong and in harmony.
+
+CALCULATION OF ARUDHA LAGNA
+
+Step 1: Note the sign of the Lagna (Ascendant). Identify the lord of that sign.
+Step 2: Count the number of signs from the Lagna sign to the sign occupied by its lord (counting the Lagna sign as 1, inclusive).
+Step 3: From the lord's sign, count the same number of signs forward. The sign arrived at is the Arudha Lagna.
+
+Example: Lagna in Aries (lord Mars). Mars is in Gemini. From Aries to Gemini = 3 signs. Count 3 signs from Gemini: Gemini (1), Cancer (2), Leo (3). Arudha Lagna = Leo.
+
+SPECIAL EXCEPTIONS FOR ARUDHA CALCULATION
+
+Exception 1 — Arudha falls in Lagna sign: If the calculated Arudha falls in the same sign as the Lagna, it is shifted to the 10th from Lagna. This is because the lagna cannot be its own Arudha (the reflection cannot coincide with the source in Jaimini's doctrine).
+
+Exception 2 — Arudha falls in 7th from Lagna: If the calculated Arudha falls in the 7th house from Lagna, it is shifted to the 4th from Lagna. The 7th is the house of partnerships and opposition; it cannot serve as the reflection of the self.
+
+These same exceptions apply to the calculation of all 12 Arudha Padas. Whenever the result of the Arudha calculation lands on the house itself or on its 7th, shift to the 10th or 4th respectively.
+
+INTERPRETATION OF THE ARUDHA LAGNA
+
+The Arudha Lagna governs how the world at large sees and responds to the native. In modern parlance it maps closely to public brand, professional image, and social identity. Planets occupying the Arudha Lagna sign in the natal D1 chart directly colour the public image. Planets aspecting the Arudha Lagna by Jaimini rasi aspect add their quality to the native's perceived character.
+
+Jupiter in AL: the native is seen as wise, generous, prosperous, and learned. Public respect is high. Career image is dignified.
+Venus in AL: native is seen as attractive, elegant, refined, and charming. Creative or aesthetic public persona.
+Mercury in AL: native is perceived as intelligent, communicative, and witty. Linked to commerce and communication in public life.
+Moon in AL: native is seen as warm, nurturing, popular, and emotionally accessible. Public-facing career often indicated.
+Sun in AL: native commands authority and respect; government or leadership associations; prominent public image.
+Mars in AL: native appears courageous, energetic, possibly aggressive; physical or competitive public image; reputation for action.
+Saturn in AL: native is seen as serious, disciplined, hardworking, austere; sometimes cold or slow in public perception; eventual authority.
+Rahu in AL: unconventional, foreign, or glamorous image; native may project an image quite different from inner reality; mass appeal possible.
+Ketu in AL: spiritual or detached public image; native may be seen as mysterious, otherworldly, or reclusive; fame without desire for it.
+
+The 2nd from AL (and the planets/signs there) shows the resources that sustain the image. The 11th from AL shows what gains flow into the Arudha and expand its influence. The 12th from AL shows what erodes the image or causes loss of public standing.
+
+---
+
+THE TWELVE ARUDHA PADAS (A1 THROUGH A12)
+
+Each house of the horoscope has its own Arudha Pada, calculated identically to the Arudha Lagna but applied to each house and its lord in turn. The twelve Arudha Padas are denoted A1 through A12.
+
+A1 — ARUDHA OF THE FIRST HOUSE (= ARUDHA LAGNA / PADA LAGNA)
+
+The Arudha of the 1st house is the Arudha Lagna itself, described above. It represents the public self-image, the body and complexion as perceived by others, the general social reputation, and the worldly personality. Strong benefics here give a magnetic public persona. A1 in a kendra from AL itself (by the exceptions having placed it elsewhere) creates an especially strong self-image. The sign of A1 and its lord's placement in the D9 navamsha further refines the texture of the image.
+
+A2 — ARUDHA OF THE SECOND HOUSE (DHANA PADA)
+
+A2 is calculated by finding the lord of the 2nd house and applying the Arudha formula. A2 represents the material reflection of wealth — not actual accumulated wealth (that is the 2nd house itself) but the PERCEPTION of wealth: how wealthy others believe the native to be, the native's face value, financial reputation, and public association with money.
+
+Planets in A2: benefics (Jupiter, Venus, unafflicted Mercury) in A2 indicate that the native is widely perceived as prosperous, financially credible, and well-fed. Jupiter in A2 especially confers the image of abundance. Malefics in A2 (Saturn, Mars, Rahu, Ketu) suggest that the native's finances appear troubled, debted, or austere to the world even if actual wealth exists.
+
+The 2nd house rules speech; therefore A2 also reflects the perceived quality of speech and communication. If the Sun aspects A2, the native is seen as authoritative and dignified in speech. Saturn here may make the native appear harsh or slow in expression.
+
+A2 conjunct or aspected by both A1 and the AL simultaneously: native projects an integrated, coherent image — self, body, and wealth all aligned in public perception.
+
+A3 — ARUDHA OF THE THIRD HOUSE (VIKRAMA PADA)
+
+A3 represents the perceived reputation for courage, valor, initiative, and effort. It describes how others see the native's boldness. Warriors, athletes, entrepreneurs, and those known for their daring have a prominent A3. Planets in A3: Mars or Sun here makes the native famous for courage and decisive action. Venus here gives a reputation for artistic or diplomatic effort. Saturn in A3 indicates a reputation for determined, slow, methodical application of effort — persistent but not flashy. Rahu here gives reputation for unconventional, rule-breaking initiative.
+
+A3 also governs the fame of short journeys, media communication, and the hands as instruments of action. Skilled craftsmen and writers often have active A3 connections with Mercury.
+
+A4 — ARUDHA OF THE FOURTH HOUSE (MATRU PADA)
+
+A4 is the Arudha of the 4th house and represents the perceived reputation regarding home, property, vehicles, and domestic life. It reflects how the world sees the native's real estate holdings, ancestral heritage, and roots. A strong A4 with benefics marks a person known for their home, land, or family heritage.
+
+Jupiter in A4: the native is known for their beautiful home, abundant family resources, or fine vehicles. Moon in A4: the native's domestic warmth and nurturing household are publicly known; real-estate dealings are visible. Saturn in A4: the native is perceived as owning old or austere property; delays in property acquisition are visible to others. Ketu in A4: the native is seen as indifferent to property or home; reputation for spiritual austerity over domestic comfort.
+
+A4 square or opposing A1 indicates tension between self-image and domestic reputation.
+
+A5 — ARUDHA OF THE FIFTH HOUSE (PUTRA PADA)
+
+A5 reflects the public image concerning children, creative output, intelligence, romance, and speculation. A person known for their children's success, literary works, film career, or investment prowess has an active A5.
+
+Jupiter in A5: famous for learned, gifted children or for own philosophical and creative intelligence. Mercury in A5: known for writing, literary talent, or mathematical genius. Venus in A5: famous for romantic connections, artistic output, film, or entertainment. Sun in A5: children of status; or the native is known as an authority on dharmic matters and education. Rahu in A5: unconventional creativity; may be famous for speculative success or for unusual intellectual output. Ketu in A5: known for spiritual intelligence, mantra siddhis, or detachment from romance and children.
+
+A5 is also important in the timing of recognition for creative or speculative activities during Chara Dasas of the sign containing A5 or its trines.
+
+A6 — ARUDHA OF THE SIXTH HOUSE (SHATRU PADA)
+
+A6 represents the perceived reputation regarding enemies, debts, competition, and disease. It shows who the native's rivals are in the public arena and what kinds of conflicts are associated with the native's name. A prominent A6 with malefics may indicate someone widely known to have enemies or to engage in litigation. A6 with Sun or Mars: the native is associated with competitive fights, legal battles, or military conflict; seen as a formidable adversary.
+
+A6 with Saturn or Rahu: the native carries a reputation linked to chronic debt, subordinate roles, or service industries. A6 with Venus or Jupiter: even the native's enemies or rivals are wealthy and cultured; competition occurs in refined arenas.
+
+The lord of A6 and its placement in the D1 reveals the sphere in which the native's conflicts materialize publicly. Benefics aspecting A6 help neutralize the reputation for conflict or ensure the native ultimately prevails in public disputes.
+
+A7 — ARUDHA OF THE SEVENTH HOUSE (DARA PADA)
+
+A7 is the Arudha of the 7th house and represents the material/social image of the spouse or business partner. A7 shows what kind of person the native is publicly seen to be partnered with, and the social class and reputation of that partner. This is distinct from the Upapada Lagna (UL), which is the Arudha of the 12th house and governs the quality of the marital bond itself.
+
+In practice: A7 = the reputation and visibility of the partner(s); UL = the nature and longevity of the marital/intimate bond.
+
+Jupiter in A7: native partners with or is seen partnering with someone of high social standing, wisdom, or spiritual stature. Venus in A7: known for a beautiful, charming, and socially sought-after partner. Saturn in A7: partner is older, austere, or of a working/service background; partnerships are serious. Rahu in A7: partner is foreign, unconventional, or from a different cultural or caste background; the partnership may be publicly controversial. Sun in A7: partner is authoritative, government-connected, or socially prominent. Moon in A7: partner is well-known to the public, emotionally expressive, or active in commerce. Mars in A7: energetic, competitive, or assertive partner; possible reputation for heated or passionate relationships.
+
+When both A7 and UL contain or are aspected by benefics, the marriage is both socially prestigious (A7) and personally fulfilling (UL). Discord between A7 and UL — for instance, malefics in UL but benefics in A7 — indicates a publicly envied marriage that is privately troubled.
+
+A8 — ARUDHA OF THE EIGHTH HOUSE (MRITYU PADA / RANDHRA PADA)
+
+A8 is associated with hidden matters, occult reputation, transformation, chronic illness, and the public face of crises or scandals. It is sometimes called the Mrityu Pada (death pada) in classical texts. A prominent A8 with malefics can indicate a public reputation for tragedy, scandal, or hidden activity that becomes visible.
+
+A8 with Ketu: the native is publicly associated with spiritual transformation, occult practices, or appears to the world as one who has undergone profound inner change. A8 with Saturn: reputation for dealing with death, disease, mining, oil, or deep-earth matters. A8 with Rahu: sudden crises or hidden activities surface publicly; association with poisons, secrets, or foreign-origin scandals. A8 with Jupiter or Venus: the native transforms difficult circumstances into something of value; associated with inheritance, insurance, or research-based wealth. A8 with Moon: emotional crises are visible to the public; the native may gain public sympathy through vulnerability.
+
+A8 aspected by benefics: transformation-based reputation is positive and brings regeneration. A8 aspected by only malefics: reputation for misfortune or association with negative transformative events.
+
+A9 — ARUDHA OF THE NINTH HOUSE (DHARMA PADA / BHAGYA PADA)
+
+A9 reflects the perceived reputation for fortune, spirituality, dharma, and relationship with the guru or father. It shows how the world sees the native's luck, religion, travel, and philosophical character.
+
+Jupiter in A9 (natural karaka of the 9th): the native is widely regarded as fortunate, blessed, devout, and philosophically wise. Sun in A9: the native is known for ancestral pride, father's influence, and governmental or religious authority. Saturn in A9: the native earns a reputation for slow, difficult, but ultimately solid fortune; philosophical depth through suffering. Moon in A9: the native is seen as blessed, spiritually inclined, and associated with pilgrimage, water-based travel, or popular religious devotion. Ketu in A9: the native is known for unconventional dharma, rejection of orthodoxy, or deep spiritual withdrawal. Rahu in A9: foreign religious practices, unconventional gurus, or travel to exotic lands define the public dharmic image.
+
+A9 activated in Chara Dasa periods brings opportunities linked to fortune, foreign travel, higher education, and religious activities into the visible public sphere.
+
+A10 — ARUDHA OF THE TENTH HOUSE (KARMA PADA / RAJYA PADA)
+
+A10 is one of the most important Arudha Padas for practical life readings. It is the Arudha of the 10th house and governs the native's professional reputation, career image, public authority, and social position. A10 corresponds closely to what in modern parlance would be called the professional brand.
+
+A strong A10 with benefics: the native has a highly positive professional reputation, commands public respect in their field, and is widely sought-after. A10 with Jupiter: known for ethical leadership, philosophical guidance, or institutional authority. A10 with Sun: famous for governmental, administrative, or executive role; political image is strong. A10 with Mercury: known for communication, trading, or analytical skills; intellectual professional image. A10 with Venus: associated with arts, luxury goods, fashion, or diplomatic roles; aesthetically appealing professional image. A10 with Mars: energetic, decisive, and action-oriented professional reputation; competitive career image. A10 with Saturn: known for hard work, endurance, or industrial/technical roles; professional image may be austere. A10 with Rahu: unconventional or technology-linked career image; may achieve fame in foreign countries or through disruptive innovation.
+
+The distance between AL and A10 shows how integrated the self-image and career image are. When they are in trine (5th or 9th from each other) or the same sign, self and career are naturally aligned. When they are in 6th-8th or 2nd-12th relationship, there may be conflict between personal life and professional demands.
+
+A11 — ARUDHA OF THE ELEVENTH HOUSE (LABHA PADA)
+
+A11 reflects the public reputation for gains, income, social network, and fulfilment of desires. It shows how the world perceives the native's social connections, earning capacity, and the people who support the native's ambitions.
+
+Jupiter in A11: native is widely seen as prosperous, with abundant social connections and a positive network. Known for charitable or community-oriented gain. Mercury in A11: the native is associated with a wide, intellectually active social network; gains through communication and information. Venus in A11: gains through arts, beauty, relationships, or luxury circles are visible to the public. Sun in A11: high-status social network; gains through government, politics, or authority figures. Saturn in A11: gains are slow and through service; the native's network consists of workers, elderly, or those from austere backgrounds. Rahu in A11: sudden, unconventional, or foreign-sourced gains; large and diverse but unpredictable social network. Moon in A11: popular, emotionally resonant social standing; gains through public or mass channels.
+
+When A11 and A2 are both strong with benefics, the native has both a reputation for earning and a reputation for holding wealth — financial credibility is very high.
+
+A12 — ARUDHA OF THE TWELFTH HOUSE (VYAYA PADA)
+
+A12 represents the public reputation for expenses, losses, foreign connections, hospitalization, imprisonment, or spiritual renunciation. In positive manifestations, A12 shows the native's reputation for generosity, philanthropy, and spiritual seeking. In negative manifestations, it reflects public knowledge of the native's financial losses, imprisonment, or chronic expenditure.
+
+Saturn in A12: known for enormous or chronic expenses; associated with large institutions, hospitals, or places of confinement. Jupiter in A12: expenses on religious or charitable causes; reputation for generosity, pilgrimages, or ashram life. Ketu in A12: strong association with spiritual liberation, renunciation, or monastic life; known for detachment from material things. Rahu in A12: foreign expenses, immigration, or connection to foreign lands; sometimes associated with exile or self-imposed isolation. Venus in A12: expenses on luxury, beauty, or sensual indulgence are publicly known; possible reputation for excessive lifestyle. Moon in A12: emotional losses or sensitivity to loss; possible reputation for sorrow or caregiving in institutional settings.
+
+A12 aspected by benefics transforms expenses into spiritual merit. Malefics in A12 without benefic intervention suggest that the native's losses are visible and socially damaging to reputation.
+
+ARUDHA PADAS AND CHARA DASA TIMING
+
+The Arudha Padas interact powerfully with Chara Dasa timing. When the Chara Dasa of a sign that contains an important Arudha Pada activates, the matters of that Pada come into prominence in the native's visible public life. For instance, if A10 occupies Taurus and the native runs the Taurus Chara Dasa, career reputation reaches a peak. If A7 occupies Scorpio and the Scorpio Dasa runs, partnership/marriage dynamics become very visible. This is one of the key practical uses of the Arudha system in predictive astrology.
+
+---
+
+PART 2 — UPAPADA LAGNA IN DEPTH
+
+THE NATURE OF UPAPADA LAGNA
+
+The Upapada Lagna (UL) is the Arudha of the 12th house — it is calculated the same way as other Arudha Padas: find the 12th house lord, count the number of signs from the 12th house to the 12th lord, and count the same number from the 12th lord forward. The resulting sign is the Upapada Lagna.
+
+The 12th house in Vedic astrology governs bed pleasures, intimate relationships, the spouse's family (as the 6th from 7th), foreign connections, and expenses of the heart. The Arudha of this house — the UL — therefore shows the material and social image of the most intimate partnerships, particularly marriage. It describes the nature, quality, and social reality of the marital bond, not merely who the spouse is (that is governed by the Darakaraka) but the texture of the union itself.
+
+The second house from UL (2nd from UL) is especially critical: it sustains the marriage and shows whether the relationship has enduring social and emotional support structures. Benefics in the 2nd from UL strongly favour a stable, long-lasting marriage.
+
+PLANETS IN OR ASPECTING THE UPAPADA LAGNA
+
+Jupiter in UL or aspecting UL by rasi aspect: the spouse is virtuous, wise, generous, and comes from a respected family. Marriage is blessed by Brahaspati (the planet of dharma and auspiciousness). Suggests an auspicious, dharmic marriage with long duration. Progeny often blessed.
+
+Venus in UL or aspecting UL: the spouse is beautiful, charming, and artistically talented. Marriage is harmonious and sensually fulfilling. An early marriage is often indicated, as Venus naturally draws the 7th-house energy forward in time. Venus in UL is one of the most favourable indicators for a happy married life in Jaimini.
+
+Moon in UL or aspecting UL: the spouse is emotionally expressive, caring, and public-facing. The marriage has an emotionally nurturing quality. If the Moon is waxing and well-placed, domestic happiness is high. If waning or afflicted, emotional sensitivity may create difficulty.
+
+Mercury in UL or aspecting UL: the spouse is intelligent, communicative, commercially skilled, and youthful. The marriage has an intellectual or communicative bond at its core. Business partnerships alongside marriage are possible.
+
+Sun in UL or aspecting UL: the spouse comes from a prominent family or is associated with government, authority, or high social status. The marriage has a dignified, status-conscious quality. The husband may be authoritative (for female natives). Possible ego-related friction if Sun is in a fiery or fixed sign.
+
+MALEFICS AND THEIR EFFECTS ON UPAPADA LAGNA
+
+Saturn aspecting UL by rasi aspect: marriage is delayed. The spouse may be older than the native, from a working-class or austere background, or the relationship may carry a karmic weight from past lives. The marriage, once established, however, is durable — Saturn in its positive role brings longevity and commitment. The delay can be calculated: Saturn's influence on UL is especially strong when Saturn also aspects the 7th house or the Darakaraka, suggesting a natural tendency to postpone commitment.
+
+Mars aspecting UL or in UL: the spouse is energetic, assertive, and possibly aggressive. Mars naturally brings passion into the marital sphere. If Mars is the 7th lord or is otherwise dignified, the result is a dynamic and vital marriage. If Mars is afflicted or in enemy signs, there is risk of conflict, separation, or even violence in extreme cases. When Mars also influences the 2nd from UL, there may be threats to the sustenance of the marriage.
+
+Rahu in UL or aspecting UL: the spouse may be from a foreign country, a different caste or religion, or from an unconventional background. The marriage itself may be unconventional — interfaith, intercultural, or outside social norms. Rahu amplifies and distorts; the marriage may be intensely passionate and unusual. The spouse may have an obsessive quality.
+
+Ketu in UL or aspecting UL: indicates the possibility of multiple marriages or unions. The first marriage may dissolve, separate, or be incomplete in some way, leading to a second union. Ketu represents completion of past karma; if the karma of one union is exhausted, Ketu can show its ending and the beginning of a new one. Spiritual marriages (where the union has an otherworldly or ascetic character) are also indicated by Ketu in UL.
+
+Rahu-Ketu axis through UL: when Rahu and Ketu's axis straddles the UL (one is in UL and the other is in its 7th), the marriage carries intense karmic weight, tends toward unusual circumstances, and may involve sudden reversals.
+
+THE LORD OF UL AND ITS PLACEMENT
+
+The lord of the UL sign, when placed in the 2nd from UL, indicates a stable, sustaining, and enduring marriage. The 2nd house from any Arudha represents resources that maintain it; the lord of UL returning to the 2nd provides self-sustaining marital energy.
+
+The lord of UL placed in the 8th from UL: this is one of the most challenging combinations for marital longevity. The 8th from any Arudha represents destruction or transformation of that Arudha's essence. Marriage may be short-lived, or may undergo a profound and painful transformation. In a female's chart, if the UL lord is in the 8th from UL and receives malefic aspects, there is risk of widowhood or sudden end of marriage.
+
+UL lord in the 12th from UL: expenses related to the marriage; the union may involve sacrifice, loss of resources, or the spouse may be from a foreign land (12th signifies foreign places). If benefics are here, the loss is transformed into spiritual enrichment.
+
+UL lord in the 7th from UL: the marriage is prominent, visible, and publicly acknowledged — a high-profile partnership. The spouse may themselves be known for their partnership capacity.
+
+UL lord in the 4th from UL: the marriage is domestic, home-centred, and emotionally grounded. Property and domestic happiness are linked to the spouse.
+
+UL lord in the 11th from UL: gains come through marriage; the spouse brings financial and social gains. Excellent for business partnerships within the marriage.
+
+COMPARISON OF A7 AND UL FOR MARRIAGE TIMING
+
+In timing marriage using Chara Dasa, both A7 and UL are consulted. The Chara Dasa of the sign containing A7 or aspected by A7 tends to bring partnerships into the visible social sphere. The Chara Dasa of the sign containing UL or strongly linked to UL tends to bring the intimate marital bond into material reality.
+
+Typically, marriage materializes during a Chara Dasa where:
+1. The dasa sign is the UL itself, or contains UL.
+2. The dasa sign aspects UL by rasi aspect (Jaimini rasi aspect).
+3. The dasa sign is occupied by the DK (Darakaraka).
+4. The dasa sign is strongly linked to the 7th or 2nd houses from Lagna.
+
+When A7 and UL are in the same sign, or in mutual rasi aspect, marriage timing is confirmed strongly during the overlapping dasa periods. This triple confirmation (A7, UL, and DK all pointing to the same sign or period) is regarded as the most reliable marriage timing indicator in Jaimini.
+
+---
+
+PART 3 — NARAYANA DASA
+
+INTRODUCTION TO NARAYANA DASA
+
+Narayana Dasa is a rasi (sign-based) timing system that runs signs as dasa lords in sequence of their strength. Unlike Chara Dasa, which begins from the Lagna sign and proceeds sign by sign in fixed order, Narayana Dasa determines its sequence based on which signs are stronger in the nativity. Narayana Dasa is particularly powerful for timing events related to kingdoms, governments, political changes, and major life transitions. It is attributed directly to Jaimini's teachings in the Upadesa Sutras, though commentators differ on exact calculation details.
+
+CALCULATION OF NARAYANA DASA YEARS FOR EACH SIGN
+
+The number of years of Narayana Dasa for a given sign is determined as follows:
+
+For ODD signs (Aries, Gemini, Leo, Libra, Sagittarius, Aquarius):
+Count forward (in zodiacal order) from the sign itself to the sign containing its lord. The number of signs traversed, counting both the start sign and the end sign (inclusive), gives the dasa years.
+
+For EVEN signs (Taurus, Cancer, Virgo, Scorpio, Capricorn, Pisces):
+Count backward (reverse zodiacal order) from the sign itself to the sign containing its lord. The number of signs traversed (inclusive) gives the dasa years.
+
+Special lordship rules for Narayana Dasa:
+- Aquarius (odd): Rahu is used as the primary lord (not Saturn alone). If Rahu is in Aquarius itself, count Rahu in Aquarius and the dasa = 1 year minimum (or use Saturn as alternative).
+- Scorpio (even): Ketu may be used as the co-lord alongside Mars. The tradition of using Ketu for Scorpio yields different results from using Mars; classical texts advise using whichever lord gives a more accurate timing when verified against events.
+- Note: For all signs, if the lord is in the sign itself, the count = 1.
+
+Examples:
+- Aries (odd), lord Mars in Scorpio: count forward from Aries to Scorpio = Aries(1), Taurus(2), Gemini(3), Cancer(4), Leo(5), Virgo(6), Libra(7), Scorpio(8) = 8 years.
+- Taurus (even), lord Venus in Capricorn: count backward from Taurus to Capricorn = Taurus(1), Aries(2), Pisces(3), Aquarius(4), Capricorn(5) = 5 years.
+- Gemini (odd), lord Mercury in Virgo: count forward = Gemini(1), Cancer(2), Leo(3), Virgo(4) = 4 years.
+- Cancer (even), lord Moon in Aries: count backward from Cancer = Cancer(1), Gemini(2), Taurus(3), Aries(4) = 4 years.
+
+Total of all 12 rasi Narayana Dasa years = 144 years (same as Chara Dasa).
+
+SEQUENCE OF NARAYANA DASA
+
+The sequence of Narayana Dasa is determined by the strength of the signs. Classical texts describe two primary methods:
+
+Method 1 (Strength-based sequence): Signs that are stronger (containing more, or more powerful, planets in the D1 chart) run their dasa earlier. In case of equal strength, the sign that is earlier in the zodiac takes precedence.
+
+Method 2 (Lagna-based sequence): The sequence begins from the Lagna sign. Odd rasis (counted from Lagna) proceed in forward zodiacal order; even rasis proceed backward. The first dasa is Lagna sign, the second follows the alternating pattern. This is the method favoured by many modern Jaimini practitioners for standard natal readings.
+
+For the alternating-sequence method: starting from Lagna, the progression is Lagna, 7th from Lagna, 2nd from Lagna, 8th from Lagna... and so on in a specific Jaimini alternating pattern. Practitioners should verify with their specific lineage tradition.
+
+WHAT NARAYANA DASA ACTIVATES
+
+During any Narayana Dasa, the following themes are activated:
+
+1. The sign itself as a house from Lagna: the matters of that house in the native's D1 chart come into dynamic expression.
+2. Planets in the dasa sign: their significations, karakastwas, and natal house positions all become operative.
+3. Signs and planets aspecting the dasa sign by rasi aspect: their influence is drawn into the period.
+4. Argala on the dasa sign: planets forming argala (from 2nd, 4th, 11th positions relative to the dasa sign) provide the support resources available during that period.
+5. Yogas involving the dasa sign: any Raja Yoga, Dhana Yoga, or other special combination that includes the dasa sign's planets or its lord activates its promised results during the dasa.
+
+NARAYANA DASA AND RAJA YOGA ACTIVATION
+
+Raja Yogas in Jaimini are particularly timed through Narayana Dasa. When the dasa sign contains the Atmakaraka (AK) or Amatyakaraka (AmK), or the dasa sign has the AK and AmK in mutual rasi aspect relationship, the Raja Yoga in the nativity fructifies powerfully. Success, recognition, and authority reach their peak during such dasas.
+
+If the dasa sign is the Karakamsha sign or the sign containing A10 (career Arudha), career-related Raja Yogas manifest in the public world. The Narayana Dasa of the 10th from Lagna is often a powerful career-advancement period.
+
+NARAYANA ANTARDASA (SUB-PERIODS)
+
+Within each Narayana Dasa, 12 sub-periods (Antardasas) operate. The sequence of Antardasas within a Narayana Dasa follows the same forward (for odd signs) or backward (for even signs) progression starting from the dasa sign itself. Each Antardasa's duration = (Mahadasa years × Antardasa sign's own Narayana Dasa years) / 144. This proportional formula ensures the total sub-period duration equals the Mahadasa duration.
+
+For example, in the Aries Mahadasa (8 years), the Antardasa sequence begins from Aries (odd = forward): Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, Pisces. Each Antardasa duration = (8 × Antardasa sign's own Narayana Dasa years) / 144.
+
+During an Antardasa, the combined themes of both the Mahadasa sign and Antardasa sign are activated. Where these two signs are in harmonious relationship (trine or mutual aspect), the period tends to be productive. Where they are in inimical relationship (6th-8th axis, or both carrying malefic loads), the period can be challenging.
+
+NARAYANA DASA APPLIED TO DIVISIONAL CHARTS
+
+Narayana Dasa is applied not only to the D1 (natal chart) but also to divisional charts (Varga charts). Applied to the D9 (Navamsha), it times spiritual life milestones and inner transformations. Applied to the D10 (Dasamsha), it times career events with remarkable precision. The Narayana Dasa sequence in D10 follows the same calculation principles but using the D10 chart positions. Modern Jaimini scholars emphasize this multi-chart application as a key strength of Narayana Dasa over other timing systems.
+
+---
+
+PART 4 — JAIMINI'S SPECIAL LAGNAS AND STHIRA KARAKAS
+
+STHIRA KARAKAS — FIXED SIGNIFICATORS
+
+In addition to the dynamic Chara Karakas (which change with each nativity), Jaimini employs Sthira Karakas — Fixed Karakas — that have permanent significations regardless of their natal position. The Sthira Karakas are:
+
+SUN (Surya): Permanent significator of the father. Also signifies the soul at a universal level, kings, authority figures, and self-confidence. In any Jaimini reading, Sun is always consulted for father-related matters.
+
+MOON (Chandra): Permanent significator of the mother. Also signifies the mind, public life, nurturing, and emotional wellbeing. Moon's placement and strength always indicate maternal health and quality of relationship with the mother.
+
+MARS (Mangala): Permanent significator of siblings — especially younger brothers. Also signifies courage, initiative, property, and the physical body's vitality. Afflictions to Mars in any chart affect sibling and courage matters universally.
+
+MERCURY (Budha): Permanent significator of maternal relatives, especially the maternal uncle. Also signifies intelligence, communication, education, and youth.
+
+JUPITER (Brihaspati): Has dual Sthira Karaka roles: for female natives, Jupiter is the permanent significator of the husband; for all natives, Jupiter signifies children and disciples. Jupiter is also the permanent significator of wealth, dharma, and the guru.
+
+VENUS (Shukra): For male natives, Venus is the permanent significator of the wife. For all natives, Venus signifies beauty, comfort, vehicles, and intimate pleasures. The position of Venus determines quality of spousal relationship more broadly.
+
+SATURN (Shani): Permanent significator of servants, labourers, and longevity. Saturn also signifies discipline, delays, karma, the elderly, and chronic illness. Saturn's placement is consulted for longevity calculations in Jaimini (see Ayur Khanda below).
+
+INTERACTION OF STHIRA AND CHARA KARAKAS
+
+When the Chara Karaka for a given relative aligns with the corresponding Sthira Karaka, the signification is greatly strengthened. For example:
+- If the Matrukaraka (MK, 4th Chara Karaka) is the Moon (the Sthira Karaka for the mother), maternal influence on the native is especially powerful and defining.
+- If the Pitrukaraka (PK, 5th Chara Karaka) is the Sun (Sthira Karaka for father), paternal authority in the native's life is very prominent.
+- If the Darakaraka (DK) is Venus (Sthira Karaka for wife), the marriage has a very Venusian quality — beauty, harmony, and sensuality define the relationship at both the karaka and Sthira levels.
+
+Conversely, when the Chara Karaka for a relative is a natural enemy or oppressor of the corresponding Sthira Karaka, there is friction in that area of life. For example, if the Matrukaraka is Saturn (while Moon is the Sthira Karaka for mother), there may be coldness or separation in the maternal relationship.
+
+KARAKAMSHA REVISITED — DEEPER SIGNIFICATIONS
+
+The Karakamsha is the navamsha sign of the Atmakaraka transposed onto the D1 chart. This has been introduced in the base Jaimini Sutras text. Here we explore deeper layers:
+
+THE KARAKAMSHA AS SOUL LAGNA: The Karakamsha Lagna (KL) functions as the lagna of the soul's inner world. Just as the Lagna shows the body and outer personality, the KL shows the soul's native orientation — what it has come to do, what it is best at, and what spiritual path it is destined for.
+
+5TH FROM KARAKAMSHA — PAST LIFE MERIT (PURVA PUNYA): Planets in the 5th from KL reveal the quality of past-life dharmic accumulation. Jupiter here: enormous dharmic merit from previous lives; intelligence, wisdom, and good fortune flow easily. Venus here: past-life merit accrued through relationships, arts, and harmonious living. Ketu here: deep spiritual merit from previous incarnations; natural spiritual knowledge and detachment. Moon here: emotional and nurturing merit from past lives; public popularity as karmic reward.
+
+9TH FROM KARAKAMSHA — FUTURE DHARMA: Planets in the 9th from KL reveal the dharmic path the soul is meant to walk in this life. A strong benefic in 9th from KL — especially Jupiter — shows a life oriented around religious or philosophical service. Saturn here: dharma through service, discipline, and enduring commitment. Sun here: dharma through authority, governance, and upholding righteous order. Rahu here: dharma through engaging with the material and foreign world, transforming it from within.
+
+12TH FROM KARAKAMSHA — MOKSHA PATH: The 12th from KL is the most spiritually significant position in the entire Jaimini system. The planet in the 12th from KL determines the path through which the soul seeks or attains liberation:
+
+Ketu in 12th from KL: Jnana Marga — the path of pure knowledge and discriminative wisdom. The native is drawn to Advaita Vedanta, Samkhya philosophy, or non-dual contemplation. Liberation is through direct knowledge of the self.
+Venus in 12th from KL: Tantra or Bhakti Marga — the path of beauty, love, or devotional worship expressed through aesthetic experience. The native may be drawn to Shakta traditions, Vaishnava Bhakti, or to sacred arts.
+Moon in 12th from KL: Bhakti Yoga — deep emotional devotion. The native's spiritual path runs through surrender, love, and communal or devotional practices. Emotional resonance with the divine.
+Jupiter in 12th from KL: Dharma Marga — the path of righteous living, religious observance, and ethical conduct. The native is liberated through living out their ordained duties with full dharmic awareness.
+Saturn in 12th from KL: Karma Yoga — liberation through selfless service, labour, and acceptance of karmic burden without complaint or desire for reward.
+Sun in 12th from KL: Raja Yoga (meditative path) — the native's liberation comes through disciplined meditation, royal or solar practices, and direct communion with the source of light.
+Mercury in 12th from KL: Jnana through study — the native pursues liberation through intellectual mastery of scripture, grammar, logic, and philosophical debate. A life of learning as the spiritual path.
+Rahu in 12th from KL: An unconventional or experiential path; the native encounters the full force of Maya (illusion) and learns to transcend it through direct experience. Foreign teachings or non-traditional paths may be involved.
+Mars in 12th from KL: the path of the warrior-ascetic; tapas (austerity), will-power, and intense spiritual disciplines. Liberation through fierce and concentrated effort rather than gentle devotion.
+
+When no planet occupies the 12th from KL but a sign (with its inherent nature) sits there, the sign's quality modifies the moksha path. Fire signs indicate energetic, rajasic spiritual paths; water signs indicate devotional or emotional paths; earth signs indicate grounded, service-oriented spiritual work; air signs indicate intellectual, communicative, or community-based spiritual engagement.
+
+---
+
+PART 5 — AYUR KHANDA — LONGEVITY IN JAIMINI
+
+THE THREE LORDS OF LIFESPAN
+
+Jaimini's longevity doctrine revolves around three functional significators: Brahma (the life-sustaining force), Rudra (the life-taking force), and Maheshwara (the neutral resolver). These represent the Vedic trinity — Brahma (creation), Vishnu/sustainer (by analogy), and Shiva (dissolution) — operating within the horoscope to determine lifespan.
+
+BRAHMA — THE LIFE-GIVER
+
+Brahma in Jaimini is determined through a comparative calculation involving the lords of the Lagna, the 8th house, and the two special Lagnas (Hora Lagna and Ghati Lagna). The general principle: Brahma is the planet that is stronger — either the Lagna lord or the 8th lord — when evaluated against the backdrop of the Hora and Ghati Lagnas.
+
+Practical determination: The 6th lord from the stronger of Hora Lagna or Ghati Lagna is one candidate for Brahma. The stronger of the Lagna lord and 8th lord is another. Detailed rules from Jaimini Sutras (3.2.1-3.2.12) provide specific logic for adjudication. The planet determined as Brahma is the primary engine of life: when Brahma is strong, well-placed, and free from malefic rasi aspects, longevity is supported. When Brahma is weak or afflicted, longevity is threatened.
+
+RUDRA — THE DESTROYER
+
+Rudra is the planet associated with the termination of the lifespan. Determination: Rudra is typically the stronger of the 8th lord (from Lagna) and the planet occupying the 8th house. When both are present (a planet occupies the 8th and the 8th lord is elsewhere), the stronger one by multiple criteria (exaltation, own sign, directional strength, shadbala) becomes Rudra.
+
+Rudra's Narayana Dasa period (or Chara Dasa of the sign containing Rudra) is examined as a potential timing for the end of life, particularly when it overlaps with adverse transits of Saturn and Mars.
+
+MAHESHWARA — THE RESOLVER
+
+Maheshwara is invoked when the calculations for Brahma and Rudra produce ambiguous results. Maheshwara is the stronger of the 8th lord from the Atmakaraka's position and the lord of the sign containing the Atmakaraka in the navamsha. Maheshwara acts as a tiebreaker in longevity determination and is also relevant to spiritual liberation — Maheshwara represents the final dissolution that leads to moksha.
+
+LONGEVITY CATEGORIES
+
+Jaimini divides human lifespan into three categories, each corresponding to the three stages of life governed by specific house relationships:
+
+Alpayu (Short Life): 0 to 32 years. Indicated when the 1st, 8th, and 10th house lords form a pattern suggesting early termination — specifically when malefics dominate these three houses and their lords are all in adverse positions.
+
+Madhyayu (Middle Life): 33 to 64 years. The most common category; indicated by mixed strength of the 1st, 8th, and 10th house lords.
+
+Poornayu (Full/Long Life): 65 to 100+ years. Indicated when the lagna lord, 8th lord, and 10th lord are all in good dignity (own sign, exaltation, friend's sign) and Brahma is strong.
+
+SIGN-BASED LONGEVITY DETERMINATION
+
+An alternative method: Count the signs from the Brahma planet's sign to the Rudra planet's sign (forward for odd signs, backward for even signs). The number of signs × number of years per sign (which varies by method, commonly 12 years per sign) gives the approximate lifespan.
+
+Another method counts the signs between the stronger pair (lagna lord and 8th lord) and the weaker pair to determine whether life falls in the short, middle, or long category.
+
+SATURN'S ROLE IN LONGEVITY
+
+Saturn is the natural significator of longevity (Ayushkaraka) through the Sthira Karaka system. Saturn's placement in the 8th or 1st house, while sometimes feared, actually supports longevity in Jaimini's framework. Saturn aspecting the Lagna lord or the Brahma planet adds staying power to the lifespan. Saturn in its own signs (Capricorn, Aquarius) in the 1st or 8th is particularly strong for poornayu.
+
+---
+
+PART 6 — JAIMINI YOGAS
+
+RAJAYOGA IN JAIMINI — PRIMARY COMBINATIONS
+
+Jaimini's Raja Yogas differ from Parashari Raja Yogas in that they operate through rasi aspects and karaka relationships rather than house-based planetary combinations.
+
+Primary Jaimini Raja Yoga: The Atmakaraka (AK) and Amatyakaraka (AmK) in mutual rasi aspect, OR in kendra (1st, 4th, 7th, 10th) or trikona (1st, 5th, 9th) relationship from each other constitutes the most powerful Raja Yoga in Jaimini. This combination indicates that the soul's purpose (AK) is actively supported by the native's professional and social power (AmK). When this yoga exists and the Chara Dasa or Narayana Dasa activates either the AK's or AmK's sign, the native achieves peak recognition.
+
+Secondary Rajayoga: AK and AmK both receiving rasi aspects from benefics (Jupiter, Venus, or Mercury) amplifies the yoga. If Jupiter specifically aspects both AK and AmK by rasi aspect, the Raja Yoga is conjoined with wealth and wisdom.
+
+YOGA FOR FAME AND PUBLIC RECOGNITION
+
+For wide public fame: AK in a kendra or trikona from the Karakamsha Lagna (KL), aspected by or conjoined with benefics. The benefic's nature determines the sphere of fame — Jupiter for spiritual/philosophical fame, Venus for artistic fame, Mercury for intellectual/communicative fame, Moon for popular/public fame.
+
+A10 (Arudha of 10th) receiving aspects from both the AK and benefics: professional fame; the career image is exalted and widely recognized.
+
+The Arudha Lagna (AL) itself receiving aspects from the Sun, Jupiter, and the AK simultaneously creates a yoga for exceptional public visibility and lasting reputation.
+
+YOGA FOR SPIRITUAL ATTAINMENT
+
+The 12th from Karakamsha occupied by Ketu, Jupiter, Venus, or Moon (singly or in combination) indicates strong spiritual potential. When the AK itself is in a sign aspected by Ketu from the 12th from Karakamsha, the native has both worldly purpose (AK) and spiritual orientation (Ketu moksha influence) — creating a yogic combination for engaged liberation.
+
+Jupiter in 12th from KL + Ketu in 12th from KL (both present): extremely rare and powerful combination for multi-path liberation.
+
+Saturn in 12th from KL + benefic aspect: the path of karma yoga, where material service becomes the vehicle for spiritual evolution, is strongly indicated.
+
+YOGA FOR LIBERATION (MOKSHA YOGA)
+
+The most powerful Moksha Yoga in Jaimini: AK in the 12th from AL. This places the soul's significator in the house of liberation relative to the material world's image. The native is destined to transcend material concerns and orient toward moksha. When the AK is simultaneously in the 12th from AL and receives a benefic aspect, liberation through dharmic means is indicated.
+
+Ketu in the 12th from AK: the spiritual force of dissolution acts directly on the soul's significator, creating a strong tendency toward renunciation, asceticism, or liberation in this life.
+
+DARIDRA YOGA (POVERTY)
+
+Daridra Yoga in Jaimini: the Arudha Lagna (AL) aspected exclusively by malefics (Saturn, Mars, Rahu, Ketu, Sun when afflicted) with no benefic rasi aspect on AL. This deprives the material image of Jupiter's abundance, Venus's grace, and Mercury's commercial support. The native's public image is associated with lack, financial struggle, or social marginalization.
+
+Aggravating factors: if the lord of AL is also in the 6th, 8th, or 12th from AL, and receives no benefic aspect, the Daridra Yoga is intensified. The Narayana Dasa or Chara Dasa of the afflicted AL period brings the worst of the poverty-related experiences into material reality.
+
+Mitigating factors: even one strong benefic — particularly Jupiter — aspecting AL by rasi aspect can substantially neutralize Daridra Yoga by restoring dignity and flow of resources to the image.
+
+ILLNESS YOGA
+
+Illness Yoga in Jaimini: the AK afflicted by the Gnatikaraka (GK) through rasi aspect. The GK governs enemies, disease, and obstacles; its rasi aspect on the AK suggests that the soul's purpose is chronically challenged by health-related obstacles.
+
+If additionally the 6th from the AK's sign contains Mars or Rahu, and the GK is in a hostile sign relative to the AK, chronic or serious illness affecting core vitality is possible.
+
+The Narayana Dasa or Chara Dasa of the GK's sign brings illness-related challenges to the forefront. Benefic protection — especially Jupiter aspecting the AK sign — provides constitutional resilience.
+
+CAREER YOGAS
+
+AmK in kendra or trikona from the AK: the native's professional energy is aligned with the soul's purpose. Career flows naturally and leads to fulfilment of the AK's highest goals.
+
+AmK in kendra or trikona from the Karakamsha Lagna with no malefic rasi aspect: professional achievement reaches extraordinary heights. The native's career karma (AmK) and soul karma (AK/KL) are harmonized.
+
+AmK receiving rasi aspect from Jupiter: career in teaching, law, philosophy, religion, or counselling. The AmK's career domain is elevated and dignified by Jupiter's grace.
+
+AmK receiving rasi aspect from Sun: government, administration, politics, or executive management. Authority is the natural career domain.
+
+AmK receiving rasi aspect from Venus: arts, beauty, luxury, diplomacy, or creative industries define the career.
+
+AmK receiving rasi aspect from Mercury: commerce, communication, information technology, writing, or analytical fields.
+
+AmK receiving rasi aspect from Mars: military, surgery, engineering, athletics, or competitive business environments.
+
+AmK receiving rasi aspect from Saturn: research, mining, agriculture, labour administration, or industries dealing with time and endurance.
+
+AmK with malefic rasi aspects from multiple sources: career faces chronic obstacles, rivalry, and sabotage. Protection comes from benefic argala on the AmK's sign.
+
+DHANA YOGAS (WEALTH COMBINATIONS)
+
+In Jaimini, wealth yogas are assessed through the Arudha system. When A2 (wealth perception Arudha) and A11 (gains Arudha) are both in trines from each other or from the Arudha Lagna, and both receive Jupiter's rasi aspect, the native has enormous wealth-generating capacity. This triple alignment of AL, A2, and A11 with Jupiter is considered among the most powerful Dhana Yogas in Jaimini.
+
+When the Hora Lagna (HL) — the special lagna for wealth — is conjoined or aspected by the AK, the soul's life purpose and material prosperity are directly linked. The native achieves wealth as a natural by-product of pursuing their dharmic path.
+
+SUMMARY OF JAIMINI'S UNIQUE CONTRIBUTION
+
+Jaimini's system, viewed in its fullness through Arudha Padas, Narayana Dasa, Sthira and Chara Karakas, and the Karakamsha framework, offers a complete parallel astrology that addresses a question Parashari does not fully answer: how does the soul's inner reality manifest in the outer, material, and social world? The Arudha system bridges karma (the inner) and fate (the outer). The Dasa systems time when that bridging occurs. The Yoga combinations identify whether the bridge is a golden arc or a troubled passage. Together, these tools make Jaimini Jyotish an indispensable complement to the Parashari system for the comprehensive understanding of any nativity.

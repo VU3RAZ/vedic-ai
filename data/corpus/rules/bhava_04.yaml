@@ -1,0 +1,114 @@
+# Bhava 4 (Sukha / Matru Bhava) rules — Mother, Home, Comfort, Immovable Assets,
+# Inner Happiness
+# Primary significators: Moon (mother, mind, emotional security), Venus (comfort,
+# luxury), 4th lord placement
+
+- rule_id: B04_001
+  name: Moon in 4th House — Deep Emotional Security and Maternal Bond
+  scope: bhava_4
+  weight: 0.75
+  conditions:
+    - feature: planets.Moon.house
+      op: eq
+      value: 4
+  explanation_template: >-
+    Moon placed in the 4th house (Sukha bhava) is in its natural domain of home,
+    mother, and emotional nourishment — a highly favourable placement. BPHS regards
+    Moon in the 4th as bestowing a deep sense of inner security, a close and loving
+    maternal relationship, and a comfortable domestic life. The native is emotionally
+    intuitive, rooted in family traditions, and tends to create nurturing environments
+    for those around them. Ownership of property and conveyances is supported.
+  source_refs:
+    - "BPHS 18.2"
+  conflict_policy: merge
+
+- rule_id: B04_002
+  name: Venus in 4th House — Domestic Comfort and Aesthetic Home
+  scope: bhava_4
+  weight: 0.70
+  conditions:
+    - feature: planets.Venus.house
+      op: eq
+      value: 4
+  explanation_template: >-
+    Venus in the 4th house of home and comfort creates a beautiful, harmonious
+    domestic environment. Classical texts note that Venus here bestows fine
+    conveyances, artistic household furnishings, and genuine happiness in the
+    home sphere. The relationship with the mother tends to be warm and affectionate.
+    Wealth through real estate or property holdings is also indicated.
+  source_refs:
+    - "BPHS 18.9"
+  conflict_policy: merge
+
+- rule_id: B04_003
+  name: 4th Lord in Kendra — Stable Home and Domestic Happiness
+  scope: bhava_4
+  weight: 0.65
+  conditions:
+    - feature: houses.4.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 4th house lord placed in an angular house (kendra) stabilises the native's
+    domestic life, property holdings, and relationship with the mother. The home
+    environment is structurally secure; the native is able to establish a firm
+    material and emotional foundation from which to pursue outer achievements.
+  source_refs:
+    - "BPHS 10.1"
+  conflict_policy: merge
+
+- rule_id: B04_004
+  name: 4th Lord in Trikona — Fortunate Domestic Life
+  scope: bhava_4
+  weight: 0.65
+  conditions:
+    - feature: houses.4.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 4th house placed in a trine (trikona) brings dharmic fortune
+    to domestic life, property, and the native's inner sense of happiness. The
+    mother may be a spiritually elevated or particularly fortunate individual;
+    the home environment supports the native's growth, creativity, and sense
+    of purpose throughout life.
+  source_refs:
+    - "BPHS 10.2"
+  conflict_policy: merge
+
+- rule_id: B04_005
+  name: Moon Exalted — Exceptional Emotional Intelligence and Happiness
+  scope: bhava_4
+  weight: 0.80
+  conditions:
+    - feature: planets.Moon.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Moon is exalted in Taurus, reflecting peak lunar qualities — emotional
+    stability, receptivity, and a deeply contented inner life. An exalted Moon
+    linked to 4th house themes produces a native of remarkable empathy, intuitive
+    wisdom, and the capacity to create nurturing environments. BPHS associates
+    exalted Moon with exceptional domestic happiness and a particularly devoted
+    relationship with the mother.
+  source_refs:
+    - "BPHS 3.12"
+  conflict_policy: override
+
+- rule_id: B04_006
+  name: 4th Lord in Dusthana — Domestic Disruptions and Property Challenges
+  scope: bhava_4
+  weight: 0.50
+  conditions:
+    - feature: houses.4.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 4th house lord placed in a dusthana (6th, 8th, or 12th) brings
+    disruptions to domestic life, property, or the maternal relationship.
+    The native may relocate frequently, experience separation from the mother,
+    or encounter obstacles in acquiring immovable assets. Emotional healing
+    and cultivating inner stability independent of external circumstances
+    become important life themes.
+  source_refs:
+    - "BPHS 10.5"
+  conflict_policy: defer

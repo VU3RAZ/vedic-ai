@@ -10,10 +10,12 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 
 ## What's new (2026-05)
 
+- **12-Bhava prediction analysis** — select "All 12 Bhavas" (or any individual bhava) as the prediction scope. Each bhava runs its own rule set (6 rules each, BPHS citations), injects a **BHAVA ACTIVATION** block into the LLM prompt (dasha activation score, aspects/drishti received, current transiting planets), and renders in a responsive card grid with activation badge (HIGH / MODERATE / LOW) and transit badges.
+- **Bhava-aware prompt builder** — when scope is `bhava_N`, the prompt automatically: (a) focuses drishti on the target bhava + its trines and opposition, (b) injects the full dasha activation analysis (mahadasha/antardasha lord vs. bhava lord, occupants, drishti received), (c) maps to bhava-specific divisional charts (D2→H2, D10→H10, D9/D7→H7, etc.).
+- **Gemini backend in web UI** — Gemini now appears as a selectable backend in the LLM Backend dropdown (alongside Ollama / LM Studio / llama.cpp). Selecting it swaps the Base URL field for an API Key field; results route to a dedicated **✨ Gemini** prediction tab. Key can also be supplied per-request without restarting the server.
 - **Gochara / Transit engine** — full rule-based transit analysis: Gochara house effects (BPHS Ch.85–87, Phaladeepika Ch.26), Vedha obstruction table, Sadhe Sati / Ashtama Shani / Kantaka Shani detection, Guru Chandala and Mars–Saturn special alerts, dasha-transit synergy, remedies with classical citations (Mantra Mahodadhi, BPHS Ch.88, Agni Purana). `POST /transits/compute` — no LLM required.
 - **Gochara tab in Web UI** — enter transit date → instant rule-based findings: planet matrix, Vedha cards, Sadhe Sati status, special alerts, per-planet remedies with Vedic mantra (RV/YV/AV verse) and beeja mantra source citations.
 - **LLM synthesis-only refactor** — the LLM no longer receives raw chart longitudes or re-derives positions. It receives only pre-computed ENGINE FINDINGS (planet table, house table, yogas, dasha strength, varga analysis, triggered rules, and optional Gochara context) and is explicitly prohibited from re-deriving positions, inventing remedies, or contradicting engine tone.
-- **Gemini cloud backend** — `google-genai` wrapper behind the same `generate()` interface as the local client. Free tier: 1,500 req/day, ~2 s/request vs 2–8 min locally. Set `backend: gemini` in `configs/models.yaml` and set `GEMINI_API_KEY`.
 - **Transit context in predictions** — pass `transit_datetime` to `POST /predictions` or `run_prediction_pipeline()` and the Gochara engine output is injected as a structured context block into the LLM synthesis prompt.
 - **LLM Debug tab** — ⚙ tab alongside Standard / Raman predictions; shows the full prompt sent to the LLM and the raw response, collapsible per scope.
 - **Graha Drishti** — classical aspect computation with strength fractions (full / 3/4 / 1/2) per graha
@@ -30,18 +32,19 @@ Birth Data
   → Canonical ChartBundle    (Pydantic v2, schema-versioned JSON)
   → Feature Extractor        (strengths, lordships, graha+rashi drishti, yogas, sandhi, nakshatras,
                                varga analysis D3/D7/D9/D10/D12, dasha timing)
-  → Rule Evaluator           (YAML micro-DSL, 4 rule scopes, conflict resolution)
+  → Rule Evaluator           (YAML micro-DSL, 16 rule scopes: 4 traditional + 12 bhava, conflict resolution)
   → Gochara Engine           (transit analysis — BPHS/Phaladeepika/SC rules, Vedha, Sadhe Sati,
                                special alerts, remedies with classical citations — no LLM)
+  → Bhava Activation         (per-bhava dasha activation score + transit pressure from Gochara engine)
   → Retrieval Layer          (FAISS + sentence-transformers, 3 054 chunks, all-MiniLM-L6-v2)
-  → Prompt Builder           (synthesis-only: ENGINE FINDINGS + optional Gochara context;
-                               LLM prohibited from re-deriving positions or remedies)
+  → Prompt Builder           (synthesis-only: ENGINE FINDINGS + BHAVA ACTIVATION + optional Gochara
+                               context; LLM prohibited from re-deriving positions or remedies)
   → LLM — Local or Cloud     (Ollama / LM Studio / llama.cpp  OR  Gemini free tier)
   → Structured Report        (PredictionReport — sections + llm_debug for inspection)
   → Timing Overlay           (Vimshottari dasha + transits, ForecastReport)
   → Evaluation & Hardening   (metrics, SQLite cache, reproducibility manifest)
-  → Web UI                   (FastAPI + single-file HTML — Chart / Drishti / Vargas /
-                               Raman-Analysis / Gochara / Standard / Raman / ⚙ Debug tabs)
+  → Web UI                   (FastAPI + single-file HTML — Chart / Drishti / Vargas / Raman-Analysis /
+                               Gochara / Standard / Raman / 12 Bhavas / ✨ Gemini / ⚙ Debug tabs)
 ```
 
 ## Quick start
@@ -167,7 +170,7 @@ Start the server with `vedic-ai serve`, then:
 |---|---|---|
 | GET | `/` | Web UI (HTML frontend) |
 | GET | `/health` | Liveness check |
-| GET | `/predictions/scopes` | Returns `["personality","career","relationships","health"]` |
+| GET | `/predictions/scopes` | Returns supported scope names |
 | POST | `/predictions` | Full prediction pipeline (LLM synthesis) |
 | POST | `/charts/compute` | Compute chart only (no prediction) |
 | POST | `/transits/compute` | Gochara transit analysis (no LLM — instant) |
@@ -180,13 +183,25 @@ Start the server with `vedic-ai serve`, then:
   "latitude": 21.15,
   "longitude": 79.08,
   "name": "Rahul",
-  "scope": "all",
+  "scope": "bhava_all",
   "dry_run": false,
-  "transit_datetime": "2026-05-04T12:00:00+05:30"
+  "transit_datetime": "2026-05-04T12:00:00+05:30",
+  "llm_backend": "gemini",
+  "llm_api_key": "AIza..."
 }
 ```
-`scope`: `"all"` (default), `"personality"`, `"career"`, `"relationships"`, or `"health"`.  
-`transit_datetime` (optional): when provided, the Gochara engine runs and its findings are injected as structured context into the LLM prompt. The LLM synthesizes natal + transit findings without re-deriving any positions.
+
+**`scope` values:**
+
+| Value | Runs |
+|---|---|
+| `"all"` | All 4 traditional scopes (personality, career, relationships, health) |
+| `"personality"` / `"career"` / `"relationships"` / `"health"` | Single traditional scope |
+| `"bhava_all"` | All 12 bhava scopes |
+| `"bhava_1"` … `"bhava_12"` | Single bhava (H1 Lagna through H12 Vyaya) |
+
+`transit_datetime` (optional): triggers the Gochara engine; its findings are injected into every scope's prompt. The LLM synthesizes natal + transit without re-deriving positions.  
+`llm_api_key` (optional): Gemini API key — overrides `GEMINI_API_KEY` env var and `configs/models.yaml`.
 
 **`POST /transits/compute` body:**
 ```json
@@ -257,7 +272,7 @@ To add your own texts:
 | 8 | Timing engine | ✅ | `features/dasha_features`, `features/transit_features` |
 | 9 | Evaluation framework | ✅ | `evaluation/dataset`, `evaluation/metrics`, `evaluation/runner` |
 | 10 | Fine-tuning data prep | ✅ | `evaluation/training_data`, `llm/fine_tune_prep` |
-| 11 | FastAPI + CLI + Web UI | ✅ | `api/`, `cli/`, `static/index.html` (tabbed — Chart/Drishti/Vargas) |
+| 11 | FastAPI + CLI + Web UI | ✅ | `api/`, `cli/`, `static/index.html` (Chart/Drishti/Vargas/Raman/Gochara/Standard/Raman/12 Bhavas/Gemini/Debug) |
 | 12 | Hardening (cache, repo, repro) | ✅ | `storage/cache`, `storage/repository`, `utils/repro` |
 
 ## Repository layout
@@ -271,7 +286,8 @@ configs/
 
 data/
   corpus/
-    rules/              YAML rule files: career, personality, relationships, timing
+    rules/              YAML rule files: career, personality, relationships, health,
+                        timing, bhava_01 … bhava_12 (16 scope files, 100+ rules)
     texts/              Jyotish corpus (BPHS Vols 1+2, Jaimini, chapter extracts)
   fixtures/             Three sample chart JSON fixtures
   golden/               eval_set_v1.json — labeled evaluation cases
@@ -286,7 +302,9 @@ src/vedic_ai/
   engines/              SwissEphAdapter (primary), vimshottari, normalizer, varga
   features/             core_features, strength, lordships, nakshatra, dasha, transit,
                         aspects (graha drishti), drishti (rashi drishti + matrix),
-                        sandhi (bhava sandhi/madhya), varga_analysis (D3/D7/D9/D10/D12)
+                        sandhi (bhava sandhi/madhya), varga_analysis (D3/D7/D9/D10/D12),
+                        bhava_analysis (dasha activation + transit pressure per bhava),
+                        jaimini_features (chara karakas, arudha padas, upapada)
   retrieval/            corpus_loader, chunker, embedder, vector_store, retriever
   llm/                  LocalLLMClient (Ollama/LM Studio/llama.cpp), GeminiClient (cloud),
                         prompt_builder (synthesis-only, Gochara context block), output_parser
@@ -403,6 +421,30 @@ Expected throughput: Gemini ~2 s/scope · Local CPU ~2–8 min/scope.
 ```
 
 Valid feature namespaces: `planets`, `houses`, `yogas`, `lagna`, `aspects`, `drishti`, `sandhi`, `vargas`, `varga_analysis`, `nakshatra_ascendant`, `timing`, `transit`.
+
+## 12-Bhava rule scopes
+
+Each of the 12 houses has its own rule file (`data/corpus/rules/bhava_01.yaml` … `bhava_12.yaml`). Use scope names `bhava_1` through `bhava_12`. Rules follow the same format as traditional scopes.
+
+| Bhava | Scope name | Domain |
+|---|---|---|
+| 1 | `bhava_1` | Lagna — self, constitution, appearance |
+| 2 | `bhava_2` | Dhana — wealth, speech, family |
+| 3 | `bhava_3` | Sahaja — siblings, courage, communication |
+| 4 | `bhava_4` | Sukha — mother, home, property, happiness |
+| 5 | `bhava_5` | Putra — children, intelligence, creativity |
+| 6 | `bhava_6` | Ari — enemies, disease, debt, service |
+| 7 | `bhava_7` | Kalatra — spouse, partnerships, business |
+| 8 | `bhava_8` | Ayu — longevity, transformation, occult |
+| 9 | `bhava_9` | Dharma — father, guru, fortune, religion |
+| 10 | `bhava_10` | Karma — career, status, authority |
+| 11 | `bhava_11` | Labha — gains, income, elder siblings |
+| 12 | `bhava_12` | Vyaya — losses, liberation, foreign lands |
+
+When a bhava scope runs, the prompt builder automatically:
+- Injects a **BHAVA ACTIVATION** block with dasha lord activation score and current transits through that house
+- Focuses the drishti section on the target bhava + its trines and opposition
+- Routes to bhava-specific divisional charts (D10 for bhava_10, D9/D7 for bhava_7, etc.)
 
 ## License
 

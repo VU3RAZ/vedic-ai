@@ -476,4 +476,11 @@ def extract_core_features(bundle: ChartBundle) -> dict:
     except Exception:
         result["house_influence"] = []
 
+    # Jaimini features: Chara Karakas, Arudha Padas, Karakamsha, Upapada
+    try:
+        from vedic_ai.features.jaimini_features import compute_jaimini_features
+        result["jaimini"] = compute_jaimini_features(bundle)
+    except Exception:
+        result["jaimini"] = {}
+
     return result

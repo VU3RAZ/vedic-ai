@@ -1,0 +1,116 @@
+# Bhava 5 (Putra / Buddhi Bhava) rules — Children, Intelligence, Creativity,
+# Speculation, Past-Life Merit
+# Primary significators: Jupiter (children, wisdom, dharma), 5th lord placement,
+# creative intelligence
+
+- rule_id: B05_001
+  name: Jupiter in 5th House — Wisdom, Children, and Creative Brilliance
+  scope: bhava_5
+  weight: 0.80
+  conditions:
+    - feature: planets.Jupiter.house
+      op: eq
+      value: 5
+  explanation_template: >-
+    Jupiter in the 5th house (Putra bhava) is one of the most auspicious
+    placements in classical Jyotish. BPHS regards Jupiter in the 5th as conferring
+    exceptional intelligence, creative brilliance, and the blessings of children.
+    The native is naturally wise, morally sound, and drawn to teaching, philosophy,
+    or creative arts. Speculation and investment decisions tend to be guided by
+    sound judgment; the native's advice is valued by peers.
+  source_refs:
+    - "BPHS 19.5"
+  conflict_policy: merge
+
+- rule_id: B05_002
+  name: 5th Lord in Kendra — Children and Intelligence Well-Supported
+  scope: bhava_5
+  weight: 0.65
+  conditions:
+    - feature: houses.5.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 5th house lord placed in an angular house (kendra) provides structural
+    strength to the native's intelligence, creativity, and prospects for children.
+    The native's creative and intellectual gifts find productive expression in
+    the world; children (if indicated) tend to be healthy and accomplished.
+  source_refs:
+    - "BPHS 11.1"
+  conflict_policy: merge
+
+- rule_id: B05_003
+  name: 5th Lord in Trikona — Meritorious and Fortunate Intelligence
+  scope: bhava_5
+  weight: 0.65
+  conditions:
+    - feature: houses.5.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 5th house occupies a trine (trikona: 1st, 5th, or 9th),
+    connecting the native's intelligence and creative gifts to the domain of
+    dharma and fortune. Past-life merit (Purva Punya) actively supports the
+    native's current-life outcomes; the native's creative and intellectual
+    endeavours are blessed with natural fortune.
+  source_refs:
+    - "BPHS 11.2"
+  conflict_policy: merge
+
+- rule_id: B05_004
+  name: Jupiter Exalted — Exceptional Wisdom and Auspicious Children
+  scope: bhava_5
+  weight: 0.85
+  conditions:
+    - feature: planets.Jupiter.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Jupiter exalted in Cancer expresses the fullest manifestation of Jupiterian
+    wisdom, compassion, and abundance. In relation to Bhava 5 significations,
+    exalted Jupiter indicates exceptional intelligence, the birth of wise and
+    virtuous children, and creative gifts of the highest order. BPHS associates
+    exalted Jupiter with Hamsa yoga, conferring nobility of character and the
+    inner wisdom to guide others effectively.
+  source_refs:
+    - "BPHS 36.1"
+  conflict_policy: override
+
+- rule_id: B05_005
+  name: Gajakesari Yoga — Jupiter-Moon Intelligence and Renown
+  scope: bhava_5
+  weight: 0.75
+  conditions:
+    - feature: yogas.gajakesari
+      op: eq
+      value: true
+  explanation_template: >-
+    Gajakesari Yoga is formed when Jupiter and Moon are in mutual angular
+    relationship (kendra from each other). This celebrated yoga enhances
+    intelligence, emotional wisdom, public renown, and the capacity for inspired
+    creative and intellectual work. In the context of Bhava 5, Gajakesari
+    supports both the native's thinking capacity and the potential for talented,
+    emotionally healthy children. BPHS regards this yoga as a powerful indicator
+    of wisdom-based achievement throughout life.
+  source_refs:
+    - "BPHS 36.7"
+  conflict_policy: merge
+
+- rule_id: B05_006
+  name: 5th Lord in Dusthana — Challenges with Children or Speculation
+  scope: bhava_5
+  weight: 0.50
+  conditions:
+    - feature: houses.5.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 5th house lord placed in a dusthana (6th, 8th, or 12th) introduces
+    challenges related to children, creative self-expression, or speculative
+    ventures. Delays or difficulties in having children, unconventional creative
+    paths, or losses through speculation may be experienced. The native benefits
+    from channelling creative energy into disciplined, long-term pursuits rather
+    than impulsive gambles.
+  source_refs:
+    - "BPHS 11.5"
+  conflict_policy: defer

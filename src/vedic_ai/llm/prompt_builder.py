@@ -14,17 +14,23 @@ import json
 from vedic_ai.domain.chart import ChartBundle
 from vedic_ai.domain.corpus import RetrievedPassage
 from vedic_ai.domain.prediction import RuleTrigger
+from vedic_ai.features.bhava_analysis import build_bhava_context_block
 
 # ---------------------------------------------------------------------------
 # Section headers
 # ---------------------------------------------------------------------------
 _SECTION_CONTEXT    = "### NATIVE CONTEXT"
 _SECTION_FINDINGS   = "### ENGINE FINDINGS (pre-computed — treat as authoritative)"
+
+# Aliases for backwards compatibility with existing tests
+_SECTION_CHART_FACTS = _SECTION_CONTEXT
+_SECTION_DERIVED     = _SECTION_FINDINGS
 _SECTION_FUNCTIONAL = "### FUNCTIONAL PLANETARY NATURE"
 _SECTION_DASHA_STR  = "### DASHA LORD STRENGTH"
 _SECTION_VARGA      = "### VARGA (DIVISIONAL) ANALYSIS"
 _SECTION_DASHA      = "### DASHA TIMING"
 _SECTION_GOCHARA    = "### TRANSIT / GOCHARA CONTEXT (pre-computed — do not re-derive)"
+_SECTION_BHAVA      = "### BHAVA ACTIVATION — DASHA + TRANSIT ANALYSIS (pre-computed)"
 _SECTION_RULES      = "### TRIGGERED RULE FINDINGS (engine output)"
 _SECTION_PASSAGES   = "### SUPPORTING CLASSICAL PASSAGES"
 _SECTION_TASK       = "### YOUR TASK"
@@ -94,6 +100,19 @@ _SCOPE_VARGAS: dict[str, list[str]] = {
     "career":        ["D10", "D9"],
     "relationships": ["D9", "D7"],
     "health":        ["D6", "D8", "D30"],
+    # Bhava scopes use D9 + D1 by default; high-significance bhavas get specific charts
+    "bhava_1":  ["D1", "D9"],
+    "bhava_2":  ["D2", "D1"],
+    "bhava_3":  ["D3", "D1"],
+    "bhava_4":  ["D4", "D1"],
+    "bhava_5":  ["D7", "D5", "D1"],
+    "bhava_6":  ["D6", "D1"],
+    "bhava_7":  ["D9", "D7"],
+    "bhava_8":  ["D8", "D1"],
+    "bhava_9":  ["D9", "D1"],
+    "bhava_10": ["D10", "D1"],
+    "bhava_11": ["D11", "D1"],
+    "bhava_12": ["D12", "D1"],
 }
 
 
@@ -110,7 +129,8 @@ def _context_section(bundle: ChartBundle, features: dict) -> str:
     sun  = planets.get("Sun", {})
     lines = [
         f"Lagna (Ascendant): {lagna_info.get('rasi', '?')}  "
-        f"lord={lagna_info.get('lord','?')} in H{lagna_info.get('lord_house','?')}",
+        f"lord={lagna_info.get('lord','?')} in H{lagna_info.get('lord_house','?')}  "
+        f"longitude={d1.ascendant_longitude:.4f}",
         f"Moon: {moon.get('rasi','?')} H{moon.get('house','?')}  "
         f"nakshatra={moon.get('nakshatra','?')}",
         f"Sun:  {sun.get('rasi','?')} H{sun.get('house','?')}",
@@ -173,12 +193,23 @@ def _findings_section(features: dict, scope: str) -> str:
     drishti = features.get("drishti", {})
     matrix = drishti.get("matrix", [])
     if matrix:
-        key_houses = {
-            "personality":   [1, 5, 9],
-            "career":        [10, 6, 2],
-            "relationships": [7, 5, 11],
-            "health":        [1, 6, 8],
-        }.get(scope, [1, 7, 10])
+        # For bhava scopes focus drishti on that bhava + its trines/oppositions
+        if scope.startswith("bhava_"):
+            try:
+                bnum = int(scope.split("_")[1])
+                opposite = ((bnum - 1 + 6) % 12) + 1
+                trine1   = ((bnum - 1 + 4) % 12) + 1
+                trine2   = ((bnum - 1 + 8) % 12) + 1
+                key_houses = [bnum, opposite, trine1, trine2]
+            except ValueError:
+                key_houses = [1, 7, 10]
+        else:
+            key_houses = {
+                "personality":   [1, 5, 9],
+                "career":        [10, 6, 2],
+                "relationships": [7, 5, 11],
+                "health":        [1, 6, 8],
+            }.get(scope, [1, 7, 10])
         lines.append(f"Drishti on {scope}-relevant houses:")
         for row in matrix:
             if row["house"] in key_houses:
@@ -420,6 +451,15 @@ def _gochara_section(gochara: dict) -> str:
     return "\n".join(lines)
 
 
+def _bhava_context_section(features: dict, scope: str, gochara_context: dict | None) -> str:
+    """Build bhava activation + transit pressure block for a single bhava scope."""
+    try:
+        bhava_num = int(scope.split("_")[1])
+    except (IndexError, ValueError):
+        return "(bhava context unavailable)"
+    return build_bhava_context_block(features, bhava_num, gochara_context)
+
+
 def _rules_section(triggers: list[RuleTrigger]) -> str:
     lines = []
     for t in sorted(triggers, key=lambda x: x.rule_id):
@@ -432,7 +472,7 @@ def _rules_section(triggers: list[RuleTrigger]) -> str:
 
 def _passages_section(passages: list[RetrievedPassage]) -> str:
     lines = []
-    for p in sorted(passages, key=lambda x: x.score, reverse=True):
+    for p in sorted(passages, key=lambda x: x.chunk_id):
         lines.append(
             f"[{p.chunk_id}] (source={p.source}, relevance={p.score:.3f})\n{p.text}"
         )
@@ -440,6 +480,23 @@ def _passages_section(passages: list[RetrievedPassage]) -> str:
 
 
 def _task_section(scope: str, raman_method: bool, has_gochara: bool) -> str:
+    is_bhava = scope.startswith("bhava_")
+    if is_bhava:
+        try:
+            bhava_num = int(scope.split("_")[1])
+        except (IndexError, ValueError):
+            bhava_num = 0
+        bhava_focus = (
+            f"Focus on Bhava {bhava_num} (its lord, occupants, aspects received, dasha activation, "
+            f"and current transits through it). "
+            f"Check interdependencies: planets aspecting this bhava, the lord's placement and dignity, "
+            f"and how the active dasha lord relates to this house."
+        )
+        scope_label = f"Bhava {bhava_num}"
+    else:
+        bhava_focus = ""
+        scope_label = scope
+
     method_note = (
         "Use B.V. Raman's method: examine the relevant house, its lord, occupants, "
         "aspects, and divisional chart confirmation — all drawn from the ENGINE FINDINGS above."
@@ -453,12 +510,14 @@ def _task_section(scope: str, raman_method: bool, has_gochara: bool) -> str:
         "Do NOT suggest remedies; those are in the engine output."
         if has_gochara else ""
     )
+    bhava_note = f"\n{bhava_focus}" if bhava_focus else ""
     return (
-        f"Synthesize a {scope} interpretation from the ENGINE FINDINGS and TRIGGERED RULES above.\n"
-        f"{method_note}{gochara_note}\n\n"
+        f"Synthesize a {scope_label} interpretation from the ENGINE FINDINGS, "
+        f"BHAVA ACTIVATION, and TRIGGERED RULES above.\n"
+        f"{method_note}{gochara_note}{bhava_note}\n\n"
         f"Respond with ONLY this JSON object — no markdown fences, no explanation, no extra keys:\n"
         f'{{\n'
-        f'  "summary": "2-3 sentence overall {scope} synthesis grounded in engine findings",\n'
+        f'  "summary": "2-3 sentence overall {scope_label} synthesis grounded in engine findings",\n'
         f'  "details": [\n'
         f'    "Sentence citing a specific engine finding (planet / house / yoga / dasha).",\n'
         f'    "Another sentence. Up to 5 items. Each item must be a STRING, not an object."\n'
@@ -521,6 +580,13 @@ def build_interpretation_prompt(
         parts += [
             _SECTION_GOCHARA,
             _gochara_section(gochara_context),
+            "",
+        ]
+
+    if scope.startswith("bhava_"):
+        parts += [
+            _SECTION_BHAVA,
+            _bhava_context_section(features, scope, gochara_context),
             "",
         ]
 

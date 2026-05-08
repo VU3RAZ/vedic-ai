@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 # Scope-anchored vocabulary for baseline semantic queries
 _SCOPE_ANCHORS: dict[str, str] = {
+    # Legacy 4-scope
     "personality": (
         "lagna ascendant personality character temperament self-identity "
         "nature disposition mental makeup"
@@ -25,14 +26,40 @@ _SCOPE_ANCHORS: dict[str, str] = {
         "health constitution disease longevity vitality sixth house "
         "eighth house body immunity ailment"
     ),
+    # 12-Bhava anchors
+    "bhava_1":  "lagna ascendant first house self personality appearance health constitution vitality",
+    "bhava_2":  "second house wealth speech family food accumulated assets savings right eye kutumba",
+    "bhava_3":  "third house siblings courage communication short journeys arms shoulders effort parakrama",
+    "bhava_4":  "fourth house mother home property happiness domestic education chest Moon",
+    "bhava_5":  "fifth house children intelligence creativity past karma purva punya speculation romance",
+    "bhava_6":  "sixth house enemies disease debt service litigation competition sixth lord ari",
+    "bhava_7":  "seventh house spouse marriage partnership business Venus kalatra seventh lord",
+    "bhava_8":  "eighth house longevity transformation hidden occult inheritance chronic illness ayu",
+    "bhava_9":  "ninth house dharma father guru fortune religion higher learning spirituality luck",
+    "bhava_10": "tenth house career profession status authority public reputation karma dashamsha",
+    "bhava_11": "eleventh house gains elder siblings desires income social network fulfilment labha",
+    "bhava_12": "twelfth house losses liberation foreign lands expenses moksha sleep vyaya",
 }
 
 # Per-scope primary houses and their significance
 _SCOPE_HOUSE_FOCUS: dict[str, list[int]] = {
-    "personality": [1, 5, 9],
-    "career": [10, 11, 2],
+    "personality":   [1, 5, 9],
+    "career":        [10, 11, 2],
     "relationships": [7, 5, 11],
-    "health": [1, 6, 8, 12],
+    "health":        [1, 6, 8, 12],
+    # Bhava-specific focus: primary bhava + natural support houses
+    "bhava_1":  [1, 5, 9],
+    "bhava_2":  [2, 11, 5],
+    "bhava_3":  [3, 6, 11],
+    "bhava_4":  [4, 12, 8],
+    "bhava_5":  [5, 9, 1],
+    "bhava_6":  [6, 12, 8],
+    "bhava_7":  [7, 2, 11],
+    "bhava_8":  [8, 3, 12],
+    "bhava_9":  [9, 5, 1],
+    "bhava_10": [10, 11, 2],
+    "bhava_11": [11, 2, 6],
+    "bhava_12": [12, 8, 4],
 }
 
 

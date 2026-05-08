@@ -120,9 +120,11 @@
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-primary   { background: var(--accent); color: #0f1220; }
     .btn-raman     { background: var(--accent2); color: #fff; }
+    .btn-bhava     { background: #2563eb; color: #fff; }
     .btn-secondary { background: var(--border); color: var(--text); }
     .btn-primary:hover:not(:disabled)   { background: #fbbf24; }
     .btn-secondary:hover:not(:disabled) { background: #3d4668; }
+    .btn-bhava:hover:not(:disabled)     { background: #1d4ed8; }
 
     .quick-fill { display: flex; flex-direction: column; gap: 8px; }
     .quick-fill-btns { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -1040,6 +1042,43 @@
       font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
     }
     .dbg-pre-response { color: #7ee787; max-height: 220px; }
+
+    /* ── Bhava Grid ── */
+    .bhava-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 14px;
+      padding: 4px 0;
+    }
+    .bhava-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--panel); overflow: hidden;
+    }
+    .bhava-card-header {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+    .bhava-num {
+      font-size: 1.1rem; font-weight: 800; min-width: 28px;
+    }
+    .bhava-title {
+      font-size: 0.85rem; font-weight: 600; color: var(--text); flex: 1;
+    }
+    .bhava-act-badge {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 7px;
+      border: 1px solid; border-radius: 10px; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .bhava-transits-wrap { display: flex; gap: 4px; flex-wrap: wrap; }
+    .bhava-transit-badge {
+      font-size: 0.65rem; background: rgba(99,179,237,0.15);
+      border: 1px solid rgba(99,179,237,0.4); color: #63b3ed;
+      padding: 1px 6px; border-radius: 8px; cursor: default;
+    }
+    .bhava-body {
+      padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1099,12 +1138,29 @@
         </div>
         <div class="field">
           <label for="scope">Scope</label>
-          <select id="scope">
-            <option value="all" selected>All Scopes</option>
-            <option value="personality">Personality</option>
-            <option value="career">Career</option>
-            <option value="relationships">Relationships</option>
-            <option value="health">Health</option>
+          <select id="scope" onchange="onScopeChange()">
+            <optgroup label="Traditional Scopes">
+              <option value="all" selected>All Traditional Scopes</option>
+              <option value="personality">Personality</option>
+              <option value="career">Career</option>
+              <option value="relationships">Relationships</option>
+              <option value="health">Health</option>
+            </optgroup>
+            <optgroup label="12 Bhava Analysis">
+              <option value="bhava_all">All 12 Bhavas</option>
+              <option value="bhava_1">Bhava 1 — Lagna / Self</option>
+              <option value="bhava_2">Bhava 2 — Dhana / Wealth</option>
+              <option value="bhava_3">Bhava 3 — Sahaja / Siblings</option>
+              <option value="bhava_4">Bhava 4 — Sukha / Home</option>
+              <option value="bhava_5">Bhava 5 — Putra / Children</option>
+              <option value="bhava_6">Bhava 6 — Ari / Enemies</option>
+              <option value="bhava_7">Bhava 7 — Kalatra / Spouse</option>
+              <option value="bhava_8">Bhava 8 — Ayu / Longevity</option>
+              <option value="bhava_9">Bhava 9 — Dharma / Fortune</option>
+              <option value="bhava_10">Bhava 10 — Karma / Career</option>
+              <option value="bhava_11">Bhava 11 — Labha / Gains</option>
+              <option value="bhava_12">Bhava 12 — Vyaya / Moksha</option>
+            </optgroup>
           </select>
         </div>
         <div class="toggle-row">
@@ -1122,14 +1178,19 @@
         <div class="field">
           <label for="llm-backend">Backend</label>
           <select id="llm-backend" onchange="onBackendChange()">
-            <option value="ollama">Ollama</option>
-            <option value="lmstudio">LM Studio</option>
-            <option value="llamacpp">llama.cpp</option>
+            <option value="ollama">Ollama (local)</option>
+            <option value="lmstudio">LM Studio (local)</option>
+            <option value="llamacpp">llama.cpp (local)</option>
+            <option value="gemini">&#10024; Gemini (cloud)</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field" id="llm-url-field">
           <label for="llm-url">Base URL</label>
           <input type="text" id="llm-url" placeholder="http://localhost:11434" />
+        </div>
+        <div class="field" id="llm-apikey-field" style="display:none">
+          <label for="llm-apikey">API Key</label>
+          <input type="password" id="llm-apikey" placeholder="AIza…" />
         </div>
         <div class="field">
           <label for="llm-model">Model</label>
@@ -1144,6 +1205,12 @@
     <div class="btn-group" style="margin-top:8px;">
       <button class="btn btn-primary"   onclick="runPrediction(false)">&#9788; Standard</button>
       <button class="btn btn-raman"     onclick="runPrediction(true)">&#9775; Raman</button>
+    </div>
+    <div class="btn-group" style="margin-top:8px;">
+      <button class="btn btn-bhava" onclick="runBhavaAll()">&#9608; All 12 Bhavas</button>
+    </div>
+    <div id="bhava-scope-hint" style="display:none;margin-top:6px;font-size:0.75rem;color:var(--accent);padding:5px 8px;border:1px solid rgba(99,179,237,0.3);border-radius:6px;background:rgba(99,179,237,0.07)">
+      &#9608; Bhava scope selected — results will appear in the <strong>12 Bhavas</strong> tab.
     </div>
 
     <hr class="divider" />
@@ -1227,13 +1294,34 @@
     ollama:   { url: 'http://localhost:11434', model: 'qwen2.5:14b' },
     lmstudio: { url: 'http://localhost:1234',  model: 'local-model' },
     llamacpp: { url: 'http://localhost:8080',  model: 'unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q4_K_XL' },
+    gemini:   { url: '',                       model: 'gemini-flash-lite-latest' },
   };
 
   function onBackendChange() {
     const backend = document.getElementById('llm-backend').value;
     const def = BACKEND_DEFAULTS[backend] || {};
-    document.getElementById('llm-url').value   = def.url   || '';
+    const isGemini = backend === 'gemini';
+    document.getElementById('llm-url-field').style.display    = isGemini ? 'none' : '';
+    document.getElementById('llm-apikey-field').style.display = isGemini ? '' : 'none';
+    document.getElementById('llm-url').value   = isGemini ? '' : (def.url   || '');
     document.getElementById('llm-model').value = def.model || '';
+  }
+
+  function onScopeChange() {
+    const scope = document.getElementById('scope').value;
+    const hint  = document.getElementById('bhava-scope-hint');
+    if (!hint) return;
+    const isBhava = scope === 'bhava_all' || scope.startsWith('bhava_');
+    hint.style.display = isBhava ? '' : 'none';
+  }
+
+  function runBhavaAll() {
+    // Temporarily force scope to bhava_all, run, then restore
+    const selEl = document.getElementById('scope');
+    const prev  = selEl.value;
+    selEl.value = 'bhava_all';
+    const p = runPrediction(false);
+    if (p && p.finally) p.finally(() => { selEl.value = prev; });
   }
 
   async function initBackendSelector() {
@@ -1279,6 +1367,16 @@
     career:        '&#9795;',
     relationships: '&#9792;',
     health:        '&#10052;',
+    bhava_1:  'I',   bhava_2:  'II',  bhava_3:  'III', bhava_4:  'IV',
+    bhava_5:  'V',   bhava_6:  'VI',  bhava_7:  'VII', bhava_8:  'VIII',
+    bhava_9:  'IX',  bhava_10: 'X',   bhava_11: 'XI',  bhava_12: 'XII',
+  };
+
+  const BHAVA_NAMES = {
+    bhava_1:'Lagna — Self', bhava_2:'Dhana — Wealth', bhava_3:'Sahaja — Siblings',
+    bhava_4:'Sukha — Home', bhava_5:'Putra — Children', bhava_6:'Ari — Enemies',
+    bhava_7:'Kalatra — Spouse', bhava_8:'Ayu — Longevity', bhava_9:'Dharma — Fortune',
+    bhava_10:'Karma — Career', bhava_11:'Labha — Gains', bhava_12:'Vyaya — Moksha',
   };
 
   // ── Quick-fill data ─────────────────────────────────────────────────────────
@@ -1332,6 +1430,7 @@
     const llmBackend = document.getElementById('llm-backend').value;
     const llmUrl     = document.getElementById('llm-url').value.trim();
     const llmModel   = document.getElementById('llm-model').value.trim();
+    const llmApiKey  = (document.getElementById('llm-apikey') || {}).value?.trim() || '';
     return {
       birth_datetime: iso,
       latitude:  lat,
@@ -1340,8 +1439,9 @@
       scope:       document.getElementById('scope').value,
       dry_run:     document.getElementById('dryrun').checked,
       llm_backend: llmBackend || null,
-      llm_base_url: llmUrl    || null,
+      llm_base_url: (llmBackend === 'gemini' ? null : (llmUrl || null)),
       llm_model:    llmModel  || null,
+      llm_api_key:  llmApiKey || null,
     };
   }
 
@@ -2134,11 +2234,25 @@
           onclick="switchTab('pred-tabs','ptab','pred-standard')">&#9788; Standard</button>
         <button class="tab-btn" id="pred-raman-btn"
           onclick="switchTab('pred-tabs','ptab','pred-raman')">&#9775; Raman</button>
+        <button class="tab-btn" id="pred-bhava-btn"
+          onclick="switchTab('pred-tabs','ptab','pred-bhava')">&#9608; 12 Bhavas</button>
+        <button class="tab-btn" id="pred-gemini-btn"
+          onclick="switchTab('pred-tabs','ptab','pred-gemini')">&#10024; Gemini</button>
         <button class="tab-btn" id="pred-debug-btn"
           onclick="switchTab('pred-tabs','ptab','pred-debug')">&#9881; Debug</button>
       </div>
       <div class="tab-panel ptab active" id="pred-standard-panel"></div>
       <div class="tab-panel ptab"        id="pred-raman-panel"></div>
+      <div class="tab-panel ptab"        id="pred-bhava-panel">
+        <div style="color:var(--muted);padding:16px;font-size:0.85rem;">
+          Select a Bhava scope (e.g. "All 12 Bhavas") and run a prediction to see bhava analysis here.
+        </div>
+      </div>
+      <div class="tab-panel ptab"        id="pred-gemini-panel">
+        <div style="color:var(--muted);padding:16px;font-size:0.85rem;">
+          Select the Gemini backend and run a prediction to see Gemini's interpretation here.
+        </div>
+      </div>
       <div class="tab-panel ptab"        id="pred-debug-panel">
         <div style="color:var(--muted);padding:16px;font-size:0.85rem;">
           Run a prediction first — LLM prompt and raw response will appear here.
@@ -2151,9 +2265,28 @@
     const form = collectForm();
     if (!form) return;
 
-    const label   = ramanMethod ? 'Raman' : 'Standard';
-    const panelId = ramanMethod ? 'pred-raman-panel' : 'pred-standard-panel';
-    const tabId   = ramanMethod ? 'pred-raman'       : 'pred-standard';
+    const scope     = form.scope || 'all';
+    const isBhava   = scope === 'bhava_all' || scope.startsWith('bhava_');
+    const isGemini  = (form.llm_backend === 'gemini');
+
+    let label, panelId, tabId;
+    if (isBhava) {
+      label   = 'Bhava';
+      panelId = 'pred-bhava-panel';
+      tabId   = 'pred-bhava';
+    } else if (isGemini) {
+      label   = 'Gemini';
+      panelId = 'pred-gemini-panel';
+      tabId   = 'pred-gemini';
+    } else if (ramanMethod) {
+      label   = 'Raman';
+      panelId = 'pred-raman-panel';
+      tabId   = 'pred-raman';
+    } else {
+      label   = 'Standard';
+      panelId = 'pred-standard-panel';
+      tabId   = 'pred-standard';
+    }
 
     ensurePredTabs();
     document.getElementById(panelId).innerHTML =
@@ -2173,7 +2306,11 @@
       }
       const data = await resp.json();
       hideSpinner();
-      renderPrediction(data, panelId);
+      if (isBhava) {
+        renderBhavaPrediction(data, panelId);
+      } else {
+        renderPrediction(data, panelId);
+      }
       renderDebug(data, label);
     } catch (err) {
       showError('Prediction error: ' + err.message);
@@ -2290,6 +2427,98 @@
   function toggleRemCard(idx) {
     const card = document.getElementById('rem-card-' + idx);
     if (card) card.classList.toggle('open');
+  }
+
+  // ── Bhava Prediction Renderer ───────────────────────────────────────────────
+  function renderBhavaPrediction(data, containerId) {
+    const target   = document.getElementById(containerId);
+    const sections = data.sections || [];
+    if (!sections.length) {
+      target.innerHTML = '<div class="error-banner active">No bhava sections returned.</div>';
+      return;
+    }
+
+    const ACTIVATION_COLORS = { high:'var(--success)', moderate:'var(--accent)', low:'var(--muted)' };
+    const idPrefix = containerId || 'bhava';
+
+    // Group sections by scope
+    const bhavas = sections.filter(s => s.scope && s.scope.startsWith('bhava_'));
+    const other  = sections.filter(s => !s.scope || !s.scope.startsWith('bhava_'));
+
+    let html = '<div class="bhava-grid">';
+    bhavas.forEach((sec, idx) => {
+      const scope      = sec.scope;
+      const bnum       = parseInt((scope || '').split('_')[1]) || 0;
+      const bname      = BHAVA_NAMES[scope] || `Bhava ${bnum}`;
+      const activation = sec.bhava_activation || {};
+      const actLevel   = activation.level || '';
+      const actColor   = ACTIVATION_COLORS[actLevel] || 'var(--muted)';
+      const transitPts = activation.transiting_planets || [];
+      const dashaScore = activation.total_activation_score || 0;
+
+      const detailsHTML = (sec.details || []).map(d =>
+        `<li>${escapeHTML(parseDetail(d))}</li>`
+      ).join('');
+
+      const evidence = sec.evidence || [];
+      const evId     = idPrefix + '-bev-' + idx;
+      const evCount  = evidence.length;
+      let evHTML = '';
+      if (evCount > 0) {
+        const items = evidence.map(ev => renderEvidenceItem(ev)).join('');
+        const passageCount = evidence.filter(e => e.passage).length;
+        const ruleCount    = evidence.filter(e => e.trigger).length;
+        const label = [
+          passageCount ? `${passageCount} passage${passageCount > 1 ? 's' : ''}` : '',
+          ruleCount    ? `${ruleCount} rule${ruleCount > 1 ? 's' : ''}` : '',
+        ].filter(Boolean).join(' · ');
+        evHTML = `
+          <button class="evidence-toggle" onclick="toggleEvidence('${evId}', this)">
+            &#128218; ${label} &#9660;
+          </button>
+          <div class="evidence-panel" id="${evId}">${items}</div>`;
+      }
+
+      const transitBadges = transitPts.map(tp =>
+        `<span class="bhava-transit-badge" title="${escapeHTML(tp.effect||'')}">${escapeHTML(tp.planet)}</span>`
+      ).join('');
+
+      html += `
+        <div class="bhava-card">
+          <div class="bhava-card-header">
+            <span class="bhava-num" style="color:${actColor}">H${bnum}</span>
+            <span class="bhava-title">${escapeHTML(bname)}</span>
+            ${actLevel ? `<span class="bhava-act-badge" style="border-color:${actColor};color:${actColor}">${actLevel.toUpperCase()} activation${dashaScore ? ' ('+dashaScore+')' : ''}</span>` : ''}
+            ${transitBadges ? `<span class="bhava-transits-wrap">${transitBadges}</span>` : ''}
+          </div>
+          <div class="bhava-body">
+            ${sec.summary ? `<div class="pred-summary">${escapeHTML(sec.summary)}</div>` : ''}
+            ${detailsHTML ? `<ul class="pred-details">${detailsHTML}</ul>` : ''}
+            ${evHTML}
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+
+    // Render any non-bhava sections below
+    if (other.length) {
+      const fakeTarget = { innerHTML: '' };
+      let otherHTML = '';
+      other.forEach((sec, idx) => {
+        const icon  = SCOPE_ICONS[sec.scope] || '&#9733;';
+        const title = (sec.scope || 'Unknown').replace(/^\w/, c => c.toUpperCase());
+        const detailsHTML = (sec.details || []).map(d => `<li>${escapeHTML(parseDetail(d))}</li>`).join('');
+        otherHTML += `<div class="pred-card">
+          <div class="pred-card-header"><span class="pred-icon">${icon}</span><span class="pred-title">${title}</span></div>
+          <div class="pred-body">
+            <div class="pred-summary">${escapeHTML(sec.summary || '')}</div>
+            ${detailsHTML ? `<ul class="pred-details">${detailsHTML}</ul>` : ''}
+          </div></div>`;
+      });
+      html += otherHTML;
+    }
+
+    target.innerHTML = html;
   }
 
   function renderPrediction(data, containerId) {

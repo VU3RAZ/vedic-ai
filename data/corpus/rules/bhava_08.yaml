@@ -1,0 +1,118 @@
+# Bhava 8 (Ayu / Randhra Bhava) rules — Longevity, Transformation, Hidden Wealth,
+# Occult, Chronic Illness, Sudden Events
+# Primary significators: Saturn (longevity, chronic conditions, karma),
+# Mars (8th house co-significator, acute events), 8th lord placement
+
+- rule_id: B08_001
+  name: Saturn in 8th House — Longevity and Karmic Endurance
+  scope: bhava_8
+  weight: 0.65
+  conditions:
+    - feature: planets.Saturn.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Saturn placed in the 8th house (Ayu bhava) is one of the classical indicators
+    of long life — Saturn rules time and endurance, and the 8th house is the house
+    of longevity. BPHS regards Saturn here as conferring the capacity to endure
+    extended periods of difficulty or transformation and emerge strengthened.
+    The native may experience deep karmic lessons around loss, hidden matters,
+    or inheritance; chronic conditions are possible but managed through discipline
+    and remediation.
+  source_refs:
+    - "BPHS 22.7"
+  conflict_policy: merge
+
+- rule_id: B08_002
+  name: Mars in 8th House — Sudden Events and Transformative Courage
+  scope: bhava_8
+  weight: 0.60
+  conditions:
+    - feature: planets.Mars.house
+      op: eq
+      value: 8
+  explanation_template: >-
+    Mars in the 8th house brings intense, transformative energy into the domains
+    of longevity, hidden matters, and sudden change. Classical texts note that
+    Mars here can produce acute health crises, accidents, or sudden reversals, but
+    also exceptional investigative ability, surgical skill, and courage in the face
+    of crisis. The native may be drawn to occult sciences, research, forensics,
+    or any field requiring confrontation with hidden or dangerous realities.
+  source_refs:
+    - "BPHS 22.3"
+  conflict_policy: merge
+
+- rule_id: B08_003
+  name: 8th Lord in Kendra — Challenges Integrated into Life Structure
+  scope: bhava_8
+  weight: 0.55
+  conditions:
+    - feature: houses.8.lord_in_kendra
+      op: eq
+      value: true
+  explanation_template: >-
+    The 8th house lord placed in an angular house (kendra) brings the themes of
+    transformation, hidden knowledge, and longevity into the structural fabric of
+    the native's life. While this placement can indicate prominent life challenges,
+    it also confers the resources to navigate them — the native is rarely overwhelmed
+    by adversity because the capacity to deal with it is equally prominent.
+  source_refs:
+    - "BPHS 14.1"
+  conflict_policy: merge
+
+- rule_id: B08_004
+  name: 8th Lord in Trikona — Transformation as a Dharmic Path
+  scope: bhava_8
+  weight: 0.55
+  conditions:
+    - feature: houses.8.lord_in_trikona
+      op: eq
+      value: true
+  explanation_template: >-
+    The lord of the 8th house occupying a trine creates a partial Viparita
+    Raja Yoga configuration, linking the difficulties of the 8th house to
+    dharmic fortune. Transformative experiences — loss, deep change, or encounters
+    with hidden knowledge — become vehicles for spiritual growth and eventual
+    prosperity. Research, healing, and occult disciplines are especially favoured.
+  source_refs:
+    - "BPHS 14.2"
+  conflict_policy: merge
+
+- rule_id: B08_005
+  name: Saturn Exalted — Exceptional Longevity and Karmic Strength
+  scope: bhava_8
+  weight: 0.80
+  conditions:
+    - feature: planets.Saturn.is_exalted
+      op: eq
+      value: true
+  explanation_template: >-
+    Saturn exalted in Libra represents the highest expression of saturnine endurance,
+    justice, and mastery over time. In the context of 8th house significations,
+    an exalted Saturn powerfully supports longevity, the ability to navigate
+    profound karmic challenges, and mastery of hidden or esoteric knowledge.
+    BPHS associates exalted Saturn with Sasa yoga, conferring authority and
+    the wisdom that only deep experience can produce.
+  source_refs:
+    - "BPHS 36.3"
+  conflict_policy: override
+
+- rule_id: B08_006
+  name: 8th Lord in Dusthana — Deepened Viparita Conditions
+  scope: bhava_8
+  weight: 0.60
+  conditions:
+    - feature: houses.8.lord_in_dusthana
+      op: eq
+      value: true
+  explanation_template: >-
+    The 8th lord placed in another dusthana (6th or 12th) forms the classical
+    Viparita Raja Yoga — a configuration where the difficulties associated with
+    dusthana lords neutralise each other, ultimately producing unexpected fortune
+    and resilience. BPHS and Phaladeepika both regard this as a paradoxical
+    blessing; the native often rises after periods of hardship in ways that
+    surprise observers. Hidden resources and inherited wealth may also materialise.
+  source_refs:
+    - "BPHS 14.5"
+    - "Phaladeepika 7.18"
+  conflict_policy: merge

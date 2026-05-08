@@ -26,10 +26,24 @@ _OUTPUT_SCHEMA: dict = {
 }
 
 _SCOPE_RULE_FILES: dict[str, str] = {
-    "personality": "personality.yaml",
-    "career": "career.yaml",
+    # Legacy 4-scope analysis
+    "personality":   "personality.yaml",
+    "career":        "career.yaml",
     "relationships": "relationships.yaml",
-    "health": "health.yaml",
+    "health":        "health.yaml",
+    # 12-Bhava analysis
+    "bhava_1":  "bhava_01.yaml",
+    "bhava_2":  "bhava_02.yaml",
+    "bhava_3":  "bhava_03.yaml",
+    "bhava_4":  "bhava_04.yaml",
+    "bhava_5":  "bhava_05.yaml",
+    "bhava_6":  "bhava_06.yaml",
+    "bhava_7":  "bhava_07.yaml",
+    "bhava_8":  "bhava_08.yaml",
+    "bhava_9":  "bhava_09.yaml",
+    "bhava_10": "bhava_10.yaml",
+    "bhava_11": "bhava_11.yaml",
+    "bhava_12": "bhava_12.yaml",
 }
 
 

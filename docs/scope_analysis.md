@@ -2,6 +2,8 @@
 
 *Analysed against: rule files, `core_features.py`, `varga_analysis.py`, `prompt_builder.py`*
 
+> **Updated 2026-05-07.** The 12-Bhava analysis system (Section 5) is now implemented. The transit and dasha cross-scope gaps (previously marked CRITICAL) are resolved for bhava scopes via the BHAVA ACTIVATION prompt block.
+
 ---
 
 ## 1. Personality Scope
@@ -212,26 +214,61 @@
 
 ---
 
-## 5. Cross-Scope Gaps (affect all scopes)
+## 5. 12-Bhava Analysis — Implemented
 
-| Gap | Affects | Importance | Notes |
+The 12-Bhava prediction system was added in May 2026. Each of the 12 houses now has its own prediction scope (`bhava_1` … `bhava_12`) with 6 rules each.
+
+### What each bhava scope analyses
+
+| Layer | Coverage |
+|---|---|
+| **Bhava lord placement** | lord-in-kendra, lord-in-trikona, lord-in-dusthana rules for each house |
+| **Occupant planets** | Primary significator planet-in-bhava rule + exalted significator (override policy) |
+| **Drishti received** | Prompt-builder focuses drishti matrix on the target bhava + trines + opposition |
+| **Dasha activation** | `BHAVA ACTIVATION` block: mahadasha/antardasha lord vs. bhava lord, occupants, aspects — scored HIGH / MODERATE / LOW |
+| **Transit pressure** | Current planets transiting the bhava (from Gochara engine, when `transit_datetime` provided) |
+| **Divisional charts** | Bhava-specific varga priority (D10→H10, D9/D7→H7, D2→H2, D8→H8, etc.) |
+
+### Bhava scope — rule file quick reference
+
+| Bhava | Domain | Primary significator | 6-rule scope name |
 |---|---|---|---|
-| **Timing rules never applied** | All | CRITICAL | T001–T010 exist in `timing.yaml` but are NOT mapped to any of the 4 prediction scopes; current mahadasha/antardasha data is sent to the LLM as context but no rule fires on it |
-| **Nakshatra-based rules** | All | HIGH | Nakshatra, pada, nakshatra lord, deity fully computed for all planets and lagna — zero rules use any of it |
-| **Dasha lord functional role** | All | HIGH | Whether the current dasha lord is a yogakaraka, maraka, or malefic for this lagna is computed — no rules enforce timing consequences |
-| **Ashtakavarga** | All | HIGH | Not computed; Ashtakavarga bindus per house are the standard tool for house-by-house strength and transit effects |
-| **Transit analysis** | All | HIGH | No Gochara (transit) factors computed at all; particularly Saturn and Jupiter transits over natal positions |
-| **Upachaya progression rules** | Career, Health | MEDIUM | H3, H6, H10, H11 are upachaya houses that improve with time — no rules capture this pattern |
-| **Jaimini Karakas** | All | MEDIUM | Atmakaraka (soul purpose), Amatyakaraka (career), Darakaraka (spouse), Putrakaraka (children) computed and sent to LLM in varga section — no rules use them |
-| **Upapada Lagna** | Relationships | MEDIUM | Not computed at all |
-| **Shadbala / planetary strength scores** | All | MEDIUM | Total_strength is computed but comes from a simplified model; full Shadbala (6-fold strength) not implemented |
-| **House bhava strength** | All | LOW | Bhava Bala (house strength) not computed; would allow ranking of which life areas are strongest |
-| **Kartari yoga impact by house** | All | LOW | Kartari yogas detected (papakartari / subhakartari) but no rules check which specific house is hemmed |
-| **Chara dasha (Jaimini)** | All | LOW | Not computed; complements Vimshottari for a second timing layer |
+| 1 | Lagna — Self, constitution | Sun | `bhava_1` |
+| 2 | Dhana — Wealth, speech, family | Jupiter, Venus | `bhava_2` |
+| 3 | Sahaja — Siblings, courage | Mars, Mercury | `bhava_3` |
+| 4 | Sukha — Home, mother, property | Moon, Venus | `bhava_4` |
+| 5 | Putra — Children, intellect | Jupiter | `bhava_5` |
+| 6 | Ari — Enemies, disease, debt | Mars, Saturn | `bhava_6` |
+| 7 | Kalatra — Spouse, partnerships | Venus | `bhava_7` |
+| 8 | Ayu — Longevity, transformation | Saturn, Mars | `bhava_8` |
+| 9 | Dharma — Father, fortune | Jupiter, Sun | `bhava_9` |
+| 10 | Karma — Career, status | Sun, Saturn | `bhava_10` |
+| 11 | Labha — Gains, income, desires | Jupiter | `bhava_11` |
+| 12 | Vyaya — Liberation, foreign, losses | Saturn, Ketu | `bhava_12` |
 
 ---
 
-## 6. Priority Improvement Roadmap
+## 6. Cross-Scope Gaps (affect all scopes)
+
+| Gap | Affects | Status | Notes |
+|---|---|---|---|
+| **Dasha activation per bhava** | Bhava scopes | ✅ Resolved | `BHAVA ACTIVATION` block injected by prompt builder for all bhava scopes |
+| **Transit pressure per bhava** | Bhava scopes | ✅ Resolved | Gochara engine transiting planets listed per bhava when `transit_datetime` provided |
+| **Timing rules in traditional scopes** | Traditional 4 | OPEN | T001–T010 exist in `timing.yaml` but are NOT mapped to personality/career/relationships/health; mahadasha data sent to LLM as context but no rule fires on it |
+| **Nakshatra-based rules** | All | OPEN | Nakshatra, pada, nakshatra lord fully computed — zero rules use any of it |
+| **Dasha lord functional role** | Traditional 4 | OPEN | Yogakaraka/maraka/malefic role computed — no traditional-scope rules enforce timing consequences |
+| **Ashtakavarga** | All | OPEN | Not computed; bindus per house are the standard tool for house-by-house transit effects |
+| **Upachaya progression rules** | Career, Health | OPEN | H3/H6/H10/H11 improve with time — no rules capture this |
+| **Jaimini Karakas in rules** | All | OPEN | Atmakaraka, Amatyakaraka, Darakaraka, Putrakaraka computed — no rules use them |
+| **Upapada Lagna** | Relationships | OPEN | Computed via `jaimini_features.py` but not yet wired into relationship rules |
+| **Shadbala full computation** | All | OPEN | Simplified total_strength; full 6-fold Shadbala not implemented |
+| **House bhava strength** | All | OPEN | Bhava Bala not computed |
+| **Kartari yoga impact by house** | All | OPEN | Kartari detected globally; no rules check which specific house is hemmed |
+| **Chara dasha (Jaimini)** | All | OPEN | Not computed; second timing layer |
+
+---
+
+## 7. Priority Improvement Roadmap
 
 ### Immediate (add rules, no new feature computation needed)
 
@@ -241,23 +278,23 @@
 | Career | Venus/Mercury/Moon/Rahu/Ketu in H10; 6th lord position; 11th house lord; Dharma-Karmadhipati yoga |
 | Relationships | Sun/Moon/Mercury/Rahu/Ketu in H7; 7th lord in each house (12 rules); Kuja Dosha pattern; Venus combust |
 | Health | Mars in H1/H8; 6th lord in H8/H12; 8th lord in H6/H12; Rahu in H8; Ketu in H6/H8; Moon-Saturn aspect |
-| **All scopes** | **Wire timing.yaml rules T001–T010 into appropriate scopes** (T002 Jupiter dasha → personality/career; T005 Venus dasha → relationships; etc.) |
+| **All traditional scopes** | **Wire timing.yaml rules T001–T010 into appropriate scopes** (T002 Jupiter dasha → personality/career; T005 Venus dasha → relationships; etc.) |
+| **Bhava scopes** | Expand each bhava from 6 → 12 rules (nakshatra rules, transit-in-bhava rules once Gochara integrated) |
 
-### Medium-term (requires new feature computation)
+### Medium-term (requires new feature computation or DSL extension)
 
 | Feature | Scopes | Implementation notes |
 |---|---|---|
-| Nakshatra rules (Janma Nakshatra, lagna nakshatra, Venus nakshatra) | All | Data already in features; need rule DSL to match nakshatra name |
-| Kuja Dosha detection | Relationships | Add yoga: Mars in H1/H2/H4/H7/H8/H12 |
-| Upapada Lagna | Relationships | Compute Arudha of H12: project 12th lord from H12 by the same arc |
-| Ashtakavarga basic bindus | All | Significant implementation; high value for timing and house strength |
-| D6/D27/D8 specific house-lord rules | Health | Lagna lord and 6th/8th lord in D6 chart — data exists, need rules |
+| Nakshatra rules (Janma Nakshatra, lagna nakshatra) | All | Data already in features; need rule DSL to match nakshatra name string |
+| Kuja Dosha detection | Relationships, bhava_1/2/4/7/8/12 | Mars in H1/H2/H4/H7/H8/H12 yoga |
+| Upapada Lagna in relationship rules | Relationships | Computed by `jaimini_features.py`; add UL-based rules |
+| Ashtakavarga basic bindus | All | Significant implementation; high value for house strength and transit timing |
+| D6/D27/D8 specific house-lord rules | Health, bhava_6/8 | Lagna lord and 6th/8th lord in D6 — data exists |
 
 ### Longer-term
 
 | Feature | Notes |
 |---|---|
-| Gochara (transits) | Saturn/Jupiter transits over natal Moon, lagna, and natal Sun — standard Vedic timing |
-| Jaimini Karakas (full) | Atmakaraka, Amatyakaraka, Darakaraka — chara karaka system |
 | Shadbala full computation | 6-fold planetary strength replaces simplified total_strength |
-| Chara dasha | Secondary timing system to cross-validate Vimshottari predictions |
+| Chara dasha (Jaimini) | Secondary timing system to cross-validate Vimshottari predictions |
+| Ashtakavarga full bindus | Per-house + per-planet bindus for precise transit timing |

@@ -16,6 +16,7 @@ from vedic_ai.domain.prediction import PredictionReport
 router = APIRouter()
 
 _VALID_SCOPES = ("personality", "career", "relationships", "health")
+_BHAVA_SCOPES = tuple(f"bhava_{i}" for i in range(1, 13))
 
 # ---------------------------------------------------------------------------
 # Module-level config + retriever (loaded once at import time)
@@ -84,9 +85,10 @@ class PredictionRequest(BaseModel):
     # any positions or suggesting additional remedies.
     transit_datetime: datetime | None = None
     # Optional per-request LLM overrides (override configs/models.yaml)
-    llm_backend: str | None = None   # ollama | lmstudio | llamacpp
+    llm_backend: str | None = None   # ollama | lmstudio | llamacpp | gemini
     llm_base_url: str | None = None
     llm_model: str | None = None
+    llm_api_key: str | None = None   # for Gemini; falls back to GEMINI_API_KEY env var
 
 
 def export_report(report: PredictionReport, fmt: str = "json") -> str | dict:
@@ -160,12 +162,15 @@ def predict(request: PredictionRequest) -> dict:
     # Resolve scope list
     if request.scope == "all":
         scopes = list(_VALID_SCOPES)
-    elif request.scope in _VALID_SCOPES:
+    elif request.scope == "bhava_all":
+        scopes = list(_BHAVA_SCOPES)
+    elif request.scope in _VALID_SCOPES or request.scope in _BHAVA_SCOPES:
         scopes = [request.scope]
     else:
+        all_scopes = list(_VALID_SCOPES) + ["bhava_all"] + list(_BHAVA_SCOPES)
         raise HTTPException(
             status_code=422,
-            detail=f"Unknown scope {request.scope!r}. Choose: all, {', '.join(_VALID_SCOPES)}"
+            detail=f"Unknown scope {request.scope!r}. Choose: all, bhava_all, {', '.join(all_scopes)}"
         )
 
     birth = BirthData(
@@ -188,7 +193,8 @@ def predict(request: PredictionRequest) -> dict:
             if backend == "gemini":
                 from vedic_ai.llm.cloud_client import GeminiClient
                 llm_client = GeminiClient(
-                    model_name=request.llm_model or backend_cfg.get("model", "gemini-2.0-flash"),
+                    model_name=request.llm_model or backend_cfg.get("model", "gemini-flash-lite-latest"),
+                    api_key=request.llm_api_key or None,
                     max_tokens=cfg_llm.get("max_tokens", 4096),
                     timeout=backend_cfg.get("timeout_seconds", 60),
                 )
