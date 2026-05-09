@@ -2,6 +2,8 @@
 
 Computes Chara Karakas, Arudha Lagna (and all 12 Arudha Padas),
 Karakamsha Lagna, and Upapada Lagna from a ChartBundle.
+
+Rashi Drishti is imported from features.drishti (canonical implementation).
 """
 
 from __future__ import annotations
@@ -9,6 +11,7 @@ from __future__ import annotations
 from vedic_ai.domain.chart import ChartBundle
 from vedic_ai.domain.enums import Graha, Rasi
 from vedic_ai.engines.dignity import RASI_LORDS
+from vedic_ai.features.drishti import compute_rashi_drishti as _compute_rashi_drishti
 
 # Rasi → integer index (1-based, Aries=1)
 _RASI_INDEX: dict[str, int] = {
@@ -178,49 +181,17 @@ def compute_arudha_padas(bundle: ChartBundle) -> dict:
     return {"AL": al, "UL": ul, "padas": padas}
 
 
-def compute_jaimini_rasi_aspects(bundle: ChartBundle) -> dict[int, list[str]]:
-    """Compute which planets aspect each house via Jaimini Rasi Drishti.
-
-    Moveable signs aspect all fixed signs except adjacent; fixed signs aspect
-    all moveable signs except adjacent; dual signs aspect all other dual signs.
-    Returns {house_num: [planet_names_aspecting_via_rasi_drishti]}
-    """
-    _MOVEABLE = {"Aries", "Cancer", "Libra", "Capricorn"}
-    _FIXED    = {"Taurus", "Leo", "Scorpio", "Aquarius"}
-    _DUAL     = {"Gemini", "Virgo", "Sagittarius", "Pisces"}
-
-    def aspects_of(sign: str) -> set[str]:
-        idx = _RASI_INDEX[sign]
-        if sign in _MOVEABLE:
-            targets = _FIXED - {_INDEX_RASI[((idx) % 12) + 1]}  # exclude adjacent fixed
-            return targets
-        if sign in _FIXED:
-            targets = _MOVEABLE - {_INDEX_RASI[((idx) % 12) + 1]}  # exclude adjacent moveable
-            return targets
-        if sign in _DUAL:
-            return _DUAL - {sign}
-        return set()
-
-    houses_data = bundle.d1.houses
-    result: dict[int, list[str]] = {h: [] for h in range(1, 13)}
-
-    for pname, pp in bundle.d1.planets.items():
-        planet_sign = pp.rasi.rasi.value
-        aspected_signs = aspects_of(planet_sign)
-        for h, hd in houses_data.items():
-            house_sign = hd.rasi.value if hasattr(hd.rasi, "value") else str(hd.rasi)
-            if house_sign in aspected_signs:
-                result[h].append(pname)
-
-    return result
-
-
 def compute_jaimini_features(bundle: ChartBundle) -> dict:
     """Aggregate all Jaimini features into a single dict."""
     ck = compute_chara_karakas(bundle)
     km = compute_karakamsha(bundle, ck)
     ap = compute_arudha_padas(bundle)
-    rasi_aspects = compute_jaimini_rasi_aspects(bundle)
+    # Rashi Drishti — use canonical implementation from drishti.py
+    rashi_data = _compute_rashi_drishti(bundle)
+    rasi_aspects: dict[int, list[str]] = {
+        h: [d["graha"] for d in rashi_data["house_graha_drishti"][h]]
+        for h in range(1, 13)
+    }
 
     return {
         "chara_karakas": ck["karakas"],

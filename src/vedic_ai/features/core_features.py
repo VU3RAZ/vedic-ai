@@ -22,10 +22,16 @@ from vedic_ai.features.base import (
 from vedic_ai.features.drishti import compute_full_drishti_matrix, compute_rashi_drishti
 from vedic_ai.features.lordships import compute_house_lordships
 from vedic_ai.features.nakshatra_features import extract_nakshatra_features
-from vedic_ai.features.sandhi import compute_sandhi_analysis
+from vedic_ai.features.sandhi import compute_sandhi_analysis, compute_gandanta_flags
 from vedic_ai.features.dasha_features import assess_dasha_lord, compute_timing_features
 from vedic_ai.features.functional_nature import compute_functional_nature
-from vedic_ai.features.strength import compute_combustion, compute_planet_strengths, full_dignity
+from vedic_ai.features.strength import (
+    compute_combustion,
+    compute_planet_strengths,
+    compute_tatkalika_maitri,
+    compute_panchadha_maitri_from_chart,
+    full_dignity,
+)
 from vedic_ai.features.varga_analysis import extract_varga_analysis
 from vedic_ai.features.yogas_extended import (
     detect_conjunction_yogas,
@@ -302,12 +308,15 @@ def extract_core_features(bundle: ChartBundle) -> dict:
     aspects = compute_relationship_graph(bundle)
     nak_features = extract_nakshatra_features(bundle)
     sandhi = compute_sandhi_analysis(bundle)
+    gandanta = compute_gandanta_flags(bundle)
     vargottama = _detect_vargottama(bundle)
     rashi_drishti = compute_rashi_drishti(bundle)
     drishti_matrix = compute_full_drishti_matrix(bundle)
     varga_analysis = extract_varga_analysis(bundle)
     functional_nature = compute_functional_nature(bundle)
     combustion = compute_combustion(bundle)
+    tatkalika = compute_tatkalika_maitri(bundle)
+    panchadha = compute_panchadha_maitri_from_chart(bundle, tatkalika)
 
     # Build per-planet record
     planets_out: dict[str, dict] = {}
@@ -340,6 +349,10 @@ def extract_core_features(bundle: ChartBundle) -> dict:
             "nakshatra_deity": nf["deity"],
             "degree_in_nakshatra": nf["degree_in_nakshatra"],
             "pada_rasi": nf["pada_rasi"],
+            "nakshatra_gana": nf["gana"],
+            "nakshatra_nadi": nf["nadi"],
+            "nakshatra_yoni": nf["yoni"],
+            "nakshatra_nature": nf["nature"],
             # Aspect details with strength
             "aspects_to_houses": [a["house"] for a in asp_details],
             "aspect_details": asp_details,
@@ -347,9 +360,11 @@ def extract_core_features(bundle: ChartBundle) -> dict:
             "in_kendra": p.house in KENDRA_HOUSES,
             "in_trikona": p.house in TRIKONA_HOUSES,
             "in_dusthana": p.house in DUSTHANA_HOUSES,
-            # Cusp analysis
+            # Cusp analysis (sandhi + Gandanta)
             "is_sandhi": sh["is_sandhi"],
             "is_bhava_madhya": sh["is_bhava_madhya"],
+            "is_gandanta": sh["is_gandanta"],
+            "gandanta_side": sh["gandanta_side"],
             "sandhi_label": sh["label"],
             "distance_from_cusp": sh["distance_from_cusp"],
             # Vargottama flag
@@ -448,6 +463,11 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         },
         "yogas": yogas,
         "sandhi": sandhi,
+        "gandanta": gandanta,
+        "maitri": {
+            "tatkalika": tatkalika,
+            "panchadha": panchadha,
+        },
         "vargas": _build_varga_summary(bundle),
         "varga_analysis": varga_analysis,
         "lagna": _build_lagna_features(bundle, lordships),
@@ -482,5 +502,41 @@ def extract_core_features(bundle: ChartBundle) -> dict:
         result["jaimini"] = compute_jaimini_features(bundle)
     except Exception:
         result["jaimini"] = {}
+
+    # Shadbala: six-fold planetary strength (Sthana/Dig/Kala/Chesta/Naisargika/Drik Bala)
+    try:
+        from vedic_ai.features.shadbala import compute_shadbala
+        result["shadbala"] = compute_shadbala(bundle, aspects)
+    except Exception:
+        result["shadbala"] = {}
+
+    # Ashtakavarga: BAV + SAV bindu tables for transit scoring
+    try:
+        from vedic_ai.engines.ashtakavarga import compute_ashtakavarga
+        result["ashtakavarga"] = compute_ashtakavarga(bundle)
+    except Exception:
+        result["ashtakavarga"] = {}
+
+    # Pratyantara Dasha: level-3 sub-sub-periods active today
+    try:
+        if bundle.dashas:
+            from datetime import datetime, timezone
+            from vedic_ai.features.dasha_features import get_active_mahadasha, get_active_antardasha
+            from vedic_ai.engines.vimshottari import get_active_pratyantara
+            today = datetime.now(timezone.utc).date()
+            maha = get_active_mahadasha(bundle.dashas, today)
+            if maha and "antardasha" in result.get("dasha_strength", {}):
+                from vedic_ai.engines.vimshottari import compute_antardasha_periods
+                antar = get_active_antardasha(maha, today)
+                if antar:
+                    pratya = get_active_pratyantara(antar, today)
+                    if pratya:
+                        result["dasha_strength"]["pratyantara"] = {
+                            "graha": pratya.graha.value,
+                            "start": pratya.start_date.isoformat(),
+                            "end":   pratya.end_date.isoformat(),
+                        }
+    except Exception:
+        pass
 
     return result

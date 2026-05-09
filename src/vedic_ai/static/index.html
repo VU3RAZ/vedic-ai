@@ -1509,6 +1509,11 @@
     const houseInfluence = features.house_influence || [];
     const vargas         = features.varga_analysis || {};
     const sandhi     = features.sandhi || {};
+    const gandanta   = features.gandanta || {};
+    const maitri     = features.maitri || {};
+    const shadbala   = features.shadbala || {};
+    const ashtaka    = features.ashtakavarga || {};
+    const nakPlanets = features.planets || {};
 
     // Lagna sign from house 1
     const lagna = (houses['1'] || houses[1] || {}).rasi || '—';
@@ -1530,15 +1535,20 @@
       const ykBadge = fp.is_yogakaraka ? ' <span style="color:var(--success);font-size:0.70rem;font-weight:700" title="Yogakaraka — owns kendra+trikona">YK</span>' : '';
       const mkBadge = fp.is_maraka     ? ' <span style="color:var(--error);font-size:0.70rem" title="Maraka — lord of H2 or H7">MK</span>'  : '';
       const cBadge  = fp.is_combust && !fp.combust_exempt ? ' <span style="color:var(--warning,#f59e0b);font-size:0.70rem" title="Combust — burnt by Sun">☀</span>' : '';
+      const gBadge  = fp.is_gandanta ? ' <span style="color:#e879f9;font-size:0.68rem;font-weight:700" title="Gandanta — water/fire junction; karmic stress">GN</span>' : '';
       const fnRole  = fp.functional_role || '';
       const fnColor = fnRole === 'yogakaraka' ? 'var(--success)' : fnRole === 'benefic' ? 'var(--info)' : fnRole === 'malefic' ? 'var(--error)' : 'var(--muted)';
+      const nakStr  = fp.nakshatra ? `${escapeHTML(fp.nakshatra)} P${fp.pada||''}` : '—';
+      const qualStr = [fp.nakshatra_gana, fp.nakshatra_nadi, fp.nakshatra_yoni].filter(Boolean).join(' · ');
       tbody += `<tr>
-        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}${vargo}${ykBadge}${mkBadge}${cBadge}</td>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(name)}${vargo}${ykBadge}${mkBadge}${cBadge}${gBadge}</td>
         <td>${escapeHTML(sign)}${dignityHTML(p.dignity)}${sandhiHTML(sh)}</td>
         <td style="text-align:center">${p.house ?? '—'}</td>
         <td style="text-align:center">${degStr}</td>
         <td style="text-align:center">${retro}</td>
         <td style="text-align:center;color:${fnColor};font-size:0.76rem">${fnRole || '—'}</td>
+        <td style="color:var(--muted);font-size:0.76rem">${nakStr}</td>
+        <td style="color:var(--muted);font-size:0.72rem">${escapeHTML(qualStr)}</td>
       </tr>`;
     });
 
@@ -1555,16 +1565,36 @@
       </tr>`;
     }
 
-    // ── Dasha rows ──────────────────────────────────────────────────────────
+    // ── Dasha rows (MD + active AD + active PD) ─────────────────────────────
+    const ds = features.dasha_strength || {};
+    const activeMaha  = (ds.mahadasha  || {}).graha;
+    const activeAntar = (ds.antardasha || {}).graha;
+    const activePratya = (ds.pratyantara || {}).graha;
     let dashaRows = '';
     dashas.filter(d => d.level === 1).slice(0, 9).forEach(d => {
       const sym = PLANET_SYMS[d.graha] || '';
-      dashaRows += `<tr>
-        <td><span class="planet-sym">${sym}</span>${escapeHTML(d.graha)}</td>
+      const isActive = d.graha === activeMaha;
+      const rowStyle = isActive ? 'background:rgba(99,102,241,0.08)' : '';
+      const activeTag = isActive ? ' <span style="color:var(--accent);font-size:0.68rem;font-weight:700">▶ MD</span>' : '';
+      dashaRows += `<tr style="${rowStyle}">
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(d.graha)}${activeTag}</td>
         <td style="color:var(--muted);font-size:0.82rem">${d.start_date}</td>
         <td style="color:var(--muted);font-size:0.82rem">${d.end_date}</td>
       </tr>`;
     });
+    // Active dasha sub-periods row
+    let activeDashaRow = '';
+    if (activeMaha) {
+      const antarStr  = activeAntar  ? `<strong style="color:var(--accent)">${escapeHTML(activeAntar)}</strong>`  : '—';
+      const pratyaStr = activePratya ? `<strong style="color:var(--info)">${escapeHTML(activePratya)}</strong>` : '—';
+      activeDashaRow = `<div style="padding:8px 14px;font-size:0.82rem;border-top:1px solid var(--border);background:rgba(99,102,241,0.05)">
+        <strong style="color:var(--text)">Active Dasha:</strong>
+        MD&nbsp;<strong style="color:var(--accent)">${escapeHTML(activeMaha)}</strong>
+        &nbsp;·&nbsp; AD&nbsp;${antarStr}
+        &nbsp;·&nbsp; PD&nbsp;${pratyaStr}
+        &nbsp;&nbsp;<span style="color:var(--muted);font-size:0.78rem">${(ds.antardasha||{}).start||''} – ${(ds.antardasha||{}).end||''}</span>
+      </div>`;
+    }
 
     // ── Drishti matrix tab ──────────────────────────────────────────────────
     const matrix = (drishti.matrix || []);
@@ -1863,6 +1893,198 @@
         <div style="padding:12px 14px" class="yoga-cards">${extYogaCards(yogas.kartari_yogas)}</div>
       </div>`;
 
+    // ── Shadbala tab rendering ───────────────────────────────────────────────
+    const SB_COLORS = { true: 'var(--success)', false: 'var(--error)' };
+    const sbPlanets = shadbala.per_planet || {};
+    let sbRows = '';
+    const PLANET_ORDER_SB = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+    PLANET_ORDER_SB.forEach(g => {
+      const s = sbPlanets[g]; if (!s) return;
+      const ratio = s.strength_ratio != null ? (s.strength_ratio * 100).toFixed(0) + '%' : '—';
+      const barW  = s.strength_ratio != null ? Math.min(100, s.strength_ratio * 100).toFixed(1) : 0;
+      const barCol= s.is_strong ? 'var(--success)' : s.strength_ratio > 0.7 ? 'var(--warning,#f59e0b)' : 'var(--error)';
+      const sym = PLANET_SYMS[g] || '';
+      sbRows += `<tr>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(g)}</td>
+        <td style="text-align:right;font-family:monospace">${s.sthana_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-family:monospace">${s.dig_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-family:monospace">${s.kala_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-family:monospace">${s.chesta_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-family:monospace">${s.naisargika_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-family:monospace">${s.drik_bala.toFixed(1)}</td>
+        <td style="text-align:right;font-weight:700;font-family:monospace;color:${barCol}">${s.total_virupas.toFixed(1)}</td>
+        <td style="text-align:right;color:var(--muted);font-size:0.78rem">${s.required_virupas || '—'}</td>
+        <td style="text-align:center">
+          <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:8px;width:80px;display:inline-block;vertical-align:middle;overflow:hidden">
+            <div style="background:${barCol};height:100%;width:${barW}%;border-radius:3px"></div>
+          </div>
+          <span style="font-size:0.72rem;color:${barCol};margin-left:4px">${ratio}</span>
+        </td>
+        <td style="text-align:center;font-size:0.78rem;color:${s.is_strong ? 'var(--success)' : 'var(--muted)'}">${s.is_strong ? '✓ Strong' : '—'}</td>
+      </tr>`;
+    });
+    const sbPanel = sbRows ? `
+      <div class="result-card">
+        <div class="result-card-header">&#9670; Shadbala &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Six-fold strength in Virupas (BPHS Ch.27-35)</span></div>
+        <div style="padding:8px 14px;font-size:0.8rem;color:var(--muted)">
+          Sthana=positional · Dig=directional · Kala=temporal · Chesta=motional · Naisargika=natural · Drik=aspectual.
+          Strongest: <strong style="color:var(--text)">${escapeHTML(shadbala.strongest||'—')}</strong>
+          · Weakest: <strong style="color:var(--text)">${escapeHTML(shadbala.weakest||'—')}</strong>
+        </div>
+        <div style="overflow-x:auto">
+        <table style="font-size:0.8rem;min-width:700px">
+          <thead><tr><th>Planet</th><th style="text-align:right">Sthana</th><th style="text-align:right">Dig</th><th style="text-align:right">Kala</th><th style="text-align:right">Chesta</th><th style="text-align:right">Naisa</th><th style="text-align:right">Drik</th><th style="text-align:right;color:var(--accent)">Total V</th><th style="text-align:right">Req.</th><th style="text-align:center">Ratio</th><th style="text-align:center">Status</th></tr></thead>
+          <tbody>${sbRows}</tbody>
+        </table>
+        </div>
+        <div style="padding:6px 14px;font-size:0.75rem;color:var(--muted)">${escapeHTML(shadbala.note||'')}</div>
+      </div>` : '<div style="color:var(--muted);padding:20px">Shadbala not computed.</div>';
+
+    // ── Maitri (Panchadha) panel ─────────────────────────────────────────────
+    const panchadha = maitri.panchadha || {};
+    const PANCHADHA_COLOR = {
+      'Adhi Mitra': 'var(--success)', 'Mitra': 'var(--info)',
+      'Sama': 'var(--muted)', 'Shatru': 'var(--warning,#f59e0b)', 'Adhi Shatru': 'var(--error)'
+    };
+    const PLANETS_7 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'];
+    let maitriRows = '';
+    PLANETS_7.forEach(g1 => {
+      const row = panchadha[g1] || {};
+      const cells = PLANETS_7.map(g2 => {
+        if (g1 === g2) return `<td style="background:rgba(255,255,255,0.04);text-align:center;color:var(--muted)">—</td>`;
+        const rel = row[g2] || '—';
+        const col = PANCHADHA_COLOR[rel] || 'var(--muted)';
+        const short = rel === 'Adhi Mitra' ? 'AdM' : rel === 'Adhi Shatru' ? 'AdS' : rel;
+        return `<td style="text-align:center;font-size:0.72rem;color:${col};font-weight:600" title="${escapeHTML(rel)}">${escapeHTML(short)}</td>`;
+      }).join('');
+      const sym = PLANET_SYMS[g1] || '';
+      maitriRows += `<tr><td style="font-size:0.8rem"><span class="planet-sym">${sym}</span>${escapeHTML(g1)}</td>${cells}</tr>`;
+    });
+    const maitriPanel = maitriRows ? `
+      <div class="result-card">
+        <div class="result-card-header">&#9679; Panchadha Maitri &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— 5-fold friendship (Naisargika + Tatkalika combined)</span></div>
+        <div style="padding:6px 14px;font-size:0.77rem;color:var(--muted)">
+          <span style="color:var(--success)">■</span> Adhi Mitra (great friend) &nbsp;
+          <span style="color:var(--info)">■</span> Mitra &nbsp;
+          <span style="color:var(--muted)">■</span> Sama (neutral) &nbsp;
+          <span style="color:var(--warning,#f59e0b)">■</span> Shatru &nbsp;
+          <span style="color:var(--error)">■</span> Adhi Shatru (great enemy)
+        </div>
+        <div style="overflow-x:auto"><table style="font-size:0.82rem;min-width:500px">
+          <thead><tr><th>From ↓ To →</th>${PLANETS_7.map(g=>`<th style="text-align:center;font-size:0.78rem">${escapeHTML(g.slice(0,3))}</th>`).join('')}</tr></thead>
+          <tbody>${maitriRows}</tbody>
+        </table></div>
+      </div>` : '';
+
+    // ── Ashtakavarga tab rendering ───────────────────────────────────────────
+    const bavData = ashtaka.bav || {};
+    const savData = ashtaka.sav || {};
+    const RASI_ORDER = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const RASI_SHORT  = ['Ari','Tau','Gem','Can','Leo','Vir','Lib','Sco','Sag','Cap','Aqu','Pis'];
+    const AV_PLANETS  = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'];
+    let avRows = '';
+    AV_PLANETS.forEach(g => {
+      const bav = bavData[g] || {};
+      const sym = PLANET_SYMS[g] || '';
+      const cells = RASI_ORDER.map(r => {
+        const cnt = bav[r] ?? '—';
+        const col = cnt >= 5 ? 'var(--success)' : cnt >= 4 ? 'var(--info)' : cnt <= 2 ? 'var(--error)' : 'var(--muted)';
+        return `<td style="text-align:center;font-family:monospace;font-size:0.82rem;color:${col};font-weight:${cnt>=5?'700':'400'}">${cnt}</td>`;
+      }).join('');
+      avRows += `<tr><td style="font-size:0.8rem;white-space:nowrap"><span class="planet-sym">${sym}</span>${escapeHTML(g)}</td>${cells}</tr>`;
+    });
+    // SAV row
+    const savCells = RASI_ORDER.map(r => {
+      const cnt = savData[r] ?? '—';
+      const col = cnt >= 30 ? 'var(--success)' : cnt <= 25 ? 'var(--error)' : 'var(--muted)';
+      return `<td style="text-align:center;font-family:monospace;font-weight:700;color:${col}">${cnt}</td>`;
+    }).join('');
+    avRows += `<tr style="border-top:2px solid var(--border)"><td style="font-weight:700;color:var(--accent)">SAV Total</td>${savCells}</tr>`;
+
+    const tgRows = (ashtaka.transit_guide || []).map(t => {
+      const col = t.quality === 'Excellent' || t.quality === 'Exceptional' ? 'var(--success)'
+                : t.quality === 'Favourable' ? 'var(--info)'
+                : t.quality === 'Unfavourable' ? 'var(--error)' : 'var(--muted)';
+      const sym = PLANET_SYMS[t.planet] || '';
+      return `<tr>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(t.planet)}</td>
+        <td>${escapeHTML(t.transit_sign)}</td>
+        <td style="text-align:center;font-family:monospace;font-weight:700;color:${col}">${t.bindus}/8</td>
+        <td style="color:${col}">${escapeHTML(t.quality)}</td>
+        <td style="color:var(--muted);font-size:0.78rem">${escapeHTML(t.interpretation)}</td>
+      </tr>`;
+    }).join('');
+
+    const avPanel = avRows ? `
+      <div class="result-card">
+        <div class="result-card-header">&#9632; Ashtakavarga Bindus &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— BAV per planet + SAV total (BPHS Ch.66-71)</span></div>
+        <div style="padding:6px 14px;font-size:0.77rem;color:var(--muted)">
+          Per sign: <span style="color:var(--success)">5-8 = excellent</span> · 4 = good · <span style="color:var(--error)">0-2 = difficult</span>.
+          SAV strong signs (≥30): <strong style="color:var(--success)">${escapeHTML((ashtaka.strong_signs||[]).join(', ')||'none')}</strong>
+          · weak (≤25): <strong style="color:var(--error)">${escapeHTML((ashtaka.weak_signs||[]).join(', ')||'none')}</strong>
+        </div>
+        <div style="overflow-x:auto"><table style="font-size:0.8rem;min-width:700px">
+          <thead><tr><th>Planet</th>${RASI_SHORT.map(r=>`<th style="text-align:center;font-size:0.72rem">${escapeHTML(r)}</th>`).join('')}</tr></thead>
+          <tbody>${avRows}</tbody>
+        </table></div>
+      </div>
+      ${tgRows ? `<div class="result-card">
+        <div class="result-card-header">&#9654; Transit Quality Guide &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— current sign bindu score</span></div>
+        <table style="font-size:0.82rem">
+          <thead><tr><th>Planet</th><th>In Sign</th><th style="text-align:center">Bindus</th><th>Quality</th><th>Interpretation</th></tr></thead>
+          <tbody>${tgRows}</tbody>
+        </table>
+      </div>` : ''}` : '<div style="color:var(--muted);padding:20px">Ashtakavarga not computed.</div>';
+
+    // ── Nakshatra + Gandanta tab rendering ───────────────────────────────────
+    const GANA_COLOR  = { Deva: 'var(--success)', Manushya: 'var(--info)', Rakshasa: 'var(--error)' };
+    const NAT_COLOR   = { Dhruva: 'var(--success)', Chara: 'var(--info)', Mridu: 'var(--success)',
+                          Laghu: 'var(--info)', Ugra: 'var(--error)', Tikshna: 'var(--error)', Mishra: 'var(--muted)' };
+    let nakRows = '';
+    PLANET_ORDER_SB.forEach(g => {
+      const fp = nakPlanets[g]; if (!fp) return;
+      const sym = PLANET_SYMS[g] || '';
+      const gCol  = GANA_COLOR[fp.nakshatra_gana]  || 'var(--muted)';
+      const nCol  = NAT_COLOR[fp.nakshatra_nature]  || 'var(--muted)';
+      const gnTag = fp.is_gandanta ? ` <span style="color:#e879f9;font-size:0.68rem;font-weight:700">GN</span>` : '';
+      nakRows += `<tr>
+        <td><span class="planet-sym">${sym}</span>${escapeHTML(g)}${gnTag}</td>
+        <td>${escapeHTML(fp.nakshatra||'—')}</td>
+        <td style="text-align:center">${fp.pada||'—'}</td>
+        <td style="color:var(--muted);font-size:0.78rem">${escapeHTML(fp.nakshatra_lord||'—')}</td>
+        <td style="color:${gCol};font-weight:600;font-size:0.8rem">${escapeHTML(fp.nakshatra_gana||'—')}</td>
+        <td style="color:var(--muted);font-size:0.8rem">${escapeHTML(fp.nakshatra_nadi||'—')}</td>
+        <td style="color:var(--muted);font-size:0.8rem">${escapeHTML(fp.nakshatra_yoni||'—')}</td>
+        <td style="color:${nCol};font-size:0.8rem">${escapeHTML(fp.nakshatra_nature||'—')}</td>
+      </tr>`;
+    });
+    const gdDetails = (gandanta.details || []);
+    const gdHTML = gdDetails.length ? gdDetails.map(d => `
+      <div style="padding:8px 0;border-bottom:1px solid var(--border)">
+        <strong style="color:#e879f9">${escapeHTML(d.graha)}</strong>
+        in ${escapeHTML(d.rasi)} ${d.degree_in_rasi.toFixed(2)}° H${d.house}
+        · <span style="color:var(--muted);font-size:0.8rem">${escapeHTML(d.gandanta_side)}</span>
+        <div style="color:var(--muted);font-size:0.78rem;margin-top:3px">${escapeHTML(d.interpretation)}</div>
+      </div>`).join('') :
+      `<div style="color:var(--muted);padding:6px 0">No planets in Gandanta.</div>`;
+
+    const nakPanel = `
+      <div class="result-card">
+        <div class="result-card-header">&#9790; Nakshatra Qualities &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— Gana · Nadi · Yoni · Nature (BPHS / Jataka Chandrika)</span></div>
+        <table style="font-size:0.82rem">
+          <thead><tr><th>Planet</th><th>Nakshatra</th><th style="text-align:center">Pada</th><th>Lord</th><th>Gana</th><th>Nadi</th><th>Yoni</th><th>Nature</th></tr></thead>
+          <tbody>${nakRows}</tbody>
+        </table>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header" style="color:#e879f9">&#9670; Gandanta Analysis &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.78rem">— water/fire junction zones (3°20' each side)</span></div>
+        <div style="padding:8px 14px;font-size:0.82rem;color:var(--muted)">
+          ${escapeHTML(gandanta.summary || '')}
+          ${gandanta.lagna_gandanta ? '<span style="color:#e879f9;font-weight:700;margin-left:8px">⚠ Lagna in Gandanta</span>' : ''}
+        </div>
+        <div style="padding:0 14px 12px">${gdHTML}</div>
+      </div>`;
+
     // ── Assemble output with tabs ────────────────────────────────────────────
     const flowchart = (data.derived_features || {}).flowchart || {};
     document.getElementById('chart-section').innerHTML = `
@@ -1873,6 +2095,9 @@
         <button class="tab-btn"        id="tab-yogas-btn"      onclick="switchTab('chart-tabs','ctab','tab-yogas')">&#9733; Yogas</button>
         <button class="tab-btn"        id="tab-flowchart-btn"  onclick="switchTab('chart-tabs','ctab','tab-flowchart')">&#9775; Raman-Analysis</button>
         <button class="tab-btn"        id="tab-transit-btn"    onclick="switchTab('chart-tabs','ctab','tab-transit')">&#9654; Gochara</button>
+        <button class="tab-btn"        id="tab-shadbala-btn"   onclick="switchTab('chart-tabs','ctab','tab-shadbala')">&#9670; Shadbala</button>
+        <button class="tab-btn"        id="tab-ashtaka-btn"    onclick="switchTab('chart-tabs','ctab','tab-ashtaka')">&#9632; AshtaV</button>
+        <button class="tab-btn"        id="tab-nakshatra-btn"  onclick="switchTab('chart-tabs','ctab','tab-nakshatra')">&#9790; Nakshatra</button>
       </div>
 
       <!-- Chart tab -->
@@ -1880,7 +2105,7 @@
         <div class="result-card">
           <div class="result-card-header">&#9728; Natal Chart &nbsp;<span style="color:var(--muted);font-weight:400;font-size:0.82rem">Lagna: <strong style="color:var(--text)">${escapeHTML(lagna)}</strong></span></div>
           <table>
-            <thead><tr><th>Planet</th><th>Sign / Dignity</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th><th style="text-align:center" title="Functional role for this lagna">Fn</th></tr></thead>
+            <thead><tr><th>Planet</th><th>Sign / Dignity</th><th style="text-align:center">House</th><th style="text-align:center">Degree</th><th style="text-align:center">℞</th><th style="text-align:center" title="Functional role for this lagna">Fn</th><th>Nakshatra</th><th title="Gana · Nadi · Yoni">Qualities</th></tr></thead>
             <tbody>${tbody || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No planet data.</td></tr>'}</tbody>
           </table>
         </div>
@@ -1893,6 +2118,7 @@
         </div>
         ${dashaRows ? `<div class="result-card">
           <div class="result-card-header">&#9679; Vimshottari Dashas</div>
+          ${activeDashaRow}
           <table>
             <thead><tr><th>Dasha</th><th>Start</th><th>End</th></tr></thead>
             <tbody>${dashaRows}</tbody>
@@ -1955,6 +2181,22 @@
           &nbsp;·&nbsp; Expand each module to see step-by-step findings.
         </div>
         ${renderFlowchartHTML(flowchart)}
+      </div>
+
+      <!-- Shadbala tab -->
+      <div class="tab-panel ctab" id="tab-shadbala-panel">
+        ${sbPanel}
+        ${maitriPanel}
+      </div>
+
+      <!-- Ashtakavarga tab -->
+      <div class="tab-panel ctab" id="tab-ashtaka-panel">
+        ${avPanel}
+      </div>
+
+      <!-- Nakshatra + Gandanta tab -->
+      <div class="tab-panel ctab" id="tab-nakshatra-panel">
+        ${nakPanel}
       </div>`;
   }
 

@@ -114,3 +114,65 @@ def compute_antardasha_periods(mahadasha: DashaPeriod) -> list[DashaPeriod]:
         current = end
 
     return sub_periods
+
+
+def compute_pratyantara_periods(antardasha: DashaPeriod) -> list[DashaPeriod]:
+    """Return all Pratyantara (level-3) sub-sub-periods within an Antardasha.
+
+    Pratyantara duration = (sub_lord_years / total_years) * antardasha_duration.
+    The sequence starts with the Antardasha lord itself, then cycles.
+
+    Source: BPHS Ch.46; Saravali; standard Vimshottari algorithm applied recursively.
+    """
+    antar_lord = antardasha.graha
+    antar_start_idx = VIMSHOTTARI_SEQUENCE.index(antar_lord)
+    antar_days = (antardasha.end_date - antardasha.start_date).days
+
+    sub_periods: list[DashaPeriod] = []
+    current = antardasha.start_date
+
+    for i in range(9):
+        sub_lord = VIMSHOTTARI_SEQUENCE[(antar_start_idx + i) % 9]
+        sub_fraction = VIMSHOTTARI_YEARS[sub_lord] / 120.0
+        sub_days = round(antar_days * sub_fraction)
+        end = current + timedelta(days=sub_days)
+        if end > antardasha.end_date:
+            end = antardasha.end_date
+        sub_periods.append(
+            DashaPeriod(graha=sub_lord, level=3, start_date=current, end_date=end)
+        )
+        current = end
+
+    return sub_periods
+
+
+def get_active_pratyantara(antardasha: DashaPeriod, on_date: date) -> DashaPeriod | None:
+    """Return the active Pratyantara period for a given date within an Antardasha."""
+    for pd in compute_pratyantara_periods(antardasha):
+        if pd.start_date <= on_date < pd.end_date:
+            return pd
+    return None
+
+
+def compute_full_dasha_tree(
+    moon_longitude: float,
+    birth_date: date,
+    span_years: int = 120,
+    include_pratyantara: bool = False,
+) -> list[DashaPeriod]:
+    """Return Mahadasha list with nested Antardasha sub-periods.
+
+    Args:
+        moon_longitude: Moon's sidereal longitude (0-360).
+        birth_date: Date of birth.
+        span_years: Years to generate (default 120).
+        include_pratyantara: If True, also nest Pratyantara within each Antardasha.
+    """
+    mahadashas = compute_vimshottari_dashas(moon_longitude, birth_date, span_years)
+    for maha in mahadashas:
+        antardashas = compute_antardasha_periods(maha)
+        if include_pratyantara:
+            for antar in antardashas:
+                antar.sub_periods.extend(compute_pratyantara_periods(antar))
+        maha.sub_periods.extend(antardashas)
+    return mahadashas

@@ -134,6 +134,89 @@ def full_dignity(graha: Graha, rasi: Rasi, degree_in_rasi: float) -> str | None:
     return rel if rel != "neutral" else None
 
 
+def compute_tatkalika_maitri(bundle: ChartBundle) -> dict[str, dict[str, str]]:
+    """Compute Tatkalika (temporal) friendship between every pair of planets.
+
+    A planet P is a temporal friend of planet Q if Q occupies the 2nd, 3rd, 4th,
+    10th, 11th, or 12th sign from P's sign. All other positions = temporal enemy.
+    The relationship is directional (P→Q may differ from Q→P).
+
+    Source: BPHS Ch.3 v.55-58; Phaladeepika Ch.2.
+
+    Returns:
+        dict[planet_name → dict[other_planet_name → 'friend' | 'enemy']]
+    """
+    _TEMP_FRIEND_OFFSETS = frozenset({2, 3, 4, 10, 11, 12})
+
+    rasi_list = list(Rasi)
+
+    def _rasi_index(rasi: Rasi) -> int:
+        return rasi_list.index(rasi)
+
+    result: dict[str, dict[str, str]] = {}
+    for g1 in Graha:
+        p1_rasi = bundle.d1.planets[g1.value].rasi.rasi
+        idx1 = _rasi_index(p1_rasi)
+        row: dict[str, str] = {}
+        for g2 in Graha:
+            if g1 == g2:
+                continue
+            p2_rasi = bundle.d1.planets[g2.value].rasi.rasi
+            idx2 = _rasi_index(p2_rasi)
+            offset = ((idx2 - idx1) % 12) + 1  # 1-based forward count
+            row[g2.value] = "friend" if offset in _TEMP_FRIEND_OFFSETS else "enemy"
+        result[g1.value] = row
+    return result
+
+
+def _natural_rel_between(g1: Graha, g2: Graha) -> str:
+    """Natural relationship g1 has toward g2 (independent of sign)."""
+    if g2 in _NATURAL_FRIENDS[g1]:
+        return "friend"
+    if g2 in _NATURAL_ENEMIES[g1]:
+        return "enemy"
+    return "neutral"
+
+
+def compute_panchadha_maitri_from_chart(
+    bundle: ChartBundle,
+    tatkalika: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    """Combine Naisargika + Tatkalika into 5-fold Panchadha Maitri.
+
+    Combination rules (BPHS Ch.3 v.55-60; Phaladeepika Ch.2):
+        Natural Friend  + Temporal Friend  = Adhi Mitra  (great friend)
+        Natural Friend  + Temporal Enemy   = Sama        (neutral)
+        Natural Neutral + Temporal Friend  = Mitra       (friend)
+        Natural Neutral + Temporal Enemy   = Shatru      (enemy)
+        Natural Enemy   + Temporal Friend  = Sama        (neutral)
+        Natural Enemy   + Temporal Enemy   = Adhi Shatru (great enemy)
+
+    Returns:
+        dict[planet_name → dict[other_planet_name → panchadha_label]]
+    """
+    _COMBO: dict[tuple[str, str], str] = {
+        ("friend",  "friend"): "Adhi Mitra",
+        ("friend",  "enemy"):  "Sama",
+        ("neutral", "friend"): "Mitra",
+        ("neutral", "enemy"):  "Shatru",
+        ("enemy",   "friend"): "Sama",
+        ("enemy",   "enemy"):  "Adhi Shatru",
+    }
+
+    result: dict[str, dict[str, str]] = {}
+    for g1 in Graha:
+        row: dict[str, str] = {}
+        for g2 in Graha:
+            if g1 == g2:
+                continue
+            nat_rel = _natural_rel_between(g1, g2)
+            temp_rel = tatkalika[g1.value][g2.value]
+            row[g2.value] = _COMBO.get((nat_rel, temp_rel), "Sama")
+        result[g1.value] = row
+    return result
+
+
 def compute_planet_strengths(bundle: ChartBundle) -> dict[str, dict]:
     """Compute dignity and house-based strength indicators for each graha.
 

@@ -26,6 +26,10 @@ def extract_nakshatra_features(bundle: ChartBundle) -> dict:
             "deity": detail.deity,
             "degree_in_nakshatra": round(placement.nakshatra.degree_in_nakshatra, 4),
             "pada_rasi": detail.pada_rasis[placement.nakshatra.pada - 1].value,
+            "gana": detail.gana,
+            "nadi": detail.nadi,
+            "yoni": detail.yoni,
+            "nature": detail.nature,
             "qualities": detail.qualities,
         }
 
@@ -41,6 +45,10 @@ def extract_nakshatra_features(bundle: ChartBundle) -> dict:
         "deity": asc_detail.deity,
         "degree_in_nakshatra": round(asc_deg, 4),
         "pada_rasi": asc_detail.pada_rasis[asc_pada - 1].value,
+        "gana": asc_detail.gana,
+        "nadi": asc_detail.nadi,
+        "yoni": asc_detail.yoni,
+        "nature": asc_detail.nature,
         "qualities": asc_detail.qualities,
     }
 
