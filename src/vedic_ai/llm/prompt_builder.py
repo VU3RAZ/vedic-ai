@@ -31,6 +31,8 @@ _SECTION_VARGA      = "### VARGA (DIVISIONAL) ANALYSIS"
 _SECTION_DASHA      = "### DASHA TIMING"
 _SECTION_GOCHARA    = "### TRANSIT / GOCHARA CONTEXT (pre-computed — do not re-derive)"
 _SECTION_BHAVA      = "### BHAVA ACTIVATION — DASHA + TRANSIT ANALYSIS (pre-computed)"
+_SECTION_SHADBALA   = "### SHADBALA — PLANETARY STRENGTH (pre-computed)"
+_SECTION_ASHTAKA    = "### ASHTAKAVARGA — TRANSIT BINDU QUALITY (pre-computed)"
 _SECTION_RULES      = "### TRIGGERED RULE FINDINGS (engine output)"
 _SECTION_PASSAGES   = "### SUPPORTING CLASSICAL PASSAGES"
 _SECTION_TASK       = "### YOUR TASK"
@@ -159,13 +161,22 @@ def _findings_section(features: dict, scope: str) -> str:
                 " MARAKA"            if p.get("is_maraka") else "",
             ])
             sandhi = ""
-            if p.get("is_sandhi"):
+            if p.get("is_gandanta"):
+                sandhi = f" [GANDANTA-{p.get('gandanta_side','')}]"
+            elif p.get("is_sandhi"):
                 sandhi = f" [{p.get('sandhi_label','Sandhi')}]"
             elif p.get("is_bhava_madhya"):
                 sandhi = " [BhavaMadhya]"
+            nak_qual = ""
+            if p.get("nakshatra_gana") or p.get("nakshatra_nature"):
+                nak_qual = (
+                    f"  gana={p.get('nakshatra_gana','')} nadi={p.get('nakshatra_nadi','')}"
+                    f" nature={p.get('nakshatra_nature','')}"
+                )
             lines.append(
                 f"  {name}: {p.get('rasi','?')} H{p.get('house','?')}"
-                f"{retro}{flags}{sandhi}  nak={p.get('nakshatra','?')}"
+                f"{retro}{flags}{sandhi}  nak={p.get('nakshatra','?')} P{p.get('pada','?')}"
+                f"{nak_qual}"
                 f"  role={p.get('functional_role','?')}  strength={p.get('total_strength','?')}"
             )
 
@@ -238,6 +249,25 @@ def _findings_section(features: dict, scope: str) -> str:
             lines.append(f"  Viparita Raja: {y.get('lord')} owns H{y.get('owns_house')} placed H{y.get('placed_in_house')}")
         for y in yogas.get("kartari_yogas", []):
             lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("lunar_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("solar_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("conjunction_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("wealth_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("special_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+        for y in yogas.get("nabhasa_yogas", []):
+            lines.append(f"  {y.get('name')}: {y.get('detail','')}")
+
+    # Gandanta summary (if any planet in Gandanta)
+    gandanta = features.get("gandanta", {})
+    if gandanta.get("gandanta_planets"):
+        lines.append(f"Gandanta (karmic stress — water/fire junction):")
+        for d in gandanta.get("details", []):
+            lines.append(f"  {d.get('graha')} in {d.get('rasi')} H{d.get('house')} [{d.get('gandanta_side')}]")
 
     return "\n".join(lines) if lines else "(no engine findings available)"
 
@@ -281,7 +311,7 @@ def _dasha_strength_section(features: dict) -> str:
             continue
         label = "Mahadasha" if key == "mahadasha" else "Antardasha"
         lord  = rec.get("lord", "?")
-        lines.append(f"{label} Lord: {lord}")
+        lines.append(f"{label} Lord: {lord}  ({rec.get('start','?')} → {rec.get('end','?')})")
         lines.append(f"  Houses owned: H{', H'.join(str(h) for h in rec.get('houses_owned', []))}")
         lines.append(f"  Placement: H{rec.get('placement_house','?')}")
         lines.append(f"  Sign strength: {rec.get('sign_strength','?')}")
@@ -293,6 +323,15 @@ def _dasha_strength_section(features: dict) -> str:
         lines.append(f"  Role: {rec.get('functional_role','?')}  Score: {rec.get('assessment_score','?')}")
         for note in rec.get("notes", []):
             lines.append(f"  → {note}")
+
+    # Pratyantara (level-3) period if active
+    pratya = ds.get("pratyantara")
+    if pratya:
+        lines.append(
+            f"Pratyantara (PD) Lord: {pratya.get('graha','?')}  "
+            f"({pratya.get('start','?')} → {pratya.get('end','?')})"
+        )
+
     return "\n".join(lines) if lines else "(no active dasha)"
 
 
@@ -451,6 +490,59 @@ def _gochara_section(gochara: dict) -> str:
     return "\n".join(lines)
 
 
+def _shadbala_section(features: dict) -> str:
+    """Shadbala six-fold strength summary for the LLM."""
+    sb = features.get("shadbala", {})
+    if not sb:
+        return "(not available)"
+
+    lines: list[str] = [
+        f"Strongest planet (Shadbala): {sb.get('strongest','?')}",
+        f"Weakest planet  (Shadbala): {sb.get('weakest','?')}",
+    ]
+    strong, weak = [], []
+    for row in sb.get("summary", []):
+        g = row.get("graha","?")
+        v = row.get("total_virupas", 0)
+        r = row.get("strength_ratio")
+        r_str = f"{r:.2f}" if r is not None else "?"
+        if row.get("is_strong"):
+            strong.append(f"{g}({v:.0f}V ratio={r_str})")
+        elif r is not None and r < 0.6:
+            weak.append(f"{g}({v:.0f}V ratio={r_str})")
+    if strong:
+        lines.append(f"Above minimum threshold: {', '.join(strong)}")
+    if weak:
+        lines.append(f"Significantly weak (<60% of minimum): {', '.join(weak)}")
+    lines.append(sb.get("note", ""))
+    return "\n".join(lines)
+
+
+def _ashtakavarga_section(features: dict) -> str:
+    """Ashtakavarga SAV + transit quality summary for the LLM."""
+    av = features.get("ashtakavarga", {})
+    if not av:
+        return "(not available)"
+
+    lines: list[str] = []
+    strong = av.get("strong_signs", [])
+    weak   = av.get("weak_signs", [])
+    if strong:
+        lines.append(f"SAV strong signs (≥30 bindus — favourable transits): {', '.join(strong)}")
+    if weak:
+        lines.append(f"SAV weak signs (≤25 bindus — challenging transits): {', '.join(weak)}")
+
+    tg = av.get("transit_guide", [])
+    if tg:
+        lines.append("Current transit bindu quality (BAV):")
+        for t in tg:
+            lines.append(
+                f"  {t.get('planet','?')} in {t.get('transit_sign','?')}: "
+                f"{t.get('bindus','?')}/8 → {t.get('quality','?')} — {t.get('interpretation','')}"
+            )
+    return "\n".join(lines) if lines else "(no Ashtakavarga data)"
+
+
 def _bhava_context_section(features: dict, scope: str, gochara_context: dict | None) -> str:
     """Build bhava activation + transit pressure block for a single bhava scope."""
     try:
@@ -567,6 +659,12 @@ def build_interpretation_prompt(
         "",
         _SECTION_DASHA_STR,
         _dasha_strength_section(features),
+        "",
+        _SECTION_SHADBALA,
+        _shadbala_section(features),
+        "",
+        _SECTION_ASHTAKA,
+        _ashtakavarga_section(features),
         "",
         _SECTION_VARGA,
         _varga_section(features, scope),
