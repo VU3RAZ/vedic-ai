@@ -82,3 +82,24 @@ class GeminiClient:
             ),
         )
         return response.text or ""
+
+    def generate_text(self, prompt: str, temperature: float = 0.4) -> str:
+        """Send prompt to Gemini and return plain-text (no JSON constraint)."""
+        try:
+            from google import genai
+            from google.genai import types
+        except ImportError as exc:
+            raise ImportError(
+                "google-genai package is required: pip install google-genai"
+            ) from exc
+
+        client = genai.Client(api_key=self._api_key)
+        response = client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=temperature,
+                max_output_tokens=self.max_tokens,
+            ),
+        )
+        return response.text or ""

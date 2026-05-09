@@ -249,3 +249,118 @@ def predict(request: PredictionRequest) -> dict:
         raise HTTPException(status_code=500, detail=f"Pipeline error: {exc}")
 
     return report.model_dump(mode="json")
+
+
+# ---------------------------------------------------------------------------
+# Chat with Chart
+# ---------------------------------------------------------------------------
+
+class ChatRequest(BaseModel):
+    birth_datetime: datetime
+    latitude: float
+    longitude: float
+    place_name: str | None = None
+    name: str | None = None
+    question: str
+    transit_datetime: datetime | None = None
+    llm_backend: str | None = None
+    llm_base_url: str | None = None
+    llm_model: str | None = None
+    llm_api_key: str | None = None
+
+
+@router.post("/chat")
+def chat_with_chart(request: ChatRequest) -> dict:
+    """Answer a free-form question about a natal chart using the LLM.
+
+    The full chart is computed, features extracted, and a plain-prose
+    answer is returned (no JSON output schema).
+    """
+    if not request.question.strip():
+        raise HTTPException(status_code=422, detail="question must not be empty")
+
+    if request.birth_datetime.tzinfo is None:
+        raise HTTPException(
+            status_code=422,
+            detail="birth_datetime must include a timezone offset (e.g. +05:30)"
+        )
+
+    birth = BirthData(
+        birth_datetime=request.birth_datetime,
+        location=GeoLocation(
+            latitude=request.latitude,
+            longitude=request.longitude,
+            place_name=request.place_name,
+        ),
+        name=request.name,
+    )
+
+    # Build LLM client
+    cfg_llm = _models_config.get("llm", {})
+    backend = request.llm_backend or cfg_llm.get("backend", "ollama")
+    backend_cfg = cfg_llm.get(backend, {})
+
+    llm_client = None
+    try:
+        if backend == "gemini":
+            from vedic_ai.llm.cloud_client import GeminiClient
+            llm_client = GeminiClient(
+                model_name=request.llm_model or backend_cfg.get("model", "gemini-flash-lite-latest"),
+                api_key=request.llm_api_key or None,
+                max_tokens=cfg_llm.get("max_tokens", 4096),
+                timeout=backend_cfg.get("timeout_seconds", 60),
+            )
+        else:
+            from vedic_ai.llm.local_client import LocalLLMClient
+            llm_client = LocalLLMClient(
+                model_name=request.llm_model or backend_cfg.get("model", "default"),
+                base_url=request.llm_base_url or backend_cfg.get("base_url", "http://localhost:11434"),
+                backend=backend,
+                timeout=backend_cfg.get("timeout_seconds", 600),
+                max_tokens=cfg_llm.get("max_tokens", 4096),
+            )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"LLM client init failed: {exc}")
+
+    if llm_client is None:
+        raise HTTPException(status_code=503, detail="No LLM client available")
+
+    try:
+        from vedic_ai.engines.swisseph_adapter import SwissEphAdapter
+        from vedic_ai.engines.base import compute_core_chart
+        from vedic_ai.features.core_features import extract_core_features
+        from vedic_ai.llm.prompt_builder import build_chat_prompt
+
+        _ALL_VARGAS = ["D2","D3","D4","D6","D7","D8","D9","D10","D12",
+                       "D16","D20","D24","D27","D30","D60"]
+        engine = SwissEphAdapter()
+        bundle = compute_core_chart(birth, engine, include_vargas=_ALL_VARGAS)
+        features = extract_core_features(bundle)
+
+        # Optional transit context
+        gochara_context: dict | None = None
+        if request.transit_datetime is not None:
+            try:
+                from vedic_ai.engines.gochara import compute_gochara
+                from vedic_ai.api.routes_transit import _serialize_report as _ser_gochara
+                transit_snapshot = engine.compute_transits(birth, request.transit_datetime)
+                gochara_report   = compute_gochara(bundle, transit_snapshot)
+                gochara_context  = _ser_gochara(gochara_report)
+            except Exception:
+                pass
+
+        prompt = build_chat_prompt(
+            bundle, features, request.question,
+            gochara_context=gochara_context,
+        )
+
+        # Use plain-text generation for chat (not JSON-constrained)
+        if hasattr(llm_client, "generate_text"):
+            answer = llm_client.generate_text(prompt, temperature=0.4)
+        else:
+            answer = llm_client.generate(prompt, temperature=0.4)
+
+        return {"answer": answer.strip(), "question": request.question}
+
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Chat error: {exc}")

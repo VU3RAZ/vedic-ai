@@ -621,8 +621,91 @@ def _task_section(scope: str, raman_method: bool, has_gochara: bool) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Public entry point
+# Chat instruction
 # ---------------------------------------------------------------------------
+_INSTRUCTION_CHAT = """\
+You are a Vedic astrology expert assistant helping someone understand their birth chart.
+
+ROLE: Answer the user's question using ONLY the pre-computed chart data in the sections below.
+All planetary positions, house lords, yoga combinations, dasha periods, strength scores,
+and transit results are pre-computed by a deterministic engine and are authoritative.
+
+STRICT PROHIBITIONS:
+  • Do NOT re-derive or recalculate any positions, longitudes, or house numbers.
+  • Do NOT re-derive dasha periods, their lords, or their dates.
+  • Do NOT suggest remedies, mantras, or gemstones unless they appear in the engine data.
+  • Do NOT introduce any planetary placement or yoga not listed in the ENGINE FINDINGS.
+  • Do NOT contradict the engine-computed dignity or tone for any planet.
+
+HOW TO ANSWER:
+  • Be specific — cite planets, house numbers, yogas, dasha lords, and strength scores.
+  • Draw only from the sections below; do not add external knowledge that contradicts the data.
+  • Write in clear, flowing prose — no bullet lists unless the question calls for comparison.
+  • If the question cannot be answered from the available data, say so briefly and explain why.
+
+Do NOT return JSON. Answer in plain prose."""
+
+
+# ---------------------------------------------------------------------------
+# Public entry points
+# ---------------------------------------------------------------------------
+
+def build_chat_prompt(
+    bundle: ChartBundle,
+    features: dict,
+    question: str,
+    *,
+    gochara_context: dict | None = None,
+) -> str:
+    """Build a free-form Q&A prompt for 'Chat with Chart'.
+
+    Includes the full chart context but asks the LLM to answer a specific
+    user question in plain prose (no JSON output).
+    """
+    has_gochara = gochara_context is not None
+
+    parts = [
+        _INSTRUCTION_CHAT,
+        "",
+        _SECTION_CONTEXT,
+        _context_section(bundle, features),
+        "",
+        _SECTION_FINDINGS,
+        _findings_section(features, "all"),
+        "",
+        _SECTION_FUNCTIONAL,
+        _functional_nature_section(features),
+        "",
+        _SECTION_DASHA_STR,
+        _dasha_strength_section(features),
+        "",
+        _SECTION_SHADBALA,
+        _shadbala_section(features),
+        "",
+        _SECTION_ASHTAKA,
+        _ashtakavarga_section(features),
+        "",
+        _SECTION_DASHA,
+        _dasha_section(features, bundle),
+        "",
+    ]
+
+    if has_gochara:
+        parts += [
+            _SECTION_GOCHARA,
+            _gochara_section(gochara_context),
+            "",
+        ]
+
+    parts += [
+        "### USER QUESTION",
+        question.strip(),
+        "",
+        "### YOUR ANSWER",
+        "Answer in plain prose, grounding every claim in the engine data above.",
+    ]
+    return "\n".join(parts)
+
 
 def build_interpretation_prompt(
     bundle: ChartBundle,
