@@ -639,6 +639,9 @@ STRICT PROHIBITIONS:
 
 HOW TO ANSWER:
   • Be specific — cite planets, house numbers, yogas, dasha lords, and strength scores.
+  • If a TRANSIT / GOCHARA CONTEXT section is present, treat all values there as authoritative.
+    Sadhe Sati, Ashtama Shani, and planet-by-planet gochara results from that section
+    OVERRIDE any general inference about current planetary effects.
   • Draw only from the sections below; do not add external knowledge that contradicts the data.
   • Write in clear, flowing prose — no bullet lists unless the question calls for comparison.
   • If the question cannot be answered from the available data, say so briefly and explain why.

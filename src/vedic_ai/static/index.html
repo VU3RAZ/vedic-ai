@@ -3365,8 +3365,11 @@
     const llmUrl   = (document.getElementById('llm-url')      || {}).value  || null;
     const llmModel = (document.getElementById('llm-model')    || {}).value  || null;
     const llmKey   = (document.getElementById('llm-apikey')   || {}).value  || null;
-    const transitEl = document.getElementById('transit-date');
-    const transitDt = transitEl && transitEl.value ? transitEl.value + ':00Z' : null;
+    const trDtEl = document.getElementById('tr-dt');
+    const trTzEl = document.getElementById('tr-tz');
+    const transitDt = (trDtEl && trDtEl.value)
+      ? trDtEl.value + ':00' + (trTzEl ? trTzEl.value : '+05:30')
+      : null;
 
     try {
       const resp = await fetch('/predictions/chat', {
