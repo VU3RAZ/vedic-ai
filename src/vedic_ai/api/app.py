@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from vedic_ai.core.config import AppConfig
 from vedic_ai.api.routes_chart import router as chart_router
+from vedic_ai.api.routes_life_events import router as life_events_router
 from vedic_ai.api.routes_prediction import router as prediction_router
 from vedic_ai.api.routes_transit import router as transit_router
 
@@ -34,6 +35,7 @@ def create_api_app(config: AppConfig | None = None) -> FastAPI:
     app.include_router(chart_router, prefix="/charts", tags=["charts"])
     app.include_router(prediction_router, prefix="/predictions", tags=["predictions"])
     app.include_router(transit_router, prefix="/transits", tags=["transits"])
+    app.include_router(life_events_router, prefix="/life-events", tags=["life-events"])
 
     @app.get("/health", tags=["meta"])
     def health() -> dict:

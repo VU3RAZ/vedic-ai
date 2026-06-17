@@ -8,6 +8,10 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 
 **All 13 phases complete — 353 unit tests passing.**
 
+## What's new (2026-06)
+
+- **Life Events Timeline** — a 120-year śāstra-based timing engine predicting *when* key life events occur (education, career, marriage, children, property, vehicle, wealth, health, foreign travel, spirituality). Combines Vimśottarī daśā-phala (BPHS 46-47), Jaimini Chara Kārakas (JS 1.1), Ṣoḍaśavarga confirmation (BPHS 7), Indu Lagna (Jātaka Pārijāta), and Guru/Śani Gochara from Moon (Phaladīpikā 26). Every factor cites its source. `POST /life-events/compute` — no LLM required. New **🕐 Timeline** tab with age bar, Chara Kāraka panel, and cited event cards. See [docs/life_events_timeline.md](docs/life_events_timeline.md).
+
 ## What's new (2026-05)
 
 - **12-Bhava prediction analysis** — select "All 12 Bhavas" (or any individual bhava) as the prediction scope. Each bhava runs its own rule set (6 rules each, BPHS citations), injects a **BHAVA ACTIVATION** block into the LLM prompt (dasha activation score, aspects/drishti received, current transiting planets), and renders in a responsive card grid with activation badge (HIGH / MODERATE / LOW) and transit badges.
@@ -174,6 +178,7 @@ Start the server with `vedic-ai serve`, then:
 | POST | `/predictions` | Full prediction pipeline (LLM synthesis) |
 | POST | `/charts/compute` | Compute chart only (no prediction) |
 | POST | `/transits/compute` | Gochara transit analysis (no LLM — instant) |
+| POST | `/life-events/compute` | 120-year life events timeline (daśā + varga + Jaimini + Gochara — no LLM) |
 | GET | `/docs` | Interactive Swagger UI |
 
 **`POST /predictions` body:**

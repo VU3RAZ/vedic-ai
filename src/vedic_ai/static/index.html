@@ -1015,6 +1015,146 @@
     }
     .tr-spinner-wrap.active { display: flex; }
 
+    /* ── Life Events Timeline tab ── */
+    .le-header {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 10px 14px; background: rgba(255,255,255,0.03);
+      border-radius: 8px; border: 1px solid var(--border); margin-bottom: 4px;
+    }
+    .le-header-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .le-header-sub   { font-size: 0.78rem; color: var(--muted); }
+    .le-compute-btn  {
+      background: #7c3aed; color: #fff; border: none; border-radius: 6px;
+      padding: 6px 16px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      transition: background var(--transition);
+    }
+    .le-compute-btn:hover:not(:disabled) { background: #6d28d9; }
+    .le-compute-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .le-spinner { color: var(--muted); font-size: 0.82rem; padding: 4px 8px; }
+
+    /* Category filter chips */
+    .le-filter-bar {
+      display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+      padding: 6px 0;
+    }
+    .le-filter-chip {
+      padding: 3px 10px; border-radius: 20px; font-size: 0.73rem; font-weight: 600;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+      user-select: none;
+    }
+    .le-filter-chip.active  { opacity: 1; }
+    .le-filter-chip.inactive { opacity: 0.35; }
+
+    /* Visual age-bar timeline */
+    .le-timeline-bar {
+      position: relative; height: 38px;
+      background: rgba(255,255,255,0.04); border-radius: 8px;
+      border: 1px solid var(--border); overflow: hidden; margin: 6px 0;
+    }
+    .le-tb-scale {
+      position: absolute; top: 0; left: 0; right: 0; height: 100%;
+      display: flex; pointer-events: none;
+    }
+    .le-tb-tick {
+      position: absolute; top: 0; bottom: 0; width: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+    .le-tb-tick-label {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      font-size: 0.6rem; color: var(--muted); left: 3px;
+    }
+    .le-tb-event {
+      position: absolute; top: 4px; bottom: 4px; border-radius: 4px;
+      cursor: pointer; transition: opacity 0.15s;
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .le-tb-event:hover { opacity: 0.9; filter: brightness(1.15); }
+    .le-tb-event-emoji { font-size: 0.65rem; padding: 0 3px; line-height: 1; }
+
+    /* Event cards grid */
+    .le-cards-grid {
+      display: flex; flex-direction: column; gap: 8px; margin-top: 6px;
+    }
+    .le-card {
+      border-radius: 8px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); padding: 10px 14px;
+      transition: border-color 0.15s;
+    }
+    .le-card:hover { border-color: rgba(255,255,255,0.15); }
+    .le-card-header {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .le-card-emoji { font-size: 1.2rem; line-height: 1; }
+    .le-card-label { font-size: 0.9rem; font-weight: 700; color: var(--text); flex: 1; }
+    .le-card-age   {
+      font-size: 0.75rem; color: var(--muted); white-space: nowrap;
+      background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 12px;
+    }
+    .le-conf-badge {
+      font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+      white-space: nowrap;
+    }
+    .le-conf-veryhigh { background: rgba(16,185,129,0.2); color: #34d399; }
+    .le-conf-high     { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .le-conf-moderate { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .le-conf-low      { background: rgba(239,68,68,0.15); color: #f87171; }
+    .le-conf-verylow  { background: rgba(107,114,128,0.15); color: #9ca3af; }
+    .le-card-meta {
+      font-size: 0.75rem; color: var(--muted); margin-bottom: 5px;
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .le-card-meta strong { color: var(--text); }
+    .le-factors {
+      display: flex; flex-direction: column; gap: 2px; margin-top: 4px;
+    }
+    .le-factor-row {
+      font-size: 0.72rem; color: var(--muted);
+      padding: 1px 0; display: flex; align-items: flex-start; gap: 5px;
+    }
+    .le-factor-row::before { content: "▸"; color: var(--accent); flex-shrink: 0; }
+    .le-varga-signal {
+      font-size: 0.71rem; margin-top: 4px; padding: 3px 8px;
+      border-radius: 4px; background: rgba(124,58,237,0.12); color: #a78bfa;
+    }
+    .le-transit-signal {
+      font-size: 0.71rem; margin-top: 3px; padding: 3px 8px;
+      border-radius: 4px; background: rgba(6,182,212,0.10); color: #67e8f9;
+    }
+    .le-method-note {
+      font-size: 0.72rem; margin-bottom: 5px; padding: 4px 8px;
+      border-radius: 4px; background: rgba(255,255,255,0.04);
+      color: var(--text); font-style: italic; border-left: 2px solid var(--accent);
+    }
+    /* Methods panel (Jaimini Chara Karakas + Indu Lagna) */
+    .le-methods-panel {
+      border-radius: 8px; border: 1px solid var(--border);
+      background: rgba(124,58,237,0.06); padding: 10px 14px; margin: 4px 0;
+    }
+    .le-methods-title {
+      font-size: 0.82rem; font-weight: 700; color: #a78bfa; margin-bottom: 6px;
+    }
+    .le-karaka-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;
+    }
+    .le-karaka-chip {
+      font-size: 0.71rem; padding: 3px 9px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    }
+    .le-karaka-chip strong { color: #c4b5fd; }
+    .le-methods-ref {
+      font-size: 0.68rem; color: var(--muted); margin-top: 4px;
+      border-top: 1px solid var(--border); padding-top: 5px;
+    }
+    .le-cat-badge {
+      font-size: 0.65rem; font-weight: 600; padding: 1px 7px; border-radius: 10px;
+      background: rgba(255,255,255,0.08); color: var(--muted); white-space: nowrap;
+    }
+    .le-placeholder {
+      text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.85rem;
+    }
+    .le-placeholder-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
     /* ── LLM Debug tab ── */
     .dbg-block {
       border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
@@ -2146,6 +2286,7 @@
         <button class="tab-btn"        id="tab-ashtaka-btn"    onclick="switchTab('chart-tabs','ctab','tab-ashtaka')">&#9632; AshtaV</button>
         <button class="tab-btn"        id="tab-nakshatra-btn"  onclick="switchTab('chart-tabs','ctab','tab-nakshatra')">&#9790; Nakshatra</button>
         <button class="tab-btn"        id="tab-chat-btn"       onclick="switchTab('chart-tabs','ctab','tab-chat')">&#128172; Chat</button>
+        <button class="tab-btn"        id="tab-timeline-btn"   onclick="switchTab('chart-tabs','ctab','tab-timeline')">&#128336; Timeline</button>
       </div>
 
       <!-- Chart tab -->
@@ -2259,6 +2400,25 @@
           <div class="chat-input-row">
             <textarea id="chat-input" placeholder="e.g. What does my 10th house suggest about career? Why is Jupiter significant for me?" onkeydown="chatKeydown(event)"></textarea>
             <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Life Events Timeline tab -->
+      <div class="tab-panel ctab" id="tab-timeline-panel">
+        <div class="le-header">
+          <span style="font-size:1.4rem">&#128336;</span>
+          <div>
+            <div class="le-header-title">Life Events Timeline</div>
+            <div class="le-header-sub">120-year analysis • Dasha + Divisional Charts + Karaka Theory</div>
+          </div>
+          <button class="le-compute-btn" id="le-compute-btn" onclick="computeLifeEvents()">&#9654; Compute Timeline</button>
+          <span class="le-spinner" id="le-spinner" style="display:none">&#8987; Computing…</span>
+        </div>
+        <div id="le-content">
+          <div class="le-placeholder">
+            <span class="le-placeholder-icon">&#128336;</span>
+            Click <strong>Compute Timeline</strong> to analyse life events across 120 years using Vimshottari Dasha, divisional charts, and karaka theory.
           </div>
         </div>
       </div>`;
@@ -3420,6 +3580,200 @@
       sendBtn.disabled = false;
       history.scrollTop = history.scrollHeight;
     }
+  }
+
+  // ── Life Events Timeline ──────────────────────────────────────────────────
+
+  // Category → colour mapping
+  const _LE_CAT_COLORS = {
+    'Education':     '#3b82f6',
+    'Career':        '#f59e0b',
+    'Marriage':      '#ec4899',
+    'Children':      '#10b981',
+    'Property':      '#8b5cf6',
+    'Vehicle':       '#06b6d4',
+    'Health':        '#ef4444',
+    'Wealth':        '#84cc16',
+    'Spirituality':  '#a78bfa',
+    'Foreign Travel':'#fb923c',
+  };
+
+  const _LE_CONF_CLASS = {
+    'Very High': 'le-conf-veryhigh',
+    'High':      'le-conf-high',
+    'Moderate':  'le-conf-moderate',
+    'Low':       'le-conf-low',
+    'Very Low':  'le-conf-verylow',
+  };
+
+  let _leData = null;
+  let _leActiveCategories = new Set();
+
+  async function computeLifeEvents() {
+    if (!_lastBirthForm) { alert('Please compute the natal chart first.'); return; }
+    const btn     = document.getElementById('le-compute-btn');
+    const spinner = document.getElementById('le-spinner');
+    const content = document.getElementById('le-content');
+    btn.disabled  = true;
+    spinner.style.display = '';
+    content.innerHTML = '<div class="le-placeholder"><span class="le-placeholder-icon">&#8987;</span>Computing 120-year dasha timeline…</div>';
+
+    try {
+      const resp = await fetch('/life-events/compute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          birth_datetime: _lastBirthForm.birth_datetime,
+          latitude:       _lastBirthForm.latitude,
+          longitude:      _lastBirthForm.longitude,
+          place_name:     _lastBirthForm.place_name || null,
+          name:           _lastBirthForm.name       || null,
+        }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        content.innerHTML = `<div class="le-placeholder" style="color:var(--error)">&#10006; ${escapeHTML(err.detail || resp.statusText)}</div>`;
+        return;
+      }
+      _leData = await resp.json();
+      _leActiveCategories = new Set(Object.keys(_leData.by_category || {}));
+      renderLifeEventsTimeline();
+    } catch (err) {
+      content.innerHTML = `<div class="le-placeholder" style="color:var(--error)">&#10006; ${escapeHTML(err.message)}</div>`;
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+    }
+  }
+
+  function renderLifeEventsTimeline() {
+    if (!_leData) return;
+    const content  = document.getElementById('le-content');
+    const events   = _leData.events || [];
+    const name     = _leData.name ? `${escapeHTML(_leData.name)} · ` : '';
+    const cats     = Object.keys(_leData.by_category || {}).sort();
+
+    // ── Category filter chips ──────────────────────────────────────────────
+    const filterChips = cats.map(cat => {
+      const color  = _LE_CAT_COLORS[cat] || '#6b7280';
+      const active = _leActiveCategories.has(cat);
+      return `<span class="le-filter-chip ${active ? 'active' : 'inactive'}"
+        style="background:${active ? color+'22' : 'transparent'};color:${color};border-color:${color}44"
+        onclick="leToggleCategory('${escapeHTML(cat)}')">${escapeHTML(cat)}</span>`;
+    }).join('');
+
+    // ── Age bar (0–120) ─────────────────────────────────────────────────────
+    const MAX_AGE   = 120;
+    const ticksHtml = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].map(a => {
+      const pct = (a / MAX_AGE) * 100;
+      return `<div class="le-tb-tick" style="left:${pct}%">
+        <span class="le-tb-tick-label">${a}</span>
+      </div>`;
+    }).join('');
+
+    const barEvents = events
+      .filter(e => _leActiveCategories.has(e.category))
+      .map((e, i) => {
+        const left  = Math.min(99, (e.age_start / MAX_AGE) * 100);
+        const width = Math.max(0.4, ((e.age_end - e.age_start) / MAX_AGE) * 100);
+        const color = _LE_CAT_COLORS[e.category] || '#6b7280';
+        return `<div class="le-tb-event"
+          style="left:${left}%;width:${width}%;background:${color}88;border:1px solid ${color}"
+          title="${escapeHTML(e.label)} (age ${e.age_start}–${e.age_end})"
+          onclick="document.getElementById('le-card-${i}').scrollIntoView({behavior:'smooth'})">
+          <span class="le-tb-event-emoji">${e.emoji}</span>
+        </div>`;
+      }).join('');
+
+    // ── Event cards ────────────────────────────────────────────────────────
+    const filteredEvents = events.filter(e => _leActiveCategories.has(e.category));
+
+    const cardsHtml = filteredEvents.map((e, i) => {
+      const color     = _LE_CAT_COLORS[e.category] || '#6b7280';
+      const confClass = _LE_CONF_CLASS[e.confidence] || 'le-conf-verylow';
+      const factors   = (e.supporting_factors || []).slice(0, 6).map(f =>
+        `<div class="le-factor-row">${escapeHTML(f)}</div>`).join('');
+      const vargaHtml = e.divisional_signal
+        ? `<div class="le-varga-signal">&#9670; ${escapeHTML(e.divisional_signal)}</div>`
+        : '';
+      const transitHtml = e.transit_signal
+        ? `<div class="le-transit-signal">&#9654; Gochara: ${escapeHTML(e.transit_signal)}</div>`
+        : '';
+
+      const startY = e.start_date ? e.start_date.slice(0, 4) : '?';
+      const endY   = e.end_date   ? e.end_date.slice(0, 4)   : '?';
+
+      return `<div class="le-card" id="le-card-${i}" style="border-left:3px solid ${color}">
+        <div class="le-card-header">
+          <span class="le-card-emoji">${e.emoji}</span>
+          <span class="le-card-label">${escapeHTML(e.label)}</span>
+          <span class="le-cat-badge" style="color:${color};border:1px solid ${color}44;background:${color}11">${escapeHTML(e.category)}</span>
+          <span class="le-conf-badge ${confClass}">${escapeHTML(e.confidence)}</span>
+          <span class="le-card-age">Age ${e.age_start}–${e.age_end} &nbsp;(${startY}–${endY})</span>
+        </div>
+        <div class="le-card-meta">
+          <span>&#9679; <strong>${escapeHTML(e.mahadasha_lord)}</strong> Mahādaśā</span>
+          <span>&#9670; <strong>${escapeHTML(e.antardasha_lord)}</strong> Antardaśā</span>
+          <span style="color:var(--accent)">Score: ${e.score}</span>
+        </div>
+        ${e.method_note ? `<div class="le-method-note">&#128214; ${escapeHTML(e.method_note)}</div>` : ''}
+        ${vargaHtml}
+        ${transitHtml}
+        <div class="le-factors">${factors}</div>
+      </div>`;
+    }).join('');
+
+    const noEvents = filteredEvents.length === 0
+      ? '<div class="le-placeholder">No events match the selected categories.</div>'
+      : '';
+
+    // ── Summary stats ──────────────────────────────────────────────────────
+    const highConf  = events.filter(e => ['Very High','High'].includes(e.confidence)).length;
+    const modConf   = events.filter(e => e.confidence === 'Moderate').length;
+    const lowConf   = events.filter(e => ['Low','Very Low'].includes(e.confidence)).length;
+    const statLine  = `
+      <div style="font-size:0.75rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;padding:4px 2px">
+        <span>${name}${events.length} life event windows identified</span>
+        <span style="color:#34d399">&#9679; ${highConf} High confidence</span>
+        <span style="color:#fbbf24">&#9679; ${modConf} Moderate</span>
+        <span style="color:#f87171">&#9679; ${lowConf} Low</span>
+      </div>`;
+
+    // ── Methods panel: Jaimini Chara Karakas + Indu Lagna ──────────────────
+    const methods = _leData.methods || {};
+    const karakaChips = (methods.chara_karakas || []).map(k =>
+      `<span class="le-karaka-chip" title="${escapeHTML(k.meaning)}"><strong>${escapeHTML(k.role)}</strong> = ${escapeHTML(k.planet)}</span>`
+    ).join('');
+    const induTxt = methods.indu_lagna
+      ? `Indu (Dhana) Lagna: <strong style="color:#c4b5fd">${escapeHTML(methods.indu_lagna.lord)}</strong> in H${methods.indu_lagna.house_from_lagna} from Lagna`
+      : '';
+    const methodsPanel = karakaChips ? `
+      <div class="le-methods-panel">
+        <div class="le-methods-title">&#9670; Jaimini Chara Kārakas (JS 1.1)</div>
+        <div class="le-karaka-grid">${karakaChips}</div>
+        ${induTxt ? `<div style="font-size:0.74rem">${induTxt}</div>` : ''}
+        <div class="le-methods-ref">Timing model: ${escapeHTML(methods.references || '')}</div>
+      </div>` : '';
+
+    content.innerHTML = `
+      ${statLine}
+      ${methodsPanel}
+      <div class="le-filter-bar">${filterChips}</div>
+      <div class="le-timeline-bar">
+        ${ticksHtml}
+        ${barEvents}
+      </div>
+      <div class="le-cards-grid">${cardsHtml}${noEvents}</div>`;
+  }
+
+  function leToggleCategory(cat) {
+    if (_leActiveCategories.has(cat)) {
+      if (_leActiveCategories.size === 1) return; // keep at least one
+      _leActiveCategories.delete(cat);
+    } else {
+      _leActiveCategories.add(cat);
+    }
+    renderLifeEventsTimeline();
   }
 </script>
 
