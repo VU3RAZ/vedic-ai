@@ -237,6 +237,20 @@ _DOMAINS: list[EventDomain] = [
 ]
 
 
+DOMAIN_BY_KEY: dict[str, EventDomain] = {d.key: d for d in _DOMAINS}
+
+
+def list_domains() -> list[dict]:
+    """Return the event-domain catalog for UI selectors."""
+    return [
+        {
+            "key": d.key, "label": d.label, "category": d.category.value,
+            "emoji": d.emoji, "age_min": d.expected_age_min, "age_max": d.expected_age_max,
+        }
+        for d in _DOMAINS
+    ]
+
+
 # ── Output model ──────────────────────────────────────────────────────────────
 
 @dataclass
@@ -397,6 +411,7 @@ def _score_dasha(
     antar: DashaPeriod,
     birth_date: date,
     sig: dict[Graha, list[tuple[int, str]]],
+    include_age_prior: bool = True,
 ) -> tuple[int, list[str]]:
     score = 0
     factors: list[str] = []
@@ -417,19 +432,21 @@ def _score_dasha(
                 score -= 1
                 factors.append(f"{lord.value} ({label}) in {dig} — weakens result")
 
-    # Classical age-window prior (PD/Sārāvalī)
-    age_s = (antar.start_date - birth_date).days / 365.25
-    age_e = (antar.end_date - birth_date).days / 365.25
-    mid = (age_s + age_e) / 2
-    if domain.expected_age_min <= mid <= domain.expected_age_max:
-        score += 3
-        factors.append(f"age {age_s:.0f}–{age_e:.0f} within classical window {domain.expected_age_min:.0f}–{domain.expected_age_max:.0f} [{REF_AGE}]")
-    elif age_s <= domain.expected_age_max and age_e >= domain.expected_age_min:
-        score += 1
-        factors.append(f"age {age_s:.0f}–{age_e:.0f} partially overlaps classical window [{REF_AGE}]")
-    else:
-        score -= 8
-        factors.append(f"age {age_s:.0f}–{age_e:.0f} outside classical window {domain.expected_age_min:.0f}–{domain.expected_age_max:.0f}")
+    # Classical age-window prior (PD/Sārāvalī) — skipped in rectification fit mode,
+    # where the event date is supplied by the user and must not be re-biased by age.
+    if include_age_prior:
+        age_s = (antar.start_date - birth_date).days / 365.25
+        age_e = (antar.end_date - birth_date).days / 365.25
+        mid = (age_s + age_e) / 2
+        if domain.expected_age_min <= mid <= domain.expected_age_max:
+            score += 3
+            factors.append(f"age {age_s:.0f}–{age_e:.0f} within classical window {domain.expected_age_min:.0f}–{domain.expected_age_max:.0f} [{REF_AGE}]")
+        elif age_s <= domain.expected_age_max and age_e >= domain.expected_age_min:
+            score += 1
+            factors.append(f"age {age_s:.0f}–{age_e:.0f} partially overlaps classical window [{REF_AGE}]")
+        else:
+            score -= 8
+            factors.append(f"age {age_s:.0f}–{age_e:.0f} outside classical window {domain.expected_age_min:.0f}–{domain.expected_age_max:.0f}")
 
     # Malefic-event reinforcement (Trika activation)
     if domain.is_malefic_event:
@@ -530,6 +547,107 @@ def _score_gochara(domain: EventDomain, jup_from_moon: int, sat_from_moon: int) 
 
     summary = f"[{REF_GOCHARA}] " + " | ".join(sig) if sig else None
     return score, summary
+
+
+# ── Single-date scoring (used by birth-time rectification) ───────────────────────
+
+def _active_maha_antar(
+    mahadashas: list[DashaPeriod], target: date
+) -> tuple[DashaPeriod | None, DashaPeriod | None]:
+    """Return the (Mahādaśā, Antardaśā) periods active on `target`."""
+    for maha in mahadashas:
+        if maha.start_date <= target < maha.end_date:
+            for antar in compute_antardasha_periods(maha):
+                if antar.start_date <= target < antar.end_date:
+                    return maha, antar
+            return maha, None
+    return None, None
+
+
+def _transit_from_moon(
+    bundle: ChartBundle, engine: "AstrologyEngine", on_date: date
+) -> tuple[int, int]:
+    """Return (Jupiter, Saturn) house counted from natal Moon on `on_date`."""
+    moon_house = bundle.d1.planets[Graha.MOON.value].house
+    tz = bundle.birth.birth_datetime.tzinfo or timezone.utc
+    snap = engine.compute_transits(
+        bundle.birth, datetime(on_date.year, on_date.month, on_date.day, 12, 0, tzinfo=tz)
+    )
+    return (
+        _from_moon(snap.planets[Graha.JUPITER.value].house, moon_house),
+        _from_moon(snap.planets[Graha.SATURN.value].house, moon_house),
+    )
+
+
+def score_event_fit(
+    bundle: ChartBundle,
+    domain_key: str,
+    target_date: date,
+    chara: dict[Graha, str] | None = None,
+    indu: tuple[int, Graha] | None = None,
+    engine: "AstrologyEngine | None" = None,
+) -> dict | None:
+    """Score how strongly the chart activates `domain_key` on `target_date`.
+
+    This is the inverse of the timeline: instead of asking *when* an event is
+    likely, it measures the daśā/varga/gochara activation strength for a known
+    date. The classical age-window prior is intentionally disabled — the date is
+    a fact supplied by the user. Used by the birth-time rectification engine.
+
+    Returns a dict with the activation score and the active daśā lords, or None
+    if the domain is unknown or the date is out of range.
+    """
+    domain = DOMAIN_BY_KEY.get(domain_key)
+    if domain is None:
+        return None
+
+    birth_date = bundle.birth.birth_datetime.date()
+    if target_date <= birth_date:
+        return None
+
+    moon_lon = bundle.d1.planets[Graha.MOON.value].longitude
+    mahadashas = compute_vimshottari_dashas(moon_lon, birth_date, span_years=120)
+    maha, antar = _active_maha_antar(mahadashas, target_date)
+    if maha is None or antar is None:
+        return None
+
+    if chara is None:
+        chara = compute_chara_karakas(bundle)
+    if indu is None:
+        indu = compute_indu_lagna(bundle)
+
+    sig = _build_significators(bundle, domain, chara, indu)
+    d_score, d_factors = _score_dasha(
+        bundle, domain, maha, antar, birth_date, sig, include_age_prior=False
+    )
+
+    v_score, v_factors = 0, []
+    if domain.varga and domain.varga in bundle.vargas:
+        v_score, v_factors = _score_varga(
+            domain, bundle.vargas[domain.varga], maha.graha, antar.graha
+        )
+
+    t_score, t_summary = 0, None
+    if engine is not None:
+        try:
+            jm, sm = _transit_from_moon(bundle, engine, target_date)
+            t_score, t_summary = _score_gochara(domain, jm, sm)
+        except Exception:
+            pass
+
+    factors = d_factors + v_factors + ([t_summary] if t_summary else [])
+    return {
+        "domain_key":      domain_key,
+        "label":           domain.label,
+        "emoji":           domain.emoji,
+        "mahadasha_lord":  maha.graha.value,
+        "antardasha_lord": antar.graha.value,
+        "score":           d_score + v_score + t_score,
+        "dasha_score":     d_score,
+        "varga_score":     v_score,
+        "transit_score":   t_score,
+        "factors":         factors,
+    }
 
 
 # ── Main computation ────────────────────────────────────────────────────────────

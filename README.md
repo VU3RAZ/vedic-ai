@@ -10,6 +10,7 @@ Accepts birth data, computes a canonical Jyotish horoscope using Swiss Ephemeris
 
 ## What's new (2026-06)
 
+- **Birth-Time Rectification** — supply the *actual* dates of major life events and the engine searches candidate birth times (±window) to find the one whose chart most strongly activates those events on those dates (inverse of the timeline; classical age-prior disabled since the date is known). Two-stage coarse/fine search, ~30 charts in <1 s. Returns the rectified time, fitness improvement, Lagna/Moon changes, per-event activation breakdown, and top candidates. `POST /rectify/compute` — no LLM required. New **🎯 Rectify** tab with Apply-&-recompute. See [docs/rectification.md](docs/rectification.md).
 - **Life Events Timeline** — a 120-year śāstra-based timing engine predicting *when* key life events occur (education, career, marriage, children, property, vehicle, wealth, health, foreign travel, spirituality). Combines Vimśottarī daśā-phala (BPHS 46-47), Jaimini Chara Kārakas (JS 1.1), Ṣoḍaśavarga confirmation (BPHS 7), Indu Lagna (Jātaka Pārijāta), and Guru/Śani Gochara from Moon (Phaladīpikā 26). Every factor cites its source. `POST /life-events/compute` — no LLM required. New **🕐 Timeline** tab with age bar, Chara Kāraka panel, and cited event cards. See [docs/life_events_timeline.md](docs/life_events_timeline.md).
 
 ## What's new (2026-05)
@@ -179,6 +180,8 @@ Start the server with `vedic-ai serve`, then:
 | POST | `/charts/compute` | Compute chart only (no prediction) |
 | POST | `/transits/compute` | Gochara transit analysis (no LLM — instant) |
 | POST | `/life-events/compute` | 120-year life events timeline (daśā + varga + Jaimini + Gochara — no LLM) |
+| POST | `/rectify/compute` | Birth-time rectification from known event dates (no LLM) |
+| GET | `/rectify/domains` | Event-domain catalog for rectification/timeline selectors |
 | GET | `/docs` | Interactive Swagger UI |
 
 **`POST /predictions` body:**

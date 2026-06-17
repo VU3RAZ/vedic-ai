@@ -1155,6 +1155,78 @@
     }
     .le-placeholder-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
 
+    /* ── Rectification tab ── */
+    .rc-event-row {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 6px;
+    }
+    .rc-event-row select, .rc-event-row input[type=date] {
+      padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 0.8rem;
+    }
+    .rc-event-row select { flex: 1; }
+    .rc-del-btn {
+      background: rgba(239,68,68,0.15); color: #f87171; border: none;
+      border-radius: 6px; width: 28px; height: 28px; cursor: pointer; font-size: 1rem;
+    }
+    .rc-del-btn:hover { background: rgba(239,68,68,0.3); }
+    .rc-add-btn {
+      background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid #7c3aed44;
+      border-radius: 6px; padding: 5px 12px; font-size: 0.78rem; cursor: pointer; margin-top: 4px;
+    }
+    .rc-add-btn:hover { background: rgba(124,58,237,0.3); }
+    .rc-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+    .rc-controls label { font-size: 0.76rem; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+    .rc-controls select {
+      padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 0.8rem;
+    }
+    .rc-run-btn {
+      background: #7c3aed; color: #fff; border: none; border-radius: 6px;
+      padding: 8px 18px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    }
+    .rc-run-btn:hover:not(:disabled) { background: #6d28d9; }
+    .rc-run-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* Result hero */
+    .rc-hero {
+      display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+      padding: 14px 18px; border-radius: 10px; margin: 8px 0;
+      background: linear-gradient(90deg, rgba(124,58,237,0.14), rgba(16,185,129,0.10));
+      border: 1px solid #7c3aed44;
+    }
+    .rc-hero-block { display: flex; flex-direction: column; gap: 2px; }
+    .rc-hero-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .rc-hero-time  { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .rc-hero-arrow { font-size: 1.4rem; color: #a78bfa; }
+    .rc-hero-new   { color: #34d399; }
+    .rc-delta-badge {
+      font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 14px;
+      background: rgba(16,185,129,0.18); color: #34d399;
+    }
+    .rc-apply-btn {
+      background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid #10b98144;
+      border-radius: 6px; padding: 6px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    }
+    .rc-apply-btn:hover { background: rgba(16,185,129,0.32); }
+    .rc-note { font-size: 0.74rem; color: var(--muted); margin: 4px 0; }
+    .rc-changed { color: #fbbf24; font-weight: 600; }
+
+    /* Per-event fit table */
+    .rc-fit-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 6px; }
+    .rc-fit-table th { text-align: left; padding: 5px 8px; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 600; }
+    .rc-fit-table td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .rc-fit-pos { color: #34d399; font-weight: 700; }
+    .rc-fit-neg { color: #f87171; font-weight: 700; }
+
+    /* Candidate list */
+    .rc-cand-row {
+      display: flex; gap: 12px; align-items: center; padding: 5px 10px;
+      border-radius: 6px; font-size: 0.78rem; border: 1px solid var(--border); margin-bottom: 4px;
+    }
+    .rc-cand-best { border-color: #34d399; background: rgba(16,185,129,0.08); }
+    .rc-bar-track { flex: 1; height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+    .rc-bar-fill  { height: 100%; background: linear-gradient(90deg,#7c3aed,#34d399); }
+
     /* ── LLM Debug tab ── */
     .dbg-block {
       border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
@@ -2287,6 +2359,7 @@
         <button class="tab-btn"        id="tab-nakshatra-btn"  onclick="switchTab('chart-tabs','ctab','tab-nakshatra')">&#9790; Nakshatra</button>
         <button class="tab-btn"        id="tab-chat-btn"       onclick="switchTab('chart-tabs','ctab','tab-chat')">&#128172; Chat</button>
         <button class="tab-btn"        id="tab-timeline-btn"   onclick="switchTab('chart-tabs','ctab','tab-timeline')">&#128336; Timeline</button>
+        <button class="tab-btn"        id="tab-rectify-btn"     onclick="switchTab('chart-tabs','ctab','tab-rectify'); rcInit()">&#127919; Rectify</button>
       </div>
 
       <!-- Chart tab -->
@@ -2419,6 +2492,52 @@
           <div class="le-placeholder">
             <span class="le-placeholder-icon">&#128336;</span>
             Click <strong>Compute Timeline</strong> to analyse life events across 120 years using Vimshottari Dasha, divisional charts, and karaka theory.
+          </div>
+        </div>
+      </div>
+
+      <!-- Birth-Time Rectification tab -->
+      <div class="tab-panel ctab" id="tab-rectify-panel">
+        <div class="le-header">
+          <span style="font-size:1.4rem">&#127919;</span>
+          <div>
+            <div class="le-header-title">Birth-Time Rectification</div>
+            <div class="le-header-sub">Enter dates of major life events → find the birth time that best matches them</div>
+          </div>
+        </div>
+        <div class="result-card">
+          <div class="result-card-header">&#128197; Known Life Events
+            <span style="font-weight:400;font-size:0.76rem;color:var(--muted);margin-left:8px">Add the actual date of each event you remember. More events = more accurate.</span>
+          </div>
+          <div id="rc-events"></div>
+          <button class="rc-add-btn" onclick="rcAddEventRow()">+ Add event</button>
+          <div class="rc-controls">
+            <label>Search window
+              <select id="rc-window">
+                <option value="30">± 30 min</option>
+                <option value="60">± 1 hour</option>
+                <option value="120" selected>± 2 hours</option>
+                <option value="240">± 4 hours</option>
+                <option value="360">± 6 hours</option>
+                <option value="720">± 12 hours (time unknown)</option>
+              </select>
+            </label>
+            <label>Coarse step
+              <select id="rc-coarse">
+                <option value="5">5 min</option>
+                <option value="10">10 min</option>
+                <option value="15" selected>15 min</option>
+                <option value="30">30 min</option>
+              </select>
+            </label>
+            <button class="rc-run-btn" id="rc-run-btn" onclick="runRectify()">&#127919; Rectify Birth Time</button>
+            <span class="le-spinner" id="rc-spinner" style="display:none">&#8987; Searching candidate times…</span>
+          </div>
+        </div>
+        <div id="rc-content">
+          <div class="le-placeholder">
+            <span class="le-placeholder-icon">&#127919;</span>
+            Add at least one known life-event date above, then click <strong>Rectify Birth Time</strong>.
           </div>
         </div>
       </div>`;
@@ -3774,6 +3893,179 @@
       _leActiveCategories.add(cat);
     }
     renderLifeEventsTimeline();
+  }
+
+  // ── Birth-Time Rectification ──────────────────────────────────────────────
+
+  let _rcDomains = null;
+  let _rcInitDone = false;
+
+  async function rcLoadDomains() {
+    if (_rcDomains) return _rcDomains;
+    try {
+      const r = await fetch('/rectify/domains');
+      _rcDomains = (await r.json()).domains || [];
+    } catch (e) { _rcDomains = []; }
+    return _rcDomains;
+  }
+
+  async function rcInit() {
+    await rcLoadDomains();
+    const wrap = document.getElementById('rc-events');
+    if (wrap && !_rcInitDone && wrap.children.length === 0) {
+      _rcInitDone = true;
+      rcAddEventRow('marriage');
+      rcAddEventRow('career_start');
+    }
+  }
+
+  function rcAddEventRow(domainKey, dateVal) {
+    const wrap = document.getElementById('rc-events');
+    if (!wrap) return;
+    const opts = (_rcDomains || []).map(d =>
+      `<option value="${d.key}" ${d.key === domainKey ? 'selected' : ''}>${d.emoji} ${escapeHTML(d.label)}</option>`
+    ).join('');
+    const row = document.createElement('div');
+    row.className = 'rc-event-row';
+    row.innerHTML = `
+      <select class="rc-domain">${opts}</select>
+      <input type="date" class="rc-date" value="${dateVal || ''}" />
+      <button class="rc-del-btn" onclick="this.parentElement.remove()">&times;</button>`;
+    wrap.appendChild(row);
+  }
+
+  async function runRectify() {
+    if (!_lastBirthForm) { alert('Please compute the natal chart first.'); return; }
+    const rows = Array.from(document.querySelectorAll('#rc-events .rc-event-row'));
+    const events = rows.map(r => ({
+      domain_key:  r.querySelector('.rc-domain').value,
+      actual_date: r.querySelector('.rc-date').value,
+    })).filter(e => e.actual_date);
+    if (events.length === 0) { alert('Add at least one event with a date.'); return; }
+
+    const btn     = document.getElementById('rc-run-btn');
+    const spinner = document.getElementById('rc-spinner');
+    const content = document.getElementById('rc-content');
+    btn.disabled = true; spinner.style.display = '';
+    content.innerHTML = '<div class="le-placeholder"><span class="le-placeholder-icon">&#8987;</span>Searching candidate birth times…</div>';
+
+    try {
+      const resp = await fetch('/rectify/compute', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          birth_datetime: _lastBirthForm.birth_datetime,
+          latitude:  _lastBirthForm.latitude,
+          longitude: _lastBirthForm.longitude,
+          place_name: _lastBirthForm.place_name || null,
+          name:       _lastBirthForm.name || null,
+          events,
+          window_minutes: parseInt(document.getElementById('rc-window').value, 10),
+          coarse_step:    parseInt(document.getElementById('rc-coarse').value, 10),
+          fine_step:      2,
+        }),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+        content.innerHTML = `<div class="le-placeholder" style="color:var(--error)">&#10006; ${escapeHTML(err.detail || resp.statusText)}</div>`;
+        return;
+      }
+      renderRectify(await resp.json());
+    } catch (err) {
+      content.innerHTML = `<div class="le-placeholder" style="color:var(--error)">&#10006; ${escapeHTML(err.message)}</div>`;
+    } finally {
+      btn.disabled = false; spinner.style.display = 'none';
+    }
+  }
+
+  function _rcTimeStr(iso) {
+    // iso like 1972-08-15T11:30:00+05:30 → "1972-08-15 11:30"
+    return iso.replace('T', ' ').slice(0, 16);
+  }
+
+  function renderRectify(d) {
+    const content = document.getElementById('rc-content');
+    const o = d.original, b = d.best;
+    const sign = d.delta_minutes >= 0 ? '+' : '';
+    const deltaTxt = `${sign}${d.delta_minutes} min`;
+
+    const changes = [];
+    if (d.lagna_changed) changes.push(`Lagna ${escapeHTML(o.lagna_sign)} → <span class="rc-changed">${escapeHTML(b.lagna_sign)}</span>`);
+    else changes.push(`Lagna ${escapeHTML(b.lagna_sign)} (unchanged)`);
+    if (d.moon_sign_changed) changes.push(`Moon ${escapeHTML(o.moon_sign)} → <span class="rc-changed">${escapeHTML(b.moon_sign)}</span>`);
+    changes.push(`Moon nakṣatra: ${escapeHTML(b.moon_nakshatra)}`);
+
+    // Per-event fit (best candidate)
+    const fitRows = (b.per_event || []).map(e => {
+      if (e.score === null) {
+        return `<tr><td>${escapeHTML(e.domain_key)}</td><td>${escapeHTML(e.actual_date)}</td><td colspan="3" style="color:var(--muted)">${escapeHTML(e.note || '—')}</td></tr>`;
+      }
+      const cls = e.score >= 0 ? 'rc-fit-pos' : 'rc-fit-neg';
+      return `<tr>
+        <td>${e.emoji || ''} ${escapeHTML(e.label || e.domain_key)}</td>
+        <td>${escapeHTML(e.actual_date)}</td>
+        <td><span class="${cls}">${e.score}</span></td>
+        <td>${escapeHTML(e.mahadasha_lord)}/${escapeHTML(e.antardasha_lord)}</td>
+        <td style="color:var(--muted);font-size:0.72rem">D:${e.dasha_score} V:${e.varga_score} T:${e.transit_score}</td>
+      </tr>`;
+    }).join('');
+
+    // Candidate bars (normalise to max)
+    const maxFit = Math.max(...d.candidates.map(c => c.total_fit), 1);
+    const minFit = Math.min(...d.candidates.map(c => c.total_fit), 0);
+    const range = (maxFit - minFit) || 1;
+    const candRows = d.candidates.map(c => {
+      const pct = Math.round(((c.total_fit - minFit) / range) * 100);
+      const isBest = c.offset_minutes === b.offset_minutes;
+      const s = c.offset_minutes >= 0 ? '+' : '';
+      return `<div class="rc-cand-row ${isBest ? 'rc-cand-best' : ''}">
+        <span style="width:70px">${_rcTimeStr(c.birth_datetime).slice(11)}</span>
+        <span style="width:60px;color:var(--muted)">${s}${c.offset_minutes}m</span>
+        <span style="width:64px">${escapeHTML(c.lagna_sign)}</span>
+        <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
+        <span style="width:48px;text-align:right;font-weight:700">${c.total_fit}</span>
+      </div>`;
+    }).join('');
+
+    content.innerHTML = `
+      <div class="rc-hero">
+        <div class="rc-hero-block">
+          <span class="rc-hero-label">Given time</span>
+          <span class="rc-hero-time">${_rcTimeStr(o.birth_datetime)}</span>
+          <span class="rc-hero-label">fit ${o.total_fit}</span>
+        </div>
+        <span class="rc-hero-arrow">&#10142;</span>
+        <div class="rc-hero-block">
+          <span class="rc-hero-label">Rectified time</span>
+          <span class="rc-hero-time rc-hero-new">${_rcTimeStr(b.birth_datetime)}</span>
+          <span class="rc-hero-label">fit ${b.total_fit} &nbsp; (improvement +${d.fit_improvement})</span>
+        </div>
+        <span class="rc-delta-badge">${deltaTxt}</span>
+        <button class="rc-apply-btn" onclick="rcApplyTime('${b.birth_datetime}')">Apply &amp; recompute</button>
+      </div>
+      <div class="rc-note">${changes.join(' &nbsp;·&nbsp; ')}</div>
+      <div class="result-card">
+        <div class="result-card-header">&#127919; Event Activation at Rectified Time
+          <span style="font-weight:400;font-size:0.74rem;color:var(--muted);margin-left:8px">Higher score = chart activates the event more strongly on your date (D=daśā, V=varga, T=transit)</span>
+        </div>
+        <table class="rc-fit-table">
+          <thead><tr><th>Event</th><th>Your date</th><th>Fit</th><th>MD/AD</th><th>Breakdown</th></tr></thead>
+          <tbody>${fitRows}</tbody>
+        </table>
+      </div>
+      <div class="result-card">
+        <div class="result-card-header">&#128202; Top Candidate Times
+          <span style="font-weight:400;font-size:0.74rem;color:var(--muted);margin-left:8px">${d.search.evaluated} times evaluated within ±${d.search.window_minutes} min</span>
+        </div>
+        ${candRows}
+      </div>
+      <div class="rc-note" style="font-style:italic">${escapeHTML(d.disclaimer || '')}</div>`;
+  }
+
+  function rcApplyTime(iso) {
+    // iso e.g. 1972-08-15T11:30:00+05:30 → set bdt (datetime-local) to first 16 chars
+    const bdt = document.getElementById('bdt');
+    if (bdt) bdt.value = iso.slice(0, 16);
+    alert('Rectified time applied to the birth form. Click "Analyze Chart" to recompute with the new time.');
   }
 </script>
 
