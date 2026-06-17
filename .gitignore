@@ -70,3 +70,9 @@ rahul_*.json
 session
 FIXES_AND_CONFIG.md
 configs/models.yaml
+
+# Secrets — never commit API keys
+configs/gemini_api
+*.key
+*_api_key*
+.env
