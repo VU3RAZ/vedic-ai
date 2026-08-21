@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -10,6 +11,57 @@ import yaml
 
 from vedic_ai.core.exceptions import ConfigError
 from vedic_ai.domain.corpus import CorpusManifest, SourceFile
+
+# Some corpus sources (e.g. the Santhanam BPHS scans) are OCR'd from
+# Devanagari originals; failed transliteration leaves lines of Latin-script
+# noise like "ft*T *TT*5m" interleaved with clean English commentary.
+_WORD_RE = re.compile(r"^[A-Za-z][A-Za-z'\-]*$")
+_OCR_NOISE_CHARS = set("*^~«»\\|„”¢£¥§¤¬¦¡¿")
+_MID_TOKEN_CASE_FLIP_RE = re.compile(r"[a-z][A-Z]")
+
+
+def _word_flag(word: str) -> str:
+    """Classify a whitespace-split token as 'real' English, OCR 'noise'/'junk', or 'skip'."""
+    core = word.strip(".,;:!?()[]{}\"'‘’“”-–—")
+    if not core:
+        return "skip"
+    if any(c in _OCR_NOISE_CHARS for c in core):
+        return "noise"
+    if _MID_TOKEN_CASE_FLIP_RE.search(core[1:]):
+        return "noise"
+    alpha = sum(c.isalpha() for c in core)
+    if alpha == 0:
+        return "skip"
+    vowel_ratio = sum(c in "aeiouAEIOU" for c in core) / alpha
+    if _WORD_RE.match(core) and vowel_ratio > 0.15:
+        return "real"
+    return "junk"
+
+
+def _is_garbled_line(line: str, min_len: int = 8) -> bool:
+    """Detect an OCR-mangled line.
+
+    Deliberately conservative — tuned to produce zero false positives across
+    hand-authored corpus texts (headers, numeric lists, ISBN/citation lines),
+    at the cost of missing some genuine OCR garbage. Only flags a line when
+    it has no recognizable English word at all and is mostly noise/junk
+    tokens.
+    """
+    stripped = line.strip()
+    if len(stripped) < min_len:
+        return False
+    scored = [f for f in (_word_flag(w) for w in stripped.split()) if f != "skip"]
+    if len(scored) < 2:
+        return False
+    bad = sum(1 for f in scored if f in ("noise", "junk"))
+    real = sum(1 for f in scored if f == "real")
+    return real == 0 and bad / len(scored) > 0.6
+
+
+def filter_garbled_lines(text: str) -> str:
+    """Drop OCR-garbled lines from text, preserving the rest as-is."""
+    kept = [line for line in text.splitlines() if not _is_garbled_line(line)]
+    return "\n".join(kept)
 
 
 def _split_frontmatter(content: str) -> tuple[dict, str]:

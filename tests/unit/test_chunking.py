@@ -16,7 +16,13 @@ from vedic_ai.domain.corpus import (
     SourceFile,
 )
 from vedic_ai.retrieval.chunker import _chunk_text, chunk_corpus_documents
-from vedic_ai.retrieval.corpus_loader import _split_frontmatter, ingest_corpus, load_manifest
+from vedic_ai.retrieval.corpus_loader import (
+    _is_garbled_line,
+    _split_frontmatter,
+    filter_garbled_lines,
+    ingest_corpus,
+    load_manifest,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -74,6 +80,49 @@ class TestSplitFrontmatter:
         meta, body = _split_frontmatter(content)
         assert meta == {}
         assert body == "Body only."
+
+
+# ---------------------------------------------------------------------------
+# TestGarbledLineFilter
+# ---------------------------------------------------------------------------
+
+class TestGarbledLineFilter:
+    @pytest.mark.parametrize("line", [
+        "ft*T *TT*5m aft** qnjliYH",
+        "tTTRTT *TTcf: 1 aft** qnjliYH",
+        "aft** qnjliYH ^TfWR fRftnRI",
+    ])
+    def test_detects_ocr_garbage(self, line):
+        assert _is_garbled_line(line) is True
+
+    @pytest.mark.parametrize("line", [
+        "From the Sun's own natal position: benefic points fall in signs 1, 2, 4, 7, 8, 9, 10, 11",
+        "D1 (Rashi): 3 points",
+        "CHAPTER 1 — THE SUN (SURYA)",
+        "ISBN: 81-208-0844-4 (Cloth)",
+        "4. **Matrukaraka (MK)** — Mother and home significator, fourth highest longitude.",
+        "The Sun placed in the tenth house confers prominence and authority in career.",
+    ])
+    def test_spares_clean_prose(self, line):
+        assert _is_garbled_line(line) is False
+
+    def test_short_lines_never_flagged(self):
+        assert _is_garbled_line("be understood.") is False
+        assert _is_garbled_line("WTWT") is False
+
+    def test_filter_drops_only_garbled_lines(self):
+        text = (
+            "The tenth house governs career and status.\n"
+            "ft*T *TT*5m aft** qnjliYH\n"
+            "Saturn builds discipline over a long professional life.\n"
+        )
+        filtered = filter_garbled_lines(text)
+        assert "tenth house governs career" in filtered
+        assert "Saturn builds discipline" in filtered
+        assert "qnjliYH" not in filtered
+
+    def test_filter_is_noop_on_clean_text(self):
+        assert filter_garbled_lines(BODY_TEXT) == BODY_TEXT
 
 
 # ---------------------------------------------------------------------------
@@ -185,6 +234,29 @@ class TestChunkText:
         text = "P" * 700
         chunks = _chunk_text(text, "BPHS", 24, 600, 100, 100, seq_start=5)
         assert chunks[0].chunk_id == "bphs_024_0005"
+
+    def test_sentence_boundary_preferred_over_hard_cut(self):
+        # A sentence boundary sits inside the window, past the floor
+        # (start + chunk_size//2 == 300) and before hard_end (600), so the
+        # chunk should end there, not mid-sentence at the 600-char hard cut.
+        prefix = "T" * 400
+        sentence_end = "The tenth house lord in a kendra gives a solid career foundation."
+        text = prefix + " " + sentence_end + " " + ("Q" * 700)
+        chunks = _chunk_text(text, "BPHS", 24, 600, 100, 100)
+        assert chunks[0].text.rstrip() == prefix + " " + sentence_end
+        assert chunks[0].text.rstrip()[-1] == "."
+
+    def test_no_sentence_boundary_falls_back_to_hard_cut(self):
+        text = "R" * 1800
+        chunks = _chunk_text(text, "BPHS", 24, 600, 100, 100)
+        assert len(chunks[0].text) == 600
+
+    def test_paragraph_break_preferred_boundary(self):
+        para1 = "Saturn builds discipline. " * 10
+        para2 = "S" * 500
+        text = para1 + "\n\n" + para2
+        chunks = _chunk_text(text, "BPHS", 24, len(para1) + 50, 20, 50)
+        assert chunks[0].text.rstrip() == para1.rstrip()
 
 
 # ---------------------------------------------------------------------------

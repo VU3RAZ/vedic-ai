@@ -29,6 +29,13 @@ from vedic_ai.retrieval import (
 CORPUS_DIR = Path(__file__).parents[2] / "data" / "corpus" / "texts"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
+# These tests exercise the pipeline against the real BPHS chapter files only
+# (not the full production corpus, which has since grown to include other
+# texts like Ashtakavarga, Jaimini Sutras, etc. — those aren't BPHS and
+# aren't chaptered the same way, so pulling them in would make source/chapter
+# assertions below meaningless).
+BPHS_FILES = sorted(CORPUS_DIR.glob("bphs_ch*.txt"))
+
 
 # ---------------------------------------------------------------------------
 # Session-scoped fixtures — build index once for all tests
@@ -37,13 +44,14 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 @pytest.fixture(scope="session")
 def corpus_dir():
     assert CORPUS_DIR.exists(), f"Seed corpus not found at {CORPUS_DIR}"
+    assert BPHS_FILES, f"No bphs_ch*.txt files found in {CORPUS_DIR}"
     return CORPUS_DIR
 
 
 @pytest.fixture(scope="session")
 def manifest(tmp_path_factory, corpus_dir):
     out = tmp_path_factory.mktemp("retrieval") / "out"
-    return ingest_corpus([str(corpus_dir)], str(out))
+    return ingest_corpus([str(p) for p in BPHS_FILES], str(out))
 
 
 @pytest.fixture(scope="session")
@@ -76,8 +84,8 @@ def retriever(chunks, handle):
 # ---------------------------------------------------------------------------
 
 class TestIngestion:
-    def test_manifest_has_four_sources(self, manifest):
-        assert len(manifest.sources) == 4
+    def test_manifest_has_expected_source_count(self, manifest):
+        assert len(manifest.sources) == len(BPHS_FILES)
 
     def test_all_sources_are_bphs(self, manifest):
         assert all(s.source == "BPHS" for s in manifest.sources)
