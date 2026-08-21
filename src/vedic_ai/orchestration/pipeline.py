@@ -18,6 +18,7 @@ from vedic_ai.orchestration.evidence_builder import (
     generate_scope_report,
 )
 from vedic_ai.orchestration.prediction_service import (
+    build_raman_interpretation,
     call_llm_for_interpretation,
     evaluate_scope_rules,
 )
@@ -126,10 +127,18 @@ def run_prediction_pipeline(
         except Exception as exc:
             logger.warning("Gochara computation failed (continuing without transit context): %s", exc)
 
-    # 6. LLM interpretation (synthesis only — engine findings are the factual base)
+    # 6. Interpretation. raman_method is deterministic — book-derived HTJH
+    #    flowchart findings only, no LLM call. Otherwise LLM synthesis
+    #    (unless dry_run / no client, which returns evidence only).
     debug_prompt = ""
     debug_raw    = ""
-    if dry_run or llm_client is None:
+    if raman_method:
+        interpretation, debug_prompt, debug_raw = build_raman_interpretation(
+            bundle, features, triggers, passages, scope,
+            gochara_context=gochara_context,
+        )
+        logger.info("Raman method: deterministic HTJH interpretation (no LLM call)")
+    elif dry_run or llm_client is None:
         interpretation: dict = {
             "summary": f"Dry-run interpretation for scope '{scope}'.",
             "details": [t.explanation for t in triggers],

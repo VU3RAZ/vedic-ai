@@ -126,6 +126,11 @@ def _status3(pos: int, neg: int) -> str:
         return "favorable"
     if neg >= 2 and pos == 0:
         return "concern"
+    if pos >= 2 and neg >= 2:
+        # A genuine tie must not silently resolve to "concern" — that biases
+        # every borderline house toward pessimism regardless of how strong
+        # the positive factors are.
+        return "mixed"
     if neg >= 2:
         return "concern"
     if pos >= 2:
@@ -485,8 +490,13 @@ def _analyze_house(h: int, f: dict, fn: dict) -> dict:  # noqa: C901
 
     # — Lord placement
     own_house = (lh == h)
+    lord_in_dusthana = (not own_house) and (lh in _UNFAVORABLE)
     lord_fav = own_house or (lh in _FAVORABLE)
-    lord_bad = (not own_house) and (lh in _UNFAVORABLE or _is_weak(ld))
+    # HTJH principle: an exalted/own-sign/moolatrikona lord cannot be denied
+    # its significations by a dusthana placement — results are redirected,
+    # not lost. Only count the placement as adverse when the lord is not
+    # strong there; weak dignity is always adverse regardless of house.
+    lord_bad = (lord_in_dusthana and not _is_strong(ld)) or ((not own_house) and _is_weak(ld))
     finds.append(
         f"House lord: {lord} in H{lh} ({ld}) — "
         f"{'own house (self-reliant)' if own_house else 'favorable' if lord_fav else 'adverse' if lh in _UNFAVORABLE else 'neutral'} placement"
@@ -497,6 +507,21 @@ def _analyze_house(h: int, f: dict, fn: dict) -> dict:  # noqa: C901
         finds.append(f"  ✗ {lord} is debilitated — house significations weakened/reversed.")
     if hd.get("lord_is_retrograde"):
         finds.append(f"  {lord} is retrograde — results intensified or delayed then sudden.")
+
+    if lord_in_dusthana and _is_strong(ld):
+        finds.append(
+            f"  ✓ MODIFICATION, NOT DENIAL: {lord} rules H{h} and sits {ld} in dusthana H{lh} — "
+            f"HTJH principle: an exalted/strong lord cannot be denied its significations; "
+            f"results are redirected through H{lh}'s domain rather than lost."
+        )
+        for vry in f.get("yogas", {}).get("viparita_raja_yogas", []):
+            if vry.get("lord") == lord and vry.get("placed_in_house") == lh:
+                finds.append(
+                    f"  Note: {lord} also forms Viparita Raja Yoga (rules H{vry.get('owns_house')}, "
+                    f"placed H{lh}) — success often follows initial difficulty, reinforcing the "
+                    f"redirection reading above."
+                )
+                break
 
     # — Karaka conditions
     kar_ok = kar_bad = False
@@ -565,6 +590,11 @@ def _h1_rules(f: dict, fn: dict, finds: list[str]) -> None:
     # Lagna lord strength
     if ll_h in KENDRA_HOUSES | TRIKONA_HOUSES:
         finds.append(f"✓ Lagna lord {ll} in kendra/trikona H{ll_h} — strong personality, good constitution.")
+    elif ll_h in DUSTHANA_HOUSES and _is_strong(ll_d):
+        finds.append(
+            f"✓ Lagna lord {ll} ({ll_d}) in dusthana H{ll_h} — HTJH: an exalted/strong lagna lord "
+            f"is not denied; vitality is redirected through H{ll_h}'s domain rather than lost."
+        )
     elif ll_h in DUSTHANA_HOUSES:
         finds.append(f"✗ Lagna lord {ll} in dusthana H{ll_h} — health vulnerabilities, life obstacles.")
     if _is_strong(ll_d):
@@ -589,8 +619,9 @@ def _h1_rules(f: dict, fn: dict, finds: list[str]) -> None:
         finds.append("✓ Moon in kendra — emotional security and strong mind.")
 
     # Health triad
+    ll_h_bad = ll_h in _UNFAVORABLE and not _is_strong(ll_d)
     pos = sum([ll_h in _FAVORABLE, _is_strong(ll_d), _is_strong(sd), _is_strong(md)])
-    neg = sum([ll_h in _UNFAVORABLE, _is_weak(ll_d), _is_weak(sd), _is_weak(md)])
+    neg = sum([ll_h_bad, _is_weak(ll_d), _is_weak(sd), _is_weak(md)])
     if pos >= 3:
         finds.append("✓ HEALTH TRIAD (Lagna/Sun/Moon): Excellent constitution indicated — strong vitality.")
     elif neg >= 2:
@@ -610,8 +641,14 @@ def _h2_rules(f: dict, fn: dict, finds: list[str]) -> None:
     elif _is_weak(jd):
         finds.append(f"✗ Jupiter debilitated — karaka weak; wealth accumulation requires effort.")
 
+    h2_ld = _lord_dignity(f, 2)
     if h2_lh in _FAVORABLE:
         finds.append(f"✓ 2nd lord {h2_lord} in H{h2_lh} — income and family stable.")
+    elif h2_lh in _UNFAVORABLE and _is_strong(h2_ld):
+        finds.append(
+            f"✓ 2nd lord {h2_lord} ({h2_ld}) in dusthana H{h2_lh} — HTJH: an exalted/strong lord "
+            f"redirects wealth/speech significations through H{h2_lh} rather than denying them."
+        )
     elif h2_lh in _UNFAVORABLE:
         finds.append(f"✗ 2nd lord {h2_lord} in dusthana H{h2_lh} — wealth loss or family troubles indicated.")
 
@@ -642,10 +679,16 @@ def _h3_rules(f: dict, fn: dict, finds: list[str]) -> None:
             f"⚠ Malefics in H3 ({', '.join(mal_in_3)}) — HTJH: troubled siblings BUT enhanced courage."
         )
 
-    if h3_lh in _UNFAVORABLE:
-        finds.append(f"✗ 3rd lord {h3_lord} in dusthana H{h3_lh} — loss or harm to siblings; communication issues.")
-    elif h3_lh in _FAVORABLE:
+    h3_ld = _lord_dignity(f, 3)
+    if h3_lh in _FAVORABLE:
         finds.append(f"✓ 3rd lord {h3_lord} in H{h3_lh} — siblings prosper; short travels beneficial.")
+    elif h3_lh in _UNFAVORABLE and _is_strong(h3_ld):
+        finds.append(
+            f"✓ 3rd lord {h3_lord} ({h3_ld}) in dusthana H{h3_lh} — HTJH: an exalted/strong lord "
+            f"redirects courage/sibling significations through H{h3_lh} rather than denying them."
+        )
+    elif h3_lh in _UNFAVORABLE:
+        finds.append(f"✗ 3rd lord {h3_lord} in dusthana H{h3_lh} — loss or harm to siblings; communication issues.")
 
 
 def _h4_rules(f: dict, fn: dict, finds: list[str]) -> None:
@@ -668,10 +711,16 @@ def _h4_rules(f: dict, fn: dict, finds: list[str]) -> None:
     mal_in_4 = [o for o in h4_occ if _fn_role(o, fn) == "malefic"]
     if mal_in_4:
         finds.append(f"✗ Malefics in H4 ({', '.join(mal_in_4)}) — HTJH: unhappy home life, troubled relationship with mother.")
-    if h4_lh in _UNFAVORABLE:
-        finds.append(f"✗ 4th lord {h4_lord} in H{h4_lh} — domestic peace and property adversely affected.")
-    elif h4_lh in _FAVORABLE:
+    h4_ld = _lord_dignity(f, 4)
+    if h4_lh in _FAVORABLE:
         finds.append(f"✓ 4th lord {h4_lord} in H{h4_lh} — education, property, and domestic happiness supported.")
+    elif h4_lh in _UNFAVORABLE and _is_strong(h4_ld):
+        finds.append(
+            f"✓ 4th lord {h4_lord} ({h4_ld}) in dusthana H{h4_lh} — HTJH: an exalted/strong lord "
+            f"redirects home/mother significations through H{h4_lh} rather than denying them."
+        )
+    elif h4_lh in _UNFAVORABLE:
+        finds.append(f"✗ 4th lord {h4_lord} in H{h4_lh} — domestic peace and property adversely affected.")
 
 
 def _h5_rules(f: dict, fn: dict, finds: list[str]) -> None:
@@ -685,8 +734,15 @@ def _h5_rules(f: dict, fn: dict, finds: list[str]) -> None:
     elif _is_weak(jd):
         finds.append(f"✗ Jupiter debilitated — Putrakaraka weak; children and intellectual pursuits need support.")
 
+    h5_ld = _lord_dignity(f, 5)
     if h5_lh in _FAVORABLE:
         finds.append(f"✓ 5th lord {h5_lord} in H{h5_lh} — progeny, creativity, and speculative gains favored.")
+    elif h5_lh in _UNFAVORABLE and _is_strong(h5_ld):
+        finds.append(
+            f"✓ 5th lord {h5_lord} ({h5_ld}) in dusthana H{h5_lh} — HTJH: an exalted/strong lord is "
+            f"not denied children/intelligence; results are redirected through H{h5_lh}'s domain "
+            f"(e.g. foreign residence, spirituality, subconscious pursuits) rather than lost."
+        )
     elif h5_lh in _UNFAVORABLE:
         finds.append(f"✗ 5th lord {h5_lord} in dusthana H{h5_lh} — difficulty with children or creative expression.")
 
@@ -742,8 +798,14 @@ def _h7_rules(f: dict, fn: dict, finds: list[str]) -> None:
     elif _is_weak(vd):
         finds.append(f"✗ Venus debilitated — Kalatrakaraka weak; marital happiness requires effort.")
 
+    h7_ld = _lord_dignity(f, 7)
     if h7_lh in _FAVORABLE:
         finds.append(f"✓ 7th lord {h7_lord} in H{h7_lh} — spouse and partnerships well indicated.")
+    elif h7_lh in _UNFAVORABLE and _is_strong(h7_ld):
+        finds.append(
+            f"✓ 7th lord {h7_lord} ({h7_ld}) in dusthana H{h7_lh} — HTJH: an exalted/strong lord "
+            f"redirects marriage/partnership significations through H{h7_lh} rather than denying them."
+        )
     elif h7_lh in _UNFAVORABLE:
         finds.append(f"✗ 7th lord {h7_lord} in dusthana H{h7_lh} — marital difficulties; partnerships strained.")
 
@@ -833,8 +895,14 @@ def _h9_rules(f: dict, fn: dict, finds: list[str]) -> None:
     elif _is_weak(sd):
         finds.append(f"✗ Sun debilitated — father-related difficulties; authority figures less helpful.")
 
+    h9_ld = _lord_dignity(f, 9)
     if h9_lh in _FAVORABLE:
         finds.append(f"✓ 9th lord {h9_lord} in H{h9_lh} — fortune, righteousness, and long journeys favored.")
+    elif h9_lh in _UNFAVORABLE and _is_strong(h9_ld):
+        finds.append(
+            f"✓ 9th lord {h9_lord} ({h9_ld}) in dusthana H{h9_lh} — HTJH: an exalted/strong lord "
+            f"redirects fortune/dharma significations through H{h9_lh} rather than denying them."
+        )
     elif h9_lh in _UNFAVORABLE:
         finds.append(f"✗ 9th lord {h9_lord} in dusthana H{h9_lh} — fortune adversely affected; dharma tested.")
 
@@ -878,8 +946,14 @@ def _h10_rules(f: dict, fn: dict, finds: list[str]) -> None:
         prof = prof_map.get(h10_lord, "career field determined by lord's sign/nakshatra")
         finds.append(f"  10th lord {h10_lord} ({ld}) in H{h10_lh} — {prof}")
 
+    h10_ld = _lord_dignity(f, 10)
     if h10_lh in _FAVORABLE:
         finds.append(f"✓ 10th lord {h10_lord} in H{h10_lh} — career advancement and public recognition supported.")
+    elif h10_lh in _UNFAVORABLE and _is_strong(h10_ld):
+        finds.append(
+            f"✓ 10th lord {h10_lord} ({h10_ld}) in dusthana H{h10_lh} — HTJH: an exalted/strong lord "
+            f"redirects career/status significations through H{h10_lh} rather than denying them."
+        )
     elif h10_lh in _UNFAVORABLE:
         finds.append(f"✗ 10th lord {h10_lord} in dusthana H{h10_lh} — career setbacks, professional obstacles.")
 
@@ -912,6 +986,12 @@ def _h11_rules(f: dict, fn: dict, finds: list[str]) -> None:
         )
     elif h11_lh in _FAVORABLE:
         finds.append(f"✓ 11th lord {h11_lord} in H{h11_lh} — financial gains, fulfilled aspirations.")
+    elif h11_lh in _UNFAVORABLE and _is_strong(_lord_dignity(f, 11)):
+        finds.append(
+            f"✓ 11th lord {h11_lord} ({_lord_dignity(f, 11)}) in dusthana H{h11_lh} — HTJH: an "
+            f"exalted/strong lord redirects gains/income significations through H{h11_lh} rather "
+            f"than denying them."
+        )
     elif h11_lh in _UNFAVORABLE:
         finds.append(f"✗ 11th lord {h11_lord} in dusthana H{h11_lh} — income unstable; aspirations thwarted.")
 
@@ -939,8 +1019,14 @@ def _h12_rules(f: dict, fn: dict, finds: list[str]) -> None:
     elif _is_weak(sd):
         finds.append(f"✗ Saturn debilitated — karaka weak; excessive expenditure, chronic fatigue.")
 
+    h12_ld = _lord_dignity(f, 12)
     if h12_lh in _FAVORABLE:
         finds.append(f"⚠ 12th lord {h12_lord} in H{h12_lh} — expenses and losses may be channeled productively.")
+    elif h12_lh in _UNFAVORABLE and h12_lh != 12 and _is_strong(h12_ld):
+        finds.append(
+            f"✓ 12th lord {h12_lord} ({h12_ld}) in dusthana H{h12_lh} — HTJH: an exalted/strong lord "
+            f"redirects loss/spirituality significations through H{h12_lh} rather than denying them."
+        )
     elif h12_lh in _UNFAVORABLE:
         finds.append(f"✗ 12th lord {h12_lord} in dusthana H{h12_lh} — heavy losses, imprisonment risk, wasteful spending.")
 
@@ -1908,4 +1994,115 @@ def _build_final_assessment(bundle: ChartBundle, f: dict, modules: list[dict]) -
         "lagna_lord":      f"{ll} ({ll_d}) in H{ll_h}",
         "moon":            f"{moon_d} in {moon_rasi} H{moon_h}",
         "current_dasha":   f"{ml} / {al}",
+    }
+
+
+# ── Scope-scoped extraction (for prompt grounding + LLM-free interpretation) ──
+
+_SCOPE_PRIMARY_HOUSE: dict[str, int] = {
+    "personality":   1,
+    "career":        10,
+    "relationships": 7,
+    "health":        6,
+}
+
+
+def scope_to_house(scope: str) -> int:
+    """Map a prediction scope to its primary HTJH house (bhava_N -> N)."""
+    if scope.startswith("bhava_"):
+        try:
+            return int(scope.split("_")[1])
+        except (IndexError, ValueError):
+            return 1
+    return _SCOPE_PRIMARY_HOUSE.get(scope, 1)
+
+
+def scope_flowchart_excerpt(features: dict, scope: str) -> dict:
+    """Return the HTJH flowchart content relevant to one prediction scope,
+    in module priority order (M1 foundation -> M4 house -> M5 dasha ->
+    M6 yogas -> M8 synthesis). Every field here traces directly to a finding
+    already computed by build_raman_flowchart — nothing is invented.
+    """
+    flowchart = features.get("flowchart") or {}
+    modules = {m["id"]: m for m in flowchart.get("modules", [])}
+    fa = flowchart.get("final_assessment") or {}
+    house = scope_to_house(scope)
+
+    m4 = modules.get("M4", {})
+    house_step = next(
+        (s for s in m4.get("steps", []) if s["id"] == f"4.{house}"), None
+    )
+
+    return {
+        "house":           house,
+        "area":            _HOUSE_AREA.get(house, f"H{house}"),
+        "lagna":           fa.get("lagna"),
+        "lagna_lord":      fa.get("lagna_lord"),
+        "moon":            fa.get("moon"),
+        "house_step":      house_step,
+        "timing_outlook":  fa.get("timing_outlook"),
+        "yogas_positive":  fa.get("yogas_positive", []),
+        "yogas_negative":  fa.get("yogas_negative", []),
+        "grade":           fa.get("grade"),
+        "score":           fa.get("score"),
+        "life_area_finding": next(
+            (la["key_finding"] for la in fa.get("life_areas", []) if la["house"] == house),
+            None,
+        ),
+        "verdict":         fa.get("verdict"),
+    }
+
+
+def build_raman_scope_interpretation(
+    features: dict,
+    scope: str,
+    triggers: list,
+    passages: list,
+) -> dict:
+    """Build a prediction interpretation purely from the deterministic HTJH
+    flowchart — no LLM involved.
+
+    Every sentence in the returned 'details' is a book-derived finding string
+    already produced by build_raman_flowchart's if/then rules (HTJH Vol 1 & 2);
+    this function only selects and orders the subset relevant to `scope`. It
+    does not generate, paraphrase, or re-derive anything.
+    """
+    ex = scope_flowchart_excerpt(features, scope)
+    house, area, step = ex["house"], ex["area"], ex["house_step"]
+
+    details: list[str] = []
+    if ex["lagna"]:
+        details.append(f"Lagna: {ex['lagna']} — lord {ex['lagna_lord']}.")
+    if ex["moon"]:
+        details.append(f"Moon: {ex['moon']}.")
+
+    if step:
+        htjh_idx = next(
+            (i for i, x in enumerate(step["findings"]) if "HTJH ANALYSIS" in x), -1
+        )
+        pre  = step["findings"][:htjh_idx] if htjh_idx >= 0 else step["findings"]
+        post = step["findings"][htjh_idx + 1:] if htjh_idx >= 0 else []
+        details.append(f"House {house} ({area}) — {step['status'].upper()}:")
+        details.extend(x for x in pre if x != "—")
+        details.extend(post)
+
+    if ex["timing_outlook"]:
+        details.append(f"Dasha timing: {ex['timing_outlook']}")
+    if ex["yogas_positive"]:
+        details.append(f"Positive yogas: {', '.join(ex['yogas_positive'])}")
+    if ex["yogas_negative"]:
+        details.append(f"Negative yogas: {', '.join(ex['yogas_negative'])}")
+
+    summary_bits = [f"{area} (House {house}): {step['status'] if step else 'unknown'}."]
+    if ex["life_area_finding"]:
+        summary_bits.append(ex["life_area_finding"])
+    if ex["grade"]:
+        summary_bits.append(f"Overall chart grade: {ex['grade']} ({ex['score']}/100).")
+    summary = "  ".join(summary_bits)
+
+    return {
+        "summary": summary,
+        "details": details[:14],
+        "rule_refs": [t.rule_id for t in triggers],
+        "passage_refs": [p.chunk_id for p in passages],
     }

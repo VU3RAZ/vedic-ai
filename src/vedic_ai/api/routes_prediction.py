@@ -78,7 +78,7 @@ class PredictionRequest(BaseModel):
     name: str | None = None
     scope: str = "all"
     dry_run: bool = False
-    raman_method: bool = False   # Emphasise B.V. Raman-style house analysis in retrieval
+    raman_method: bool = False   # Deterministic B.V. Raman HTJH flowchart interpretation — no LLM call
     # Optional transit datetime — when provided the Gochara engine runs and its
     # pre-computed findings are injected as structured context into the LLM prompt.
     # The LLM is instructed to synthesize natal + transit findings without re-deriving

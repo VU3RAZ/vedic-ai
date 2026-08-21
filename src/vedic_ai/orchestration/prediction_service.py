@@ -11,6 +11,7 @@ from vedic_ai.core.rules import RuleDefinition
 from vedic_ai.domain.chart import ChartBundle
 from vedic_ai.domain.corpus import RetrievedPassage
 from vedic_ai.domain.prediction import RuleTrigger
+from vedic_ai.features.raman_flowchart import build_raman_scope_interpretation
 from vedic_ai.llm.output_parser import repair_llm_output, validate_llm_output
 from vedic_ai.llm.prompt_builder import build_interpretation_prompt
 
@@ -127,3 +128,38 @@ def call_llm_for_interpretation(
         logger.warning("LLM output validation errors: %s", errors)
 
     return payload, prompt, raw
+
+
+def build_raman_interpretation(
+    bundle: ChartBundle,
+    features: dict,
+    triggers: list[RuleTrigger],
+    passages: list[RetrievedPassage],
+    scope: str,
+    *,
+    gochara_context: dict | None = None,
+) -> tuple[dict, str, str]:
+    """Deterministic raman_method interpretation — no LLM call is made.
+
+    Every field in the returned interpretation traces to a book-derived HTJH
+    finding already computed by build_raman_flowchart (B.V. Raman's 'How to
+    Judge a Horoscope'); this function only selects and orders existing
+    findings for the requested scope — it never generates or paraphrases.
+
+    The prompt string built here (via build_interpretation_prompt) is
+    returned as an audit trail of the grounding content only — it is never
+    sent to a model.
+    """
+    interpretation = build_raman_scope_interpretation(features, scope, triggers, passages)
+    prompt = build_interpretation_prompt(
+        bundle=bundle,
+        features=features,
+        triggers=triggers,
+        passages=passages,
+        scope=scope,
+        output_schema=_OUTPUT_SCHEMA,
+        raman_method=True,
+        gochara_context=gochara_context,
+    )
+    raw = "(raman_method: deterministic HTJH flowchart output — no LLM call made)"
+    return interpretation, prompt, raw

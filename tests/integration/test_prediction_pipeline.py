@@ -318,6 +318,37 @@ class TestPredictionPipeline:
         )
         assert report.model_name == "test-model-v1"
 
+    def test_raman_method_never_calls_llm(self, birth_data, mock_engine, tmp_path):
+        mock_client = MagicMock()
+        mock_client.model_name = "test-model-v1"
+        report = run_prediction_pipeline(
+            birth=birth_data,
+            scope="career",
+            engine=mock_engine,
+            llm_client=mock_client,
+            dry_run=False,
+            raman_method=True,
+            artifacts_dir=tmp_path / "artifacts",
+            rules_dir=RULES_DIR,
+        )
+        assert not mock_client.generate.called
+        assert "no LLM call" in report.llm_debug[0].llm_raw
+        assert isinstance(report, PredictionReport)
+
+    def test_raman_method_summary_grounded_in_flowchart(self, birth_data, mock_engine, tmp_path):
+        report = run_prediction_pipeline(
+            birth=birth_data,
+            scope="career",
+            engine=mock_engine,
+            llm_client=None,
+            dry_run=False,
+            raman_method=True,
+            artifacts_dir=tmp_path / "artifacts",
+            rules_dir=RULES_DIR,
+        )
+        section = report.sections[0]
+        assert "House 10" in section.summary
+
     def test_with_retriever(self, birth_data, mock_engine, tmp_path):
         mock_retriever = MagicMock()
         mock_retriever.retrieve.return_value = []

@@ -15,6 +15,7 @@ from vedic_ai.domain.chart import ChartBundle
 from vedic_ai.domain.corpus import RetrievedPassage
 from vedic_ai.domain.prediction import RuleTrigger
 from vedic_ai.features.bhava_analysis import build_bhava_context_block
+from vedic_ai.features.raman_flowchart import scope_flowchart_excerpt
 
 # ---------------------------------------------------------------------------
 # Section headers
@@ -33,6 +34,7 @@ _SECTION_GOCHARA    = "### TRANSIT / GOCHARA CONTEXT (pre-computed — do not re
 _SECTION_BHAVA      = "### BHAVA ACTIVATION — DASHA + TRANSIT ANALYSIS (pre-computed)"
 _SECTION_SHADBALA   = "### SHADBALA — PLANETARY STRENGTH (pre-computed)"
 _SECTION_ASHTAKA    = "### ASHTAKAVARGA — TRANSIT BINDU QUALITY (pre-computed)"
+_SECTION_FLOWCHART  = "### RAMAN HTJH FLOWCHART (deterministic, book-derived — authoritative, in module priority order)"
 _SECTION_RULES      = "### TRIGGERED RULE FINDINGS (engine output)"
 _SECTION_PASSAGES   = "### SUPPORTING CLASSICAL PASSAGES"
 _SECTION_TASK       = "### YOUR TASK"
@@ -552,6 +554,36 @@ def _bhava_context_section(features: dict, scope: str, gochara_context: dict | N
     return build_bhava_context_block(features, bhava_num, gochara_context)
 
 
+def _flowchart_section(features: dict, scope: str) -> str:
+    """Render the HTJH flowchart excerpt relevant to `scope`, in the book's
+    module priority order (M1 Foundation -> M4 House -> M5 Dasha ->
+    M6 Yogas -> M8 Synthesis). Every line here is a pre-computed, book-derived
+    finding — not LLM output — and is the primary evidence for raman_method.
+    """
+    ex = scope_flowchart_excerpt(features, scope)
+    lines = [
+        f"[M1] Lagna: {ex['lagna'] or '?'}  lord={ex['lagna_lord'] or '?'}",
+        f"[M1] Moon: {ex['moon'] or '?'}",
+    ]
+    step = ex["house_step"]
+    if step:
+        lines.append(f"[M4] House {ex['house']} ({ex['area']}) — status={step['status']}:")
+        lines.extend(f"  {x}" for x in step["findings"])
+    else:
+        lines.append(f"[M4] House {ex['house']} ({ex['area']}): (not available)")
+    if ex["timing_outlook"]:
+        lines.append(f"[M5] Dasha timing: {ex['timing_outlook']}")
+    if ex["yogas_positive"]:
+        lines.append(f"[M6] Positive yogas: {', '.join(ex['yogas_positive'])}")
+    if ex["yogas_negative"]:
+        lines.append(f"[M6] Negative yogas: {', '.join(ex['yogas_negative'])}")
+    if ex["verdict"]:
+        lines.append(f"[M8] Synthesis verdict: {ex['verdict']}")
+    if ex["life_area_finding"]:
+        lines.append(f"[M8] House {ex['house']} key finding: {ex['life_area_finding']}")
+    return "\n".join(lines)
+
+
 def _rules_section(triggers: list[RuleTrigger]) -> str:
     lines = []
     for t in sorted(triggers, key=lambda x: x.rule_id):
@@ -590,8 +622,11 @@ def _task_section(scope: str, raman_method: bool, has_gochara: bool) -> str:
         scope_label = scope
 
     method_note = (
-        "Use B.V. Raman's method: examine the relevant house, its lord, occupants, "
-        "aspects, and divisional chart confirmation — all drawn from the ENGINE FINDINGS above."
+        "Follow the RAMAN HTJH FLOWCHART section above in its module priority order "
+        "(M1 foundation -> M4 house analysis -> M5 dasha timing -> M6 yogas -> M8 synthesis). "
+        "That section is the primary evidence — use ENGINE FINDINGS only to fill in specific "
+        "planetary details it already implies. Do not introduce a conclusion the flowchart "
+        "findings or M8 synthesis verdict do not support."
         if raman_method else
         "Cite specific planets, house numbers, yogas, and dasha periods from the ENGINE FINDINGS above."
     )
@@ -724,9 +759,9 @@ def build_interpretation_prompt(
     """Construct the synthesis-only prompt sent to the local LLM.
 
     Section order:
-      NATIVE CONTEXT → ENGINE FINDINGS → FUNCTIONAL NATURE → DASHA STRENGTH →
-      VARGA ANALYSIS → DASHA TIMING → [GOCHARA CONTEXT] →
-      TRIGGERED RULE FINDINGS → CLASSICAL PASSAGES → TASK
+      NATIVE CONTEXT → [RAMAN HTJH FLOWCHART, if raman_method] → ENGINE FINDINGS →
+      FUNCTIONAL NATURE → DASHA STRENGTH → VARGA ANALYSIS → DASHA TIMING →
+      [GOCHARA CONTEXT] → TRIGGERED RULE FINDINGS → CLASSICAL PASSAGES → TASK
     """
     instruction = _INSTRUCTION_RAMAN if raman_method else _INSTRUCTION
     has_gochara = gochara_context is not None
@@ -737,6 +772,16 @@ def build_interpretation_prompt(
         _SECTION_CONTEXT,
         _context_section(bundle, features),
         "",
+    ]
+
+    if raman_method:
+        parts += [
+            _SECTION_FLOWCHART,
+            _flowchart_section(features, scope),
+            "",
+        ]
+
+    parts += [
         _SECTION_FINDINGS,
         _findings_section(features, scope),
         "",
