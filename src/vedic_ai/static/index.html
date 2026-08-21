@@ -657,6 +657,61 @@
       padding: 6px 0 10px;
     }
 
+    /* ── Step-by-step flow trace ── */
+    .fc-trace-wrap {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .fc-trace-wrap > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .fc-trace-wrap > summary::-webkit-details-marker { display: none; }
+    .fc-trace-wrap > summary .fc-tog { font-size: 0.7rem; transition: transform 0.15s; }
+    .fc-trace-wrap[open] > summary .fc-tog { transform: rotate(90deg); }
+    .fc-trace { display: flex; flex-direction: column; padding: 14px 16px 16px; }
+    .fc-trace-step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 9px 14px;
+    }
+    .fc-trace-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .fc-trace-num {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .fc-trace-title { font-weight: 600; font-size: 0.85rem; color: var(--text); }
+    .fc-trace-headline {
+      margin-top: 5px;
+      font-size: 0.81rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .fc-trace-arrow {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 3px 0;
+      opacity: 0.55;
+    }
+
     /* ── Final Assessment Card ── */
     .fa-card {
       background: var(--card-bg);
@@ -1121,6 +1176,10 @@
       font-size: 0.71rem; margin-top: 3px; padding: 3px 8px;
       border-radius: 4px; background: rgba(6,182,212,0.10); color: #67e8f9;
     }
+    .le-alts {
+      font-size: 0.71rem; margin-top: 3px; padding: 3px 8px;
+      border-radius: 4px; background: rgba(148,163,184,0.10); color: var(--muted);
+    }
     .le-method-note {
       font-size: 0.72rem; margin-bottom: 5px; padding: 4px 8px;
       border-radius: 4px; background: rgba(255,255,255,0.04);
@@ -1217,6 +1276,54 @@
     .rc-fit-table td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .rc-fit-pos { color: #34d399; font-weight: 700; }
     .rc-fit-neg { color: #f87171; font-weight: 700; }
+
+    /* Stepwise per-event cascade cards */
+    .rc-step { border: 1px solid var(--border); border-radius: 9px; margin-bottom: 12px; overflow: hidden; }
+    .rc-step-head {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 9px 13px; background: var(--panel); border-bottom: 1px solid var(--border);
+    }
+    .rc-step-title { font-weight: 700; font-size: 0.9rem; }
+    .rc-step-date  { font-size: 0.74rem; color: var(--muted); }
+    .rc-step-delta { margin-left: auto; font-size: 0.78rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; }
+    .rc-step-delta.up   { background: rgba(16,185,129,0.18); color: #34d399; }
+    .rc-step-delta.down { background: rgba(239,68,68,0.16); color: #f87171; }
+    .rc-step-delta.same { background: rgba(148,163,184,0.16); color: var(--muted); }
+    .rc-cascade { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+    .rc-cascade th { text-align: left; padding: 5px 10px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    .rc-cascade td { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+    .rc-stage-name { font-weight: 700; }
+    .rc-stage-ref  { font-size: 0.66rem; color: var(--muted); }
+    .rc-lord-chg   { color: #fbbf24; font-weight: 600; }
+    .rc-arrow-sm   { color: #a78bfa; padding: 0 4px; }
+    .rc-sc-up   { color: #34d399; font-weight: 700; }
+    .rc-sc-down { color: #f87171; font-weight: 700; }
+    .rc-sc-flat { color: var(--muted); }
+    .rc-final-row td { background: rgba(124,58,237,0.07); }
+    .rc-pass { color: #34d399; } .rc-fail { color: #64748b; }
+    .rc-prio-tag { display:inline-block; font-size:0.6rem; font-weight:700; color:#a78bfa;
+      background:rgba(124,58,237,0.15); border-radius:4px; padding:1px 4px; margin-right:5px; vertical-align:middle; }
+    .rc-w-tag { font-size:0.66rem; font-weight:700; color:#38bdf8; background:rgba(56,189,248,0.14);
+      border-radius:10px; padding:2px 8px; }
+    .rc-crit-tag { font-size:0.66rem; font-weight:700; color:#fbbf24; background:rgba(251,191,36,0.16);
+      border-radius:10px; padding:2px 8px; }
+    .rc-step-crit { border-color:#fbbf2466; }
+    .rc-event-row select.rc-prio { flex:0 0 auto; min-width:84px; }
+
+    /* Classical-method cards */
+    .rc-mcard { border:1px solid var(--border); border-radius:9px; margin:10px 0; overflow:hidden; }
+    .rc-mcard-sug { border-color:#34d399; }
+    .rc-mcard-head { padding:8px 13px; background:var(--panel); border-bottom:1px solid var(--border); font-size:0.86rem; }
+    .rc-mtable { width:100%; border-collapse:collapse; font-size:0.78rem; }
+    .rc-mtable td { padding:7px 13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; }
+    .rc-m-name { width:150px; font-weight:700; }
+    .rc-m-tag { font-size:0.66rem; font-weight:400; color:var(--muted); }
+    .rc-pass-row td { background:rgba(16,185,129,0.08); }
+    .rc-fail-row td { background:rgba(239,68,68,0.06); }
+    .rc-yes { color:#34d399; font-weight:700; } .rc-no { color:#f87171; font-weight:700; }
+    .rc-wins { display:flex; flex-wrap:wrap; gap:8px; padding:4px 0; }
+    .rc-win { font-size:0.78rem; font-weight:600; background:rgba(16,185,129,0.12); color:#34d399;
+      border-radius:8px; padding:3px 9px; }
 
     /* Candidate list */
     .rc-cand-row {
@@ -2434,6 +2541,7 @@
       <!-- Raman-Analysis tab -->
       <div class="tab-panel ctab" id="tab-flowchart-panel">
         ${renderFinalAssessment(flowchart.final_assessment)}
+        ${renderFlowTrace(flowchart)}
         <div class="fc-intro" style="margin-top:4px">
           &#9660; Detailed 8-Module HTJH Analysis &nbsp;·&nbsp;
           <span class="fc-badge fc-badge-favorable">FAVORABLE</span>
@@ -2502,15 +2610,13 @@
           <span style="font-size:1.4rem">&#127919;</span>
           <div>
             <div class="le-header-title">Birth-Time Rectification</div>
-            <div class="le-header-sub">Enter dates of major life events → find the birth time that best matches them</div>
+            <div class="le-header-sub">Classical methods — Praṇapada (BPHS) decides; Gulika, rising-element &amp; KP Ruling Planets shown as indicators</div>
           </div>
         </div>
         <div class="result-card">
-          <div class="result-card-header">&#128197; Known Life Events
-            <span style="font-weight:400;font-size:0.76rem;color:var(--muted);margin-left:8px">Add the actual date of each event you remember. More events = more accurate.</span>
+          <div class="result-card-header">&#9881; Search settings
+            <span style="font-weight:400;font-size:0.76rem;color:var(--muted);margin-left:8px">Scans candidate times around your entered birth time. No life events needed.</span>
           </div>
-          <div id="rc-events"></div>
-          <button class="rc-add-btn" onclick="rcAddEventRow()">+ Add event</button>
           <div class="rc-controls">
             <label>Search window
               <select id="rc-window">
@@ -2522,22 +2628,24 @@
                 <option value="720">± 12 hours (time unknown)</option>
               </select>
             </label>
-            <label>Coarse step
-              <select id="rc-coarse">
+            <label>Step
+              <select id="rc-step">
+                <option value="1" selected>1 min</option>
+                <option value="2">2 min</option>
                 <option value="5">5 min</option>
-                <option value="10">10 min</option>
-                <option value="15" selected>15 min</option>
-                <option value="30">30 min</option>
               </select>
             </label>
+            <label style="flex-direction:row;align-items:center;gap:6px">
+              <input type="checkbox" id="rc-kp" checked /> KP Ruling Planets (non-classical)
+            </label>
             <button class="rc-run-btn" id="rc-run-btn" onclick="runRectify()">&#127919; Rectify Birth Time</button>
-            <span class="le-spinner" id="rc-spinner" style="display:none">&#8987; Searching candidate times…</span>
+            <span class="le-spinner" id="rc-spinner" style="display:none">&#8987; Scanning candidate times…</span>
           </div>
         </div>
         <div id="rc-content">
           <div class="le-placeholder">
             <span class="le-placeholder-icon">&#127919;</span>
-            Add at least one known life-event date above, then click <strong>Rectify Birth Time</strong>.
+            Click <strong>Rectify Birth Time</strong> to test candidate times against the classical conditions.
           </div>
         </div>
       </div>`;
@@ -2681,6 +2789,49 @@
   }
 
   // ── Flowchart renderer ──────────────────────────────────────────────────────
+  function stepHeadline(step) {
+    // Best single-line summary of a step: the first ✓/✗ HTJH-rule finding,
+    // falling back to the first non-separator line.
+    const finds = step.findings || [];
+    const htjhIdx = finds.findIndex(f => (f || '').includes('HTJH ANALYSIS'));
+    const scanFrom = htjhIdx >= 0 ? finds.slice(htjhIdx + 1) : finds;
+    let headline = scanFrom.find(f => f && (f.startsWith('✓') || f.startsWith('✗')));
+    if (!headline) headline = scanFrom.find(f => f && f !== '—') || finds.find(f => f && f !== '—');
+    return headline || 'No specific indicator.';
+  }
+
+  function renderFlowTrace(flowchart) {
+    if (!flowchart || !flowchart.modules || !flowchart.modules.length) return '';
+    const allSteps = [];
+    flowchart.modules.forEach(mod => {
+      (mod.steps || []).forEach(step => allSteps.push(step));
+    });
+    if (!allSteps.length) return '';
+
+    const rows = allSteps.map((step, i) => {
+      const headline = escapeHTML(stepHeadline(step).replace(/^([✓✗])\s*/, ''))
+        .replace(/^(✓)/, '<span style="color:var(--success)">✓</span>')
+        .replace(/^(✗)/, '<span style="color:var(--error)">✗</span>');
+      const cls = 'fc-badge fc-badge-' + (step.status || 'ok');
+      const title = escapeHTML((step.title || '').replace(/^STEP\s*[\d.]+:\s*/i, ''));
+      const arrow = i < allSteps.length - 1
+        ? '<div class="fc-trace-arrow">&#8595;</div>' : '';
+      return `<div class="fc-trace-step">
+          <div class="fc-trace-head">
+            <span class="fc-trace-num">Step ${escapeHTML(step.id)}</span>
+            <span class="${cls}">${(step.status || 'ok').toUpperCase()}</span>
+            <span class="fc-trace-title">${title}</span>
+          </div>
+          <div class="fc-trace-headline">${headline}</div>
+        </div>${arrow}`;
+    }).join('');
+
+    return `<details class="fc-trace-wrap" open>
+        <summary><span class="fc-tog">&#9658;</span> Step-by-Step Flow &nbsp;<span style="font-weight:400;color:var(--muted);font-size:0.78rem">— all ${allSteps.length} HTJH steps, in the order the book prescribes</span></summary>
+        <div class="fc-trace">${rows}</div>
+      </details>`;
+  }
+
   function renderFlowchartHTML(flowchart) {
     if (!flowchart || !flowchart.modules || !flowchart.modules.length) {
       return '<div class="error-banner active" style="display:block">Flowchart data not available — please compute the chart first.</div>';
@@ -3833,11 +3984,13 @@
         <div class="le-card-meta">
           <span>&#9679; <strong>${escapeHTML(e.mahadasha_lord)}</strong> Mahādaśā</span>
           <span>&#9670; <strong>${escapeHTML(e.antardasha_lord)}</strong> Antardaśā</span>
+          ${e.peak_date ? `<span style="color:#34d399">&#9201; Likely peak: <strong>${e.peak_date.slice(0,7)}</strong></span>` : ''}
           <span style="color:var(--accent)">Score: ${e.score}</span>
         </div>
         ${e.method_note ? `<div class="le-method-note">&#128214; ${escapeHTML(e.method_note)}</div>` : ''}
         ${vargaHtml}
         ${transitHtml}
+        ${(e.alternatives && e.alternatives.length) ? `<div class="le-alts">&#8635; Also possible: ${e.alternatives.map(a => `${a.start_date.slice(0,7)} (age ${Math.round(a.age_start)}, ${escapeHTML(a.mahadasha_lord)}/${escapeHTML(a.antardasha_lord)}, score ${a.score})`).join(' · ')}</div>` : ''}
         <div class="le-factors">${factors}</div>
       </div>`;
     }).join('');
@@ -3895,73 +4048,31 @@
     renderLifeEventsTimeline();
   }
 
-  // ── Birth-Time Rectification ──────────────────────────────────────────────
+  // ── Birth-Time Rectification (classical methods) ──────────────────────────
+  function rcInit() { /* settings are static; nothing to preload */ }
 
-  let _rcDomains = null;
-  let _rcInitDone = false;
-
-  async function rcLoadDomains() {
-    if (_rcDomains) return _rcDomains;
-    try {
-      const r = await fetch('/rectify/domains');
-      _rcDomains = (await r.json()).domains || [];
-    } catch (e) { _rcDomains = []; }
-    return _rcDomains;
-  }
-
-  async function rcInit() {
-    await rcLoadDomains();
-    const wrap = document.getElementById('rc-events');
-    if (wrap && !_rcInitDone && wrap.children.length === 0) {
-      _rcInitDone = true;
-      rcAddEventRow('marriage');
-      rcAddEventRow('career_start');
-    }
-  }
-
-  function rcAddEventRow(domainKey, dateVal) {
-    const wrap = document.getElementById('rc-events');
-    if (!wrap) return;
-    const opts = (_rcDomains || []).map(d =>
-      `<option value="${d.key}" ${d.key === domainKey ? 'selected' : ''}>${d.emoji} ${escapeHTML(d.label)}</option>`
-    ).join('');
-    const row = document.createElement('div');
-    row.className = 'rc-event-row';
-    row.innerHTML = `
-      <select class="rc-domain">${opts}</select>
-      <input type="date" class="rc-date" value="${dateVal || ''}" />
-      <button class="rc-del-btn" onclick="this.parentElement.remove()">&times;</button>`;
-    wrap.appendChild(row);
-  }
+  function _rcTime(iso) { return iso.replace('T', ' ').slice(0, 16); }
+  function _yn(b) { return b ? '<span class="rc-yes">&#10003; yes</span>' : '<span class="rc-no">&#10007; no</span>'; }
 
   async function runRectify() {
     if (!_lastBirthForm) { alert('Please compute the natal chart first.'); return; }
-    const rows = Array.from(document.querySelectorAll('#rc-events .rc-event-row'));
-    const events = rows.map(r => ({
-      domain_key:  r.querySelector('.rc-domain').value,
-      actual_date: r.querySelector('.rc-date').value,
-    })).filter(e => e.actual_date);
-    if (events.length === 0) { alert('Add at least one event with a date.'); return; }
-
-    const btn     = document.getElementById('rc-run-btn');
+    const btn = document.getElementById('rc-run-btn');
     const spinner = document.getElementById('rc-spinner');
     const content = document.getElementById('rc-content');
     btn.disabled = true; spinner.style.display = '';
-    content.innerHTML = '<div class="le-placeholder"><span class="le-placeholder-icon">&#8987;</span>Searching candidate birth times…</div>';
-
+    content.innerHTML = '<div class="le-placeholder"><span class="le-placeholder-icon">&#8987;</span>Scanning candidate times…</div>';
     try {
       const resp = await fetch('/rectify/compute', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           birth_datetime: _lastBirthForm.birth_datetime,
-          latitude:  _lastBirthForm.latitude,
+          latitude: _lastBirthForm.latitude,
           longitude: _lastBirthForm.longitude,
           place_name: _lastBirthForm.place_name || null,
-          name:       _lastBirthForm.name || null,
-          events,
+          name: _lastBirthForm.name || null,
           window_minutes: parseInt(document.getElementById('rc-window').value, 10),
-          coarse_step:    parseInt(document.getElementById('rc-coarse').value, 10),
-          fine_step:      2,
+          step_minutes: parseInt(document.getElementById('rc-step').value, 10),
+          include_kp: document.getElementById('rc-kp').checked,
         }),
       });
       if (!resp.ok) {
@@ -3977,95 +4088,68 @@
     }
   }
 
-  function _rcTimeStr(iso) {
-    // iso like 1972-08-15T11:30:00+05:30 → "1972-08-15 11:30"
-    return iso.replace('T', ' ').slice(0, 16);
+  function _methodCard(c, isSuggested) {
+    const pp = c.pranapada, g = c.gulika, t = c.tatva, kp = c.kp || {};
+    const ppPass = pp.kendra_from_lagna;
+    const kpRow = (kp && kp.ruling_planets) ? `
+      <tr><td class="rc-m-name">KP Ruling Planets<br><span class="rc-m-tag">20th-c., advisory</span></td>
+        <td>Asc lords — sign <b>${escapeHTML(kp.asc_sign_lord)}</b> · star <b>${escapeHTML(kp.asc_star_lord)}</b> · sub <b>${escapeHTML(kp.asc_sub_lord)}</b><br>
+        Moon — sign ${escapeHTML(kp.moon_sign_lord)} · star ${escapeHTML(kp.moon_star_lord)} · sub ${escapeHTML(kp.moon_sub_lord)} · day ${escapeHTML(kp.day_lord)}<br>
+        <span class="rc-m-tag">RP set: ${kp.ruling_planets.map(escapeHTML).join(', ')} — match to a known event's RPs</span></td></tr>` : '';
+    return `<div class="rc-mcard${isSuggested ? ' rc-mcard-sug' : ''}">
+      <div class="rc-mcard-head">${isSuggested ? '&#9989; Suggested time' : '&#128338; Given time'} · <b>${_rcTime(c.birth_datetime)}</b>
+        · Lagna ${escapeHTML(c.asc_sign)} ${c.asc_degree}&deg;</div>
+      <table class="rc-mtable">
+        <tr class="${ppPass ? 'rc-pass-row' : 'rc-fail-row'}">
+          <td class="rc-m-name">Praṇapada<br><span class="rc-m-tag">BPHS · deciding</span></td>
+          <td>in <b>${escapeHTML(pp.sign)}</b> — house <b>${pp.house_from_lagna}</b> from Lagna ${_yn(pp.kendra_from_lagna)}
+            &nbsp;·&nbsp; house ${pp.house_from_moon} from Moon ${_yn(pp.kendra_from_moon)}</td></tr>
+        <tr><td class="rc-m-name">Gulika / Māndi<br><span class="rc-m-tag">BPHS · advisory</span></td>
+          <td>in <b>${escapeHTML(g.sign)}</b> · nakṣatra lord ${escapeHTML(g.nakshatra_lord)} · house ${g.house_from_lagna} from Lagna</td></tr>
+        <tr><td class="rc-m-name">Tatva (element)<br><span class="rc-m-tag">advisory · ~2 h</span></td>
+          <td>rising sign ${escapeHTML(t.lagna_sign)} → <b>${escapeHTML(t.element)}</b></td></tr>
+        ${kpRow}
+      </table></div>`;
   }
 
   function renderRectify(d) {
     const content = document.getElementById('rc-content');
-    const o = d.original, b = d.best;
-    const sign = d.delta_minutes >= 0 ? '+' : '';
-    const deltaTxt = `${sign}${d.delta_minutes} min`;
+    const g = d.given, s = d.suggested;
+    const sign = (d.delta_minutes != null && d.delta_minutes >= 0) ? '+' : '';
+    const hero = s ? `
+      <div class="rc-hero">
+        <div class="rc-hero-block"><span class="rc-hero-label">Given</span>
+          <span class="rc-hero-time">${_rcTime(g.birth_datetime)}</span></div>
+        <span class="rc-hero-arrow">&#10142;</span>
+        <div class="rc-hero-block"><span class="rc-hero-label">Suggested (nearest Praṇapada-kendra)</span>
+          <span class="rc-hero-time rc-hero-new">${_rcTime(s.birth_datetime)}</span></div>
+        <span class="rc-delta-badge">${sign}${d.delta_minutes} min</span>
+        <button class="rc-apply-btn" onclick="rcApplyTime('${s.birth_datetime}')">Apply &amp; recompute</button>
+      </div>`
+      : `<div class="rc-note" style="color:var(--error)">No candidate time within the window puts the Praṇapada in a kendra from the Lagna. Widen the window.</div>`;
 
-    const changes = [];
-    if (d.lagna_changed) changes.push(`Lagna ${escapeHTML(o.lagna_sign)} → <span class="rc-changed">${escapeHTML(b.lagna_sign)}</span>`);
-    else changes.push(`Lagna ${escapeHTML(b.lagna_sign)} (unchanged)`);
-    if (d.moon_sign_changed) changes.push(`Moon ${escapeHTML(o.moon_sign)} → <span class="rc-changed">${escapeHTML(b.moon_sign)}</span>`);
-    changes.push(`Moon nakṣatra: ${escapeHTML(b.moon_nakshatra)}`);
-
-    // Per-event fit (best candidate)
-    const fitRows = (b.per_event || []).map(e => {
-      if (e.score === null) {
-        return `<tr><td>${escapeHTML(e.domain_key)}</td><td>${escapeHTML(e.actual_date)}</td><td colspan="3" style="color:var(--muted)">${escapeHTML(e.note || '—')}</td></tr>`;
-      }
-      const cls = e.score >= 0 ? 'rc-fit-pos' : 'rc-fit-neg';
-      return `<tr>
-        <td>${e.emoji || ''} ${escapeHTML(e.label || e.domain_key)}</td>
-        <td>${escapeHTML(e.actual_date)}</td>
-        <td><span class="${cls}">${e.score}</span></td>
-        <td>${escapeHTML(e.mahadasha_lord)}/${escapeHTML(e.antardasha_lord)}</td>
-        <td style="color:var(--muted);font-size:0.72rem">D:${e.dasha_score} V:${e.varga_score} T:${e.transit_score}</td>
-      </tr>`;
-    }).join('');
-
-    // Candidate bars (normalise to max)
-    const maxFit = Math.max(...d.candidates.map(c => c.total_fit), 1);
-    const minFit = Math.min(...d.candidates.map(c => c.total_fit), 0);
-    const range = (maxFit - minFit) || 1;
-    const candRows = d.candidates.map(c => {
-      const pct = Math.round(((c.total_fit - minFit) / range) * 100);
-      const isBest = c.offset_minutes === b.offset_minutes;
-      const s = c.offset_minutes >= 0 ? '+' : '';
-      return `<div class="rc-cand-row ${isBest ? 'rc-cand-best' : ''}">
-        <span style="width:70px">${_rcTimeStr(c.birth_datetime).slice(11)}</span>
-        <span style="width:60px;color:var(--muted)">${s}${c.offset_minutes}m</span>
-        <span style="width:64px">${escapeHTML(c.lagna_sign)}</span>
-        <div class="rc-bar-track"><div class="rc-bar-fill" style="width:${pct}%"></div></div>
-        <span style="width:48px;text-align:right;font-weight:700">${c.total_fit}</span>
-      </div>`;
-    }).join('');
+    const wins = (d.pranapada_windows || []).map(w =>
+      `<span class="rc-win">${_rcTime(w.start).slice(11)}–${_rcTime(w.end).slice(11)} <span class="rc-m-tag">(${w.start_offset>=0?'+':''}${w.start_offset}…${w.end_offset>=0?'+':''}${w.end_offset}m)</span></span>`
+    ).join(' ') || '<span class="rc-no">none in window</span>';
 
     content.innerHTML = `
-      <div class="rc-hero">
-        <div class="rc-hero-block">
-          <span class="rc-hero-label">Given time</span>
-          <span class="rc-hero-time">${_rcTimeStr(o.birth_datetime)}</span>
-          <span class="rc-hero-label">fit ${o.total_fit}</span>
-        </div>
-        <span class="rc-hero-arrow">&#10142;</span>
-        <div class="rc-hero-block">
-          <span class="rc-hero-label">Rectified time</span>
-          <span class="rc-hero-time rc-hero-new">${_rcTimeStr(b.birth_datetime)}</span>
-          <span class="rc-hero-label">fit ${b.total_fit} &nbsp; (improvement +${d.fit_improvement})</span>
-        </div>
-        <span class="rc-delta-badge">${deltaTxt}</span>
-        <button class="rc-apply-btn" onclick="rcApplyTime('${b.birth_datetime}')">Apply &amp; recompute</button>
-      </div>
-      <div class="rc-note">${changes.join(' &nbsp;·&nbsp; ')}</div>
+      ${hero}
+      <div class="rc-note">Sunrise ${_rcTime(d.sunrise).slice(11)} · Sunset ${_rcTime(d.sunset).slice(11)} · ${d.day_birth ? 'day birth' : 'night birth'} · ${d.candidates.length} times scanned (±${d.search.window_minutes}m / ${d.search.step_minutes}m)</div>
+      ${s ? _methodCard(s, true) : ''}
+      ${_methodCard(g, false)}
       <div class="result-card">
-        <div class="result-card-header">&#127919; Event Activation at Rectified Time
-          <span style="font-weight:400;font-size:0.74rem;color:var(--muted);margin-left:8px">Higher score = chart activates the event more strongly on your date (D=daśā, V=varga, T=transit)</span>
+        <div class="result-card-header">&#9201; Praṇapada-kendra windows
+          <span style="font-weight:400;font-size:0.74rem;color:var(--muted);margin-left:8px">time ranges in the search window where Praṇapada falls in a kendra (1/4/7/10) from the Lagna (BPHS)</span>
         </div>
-        <table class="rc-fit-table">
-          <thead><tr><th>Event</th><th>Your date</th><th>Fit</th><th>MD/AD</th><th>Breakdown</th></tr></thead>
-          <tbody>${fitRows}</tbody>
-        </table>
-      </div>
-      <div class="result-card">
-        <div class="result-card-header">&#128202; Top Candidate Times
-          <span style="font-weight:400;font-size:0.74rem;color:var(--muted);margin-left:8px">${d.search.evaluated} times evaluated within ±${d.search.window_minutes} min</span>
-        </div>
-        ${candRows}
+        <div class="rc-wins">${wins}</div>
       </div>
       <div class="rc-note" style="font-style:italic">${escapeHTML(d.disclaimer || '')}</div>`;
   }
 
   function rcApplyTime(iso) {
-    // iso e.g. 1972-08-15T11:30:00+05:30 → set bdt (datetime-local) to first 16 chars
     const bdt = document.getElementById('bdt');
     if (bdt) bdt.value = iso.slice(0, 16);
-    alert('Rectified time applied to the birth form. Click "Analyze Chart" to recompute with the new time.');
+    alert('Suggested time applied to the birth form. Click "Analyze Chart" to recompute with the new time.');
   }
 </script>
 
